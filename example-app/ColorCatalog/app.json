@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "HelloWorld",
+    "description": "Catalog your colors. Save your favorite web colors and view the details",
+    "slug": "ColorCatalog",
+    "platforms": ["ios", "android"],
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/cc-icon.png",
+    "splash": {
+      "image": "./assets/cc-splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true
+    }
+  }
+}

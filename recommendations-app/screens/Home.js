@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import ByPod from './ByPod';
 
 // set up tab navigation
 const Tab = createMaterialTopTabNavigator();
@@ -8,7 +9,7 @@ const Tab = createMaterialTopTabNavigator();
 function PodsTab() {
     return (
       <View style={ styles.container }>
-        <Text>Tab 1: Your Pods</Text>
+        <ByPod/>
       </View>
     );
 }

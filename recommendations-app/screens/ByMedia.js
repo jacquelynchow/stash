@@ -1,7 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import MediaGroup from '../components/MediaGroup';
-import Pod from '../components/Pod';
 
 const ByMedia = () => {
     return (
@@ -9,9 +8,12 @@ const ByMedia = () => {
             <MediaGroup/>
             <MediaGroup/>
             <MediaGroup/>
+            <MediaGroup/>
+            <MediaGroup/>
         </View>
     )
 }
+// if have no recommendations 
 
 const styles = StyleSheet.create({
     container: {
@@ -28,7 +30,7 @@ const styles = StyleSheet.create({
     }, 
     textBox: {
         margin: 50,
-        padding: 20,
+        padding: 30,
         alignContent: 'center',
         justifyContent: 'center',
     }

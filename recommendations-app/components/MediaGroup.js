@@ -4,8 +4,9 @@ import { StyleSheet, Text, View, Image } from 'react-native';
 const MediaGroup = () => {
     return (
         <View style={styles.item}>
-            <Image source={{uri: "https://www.jaipuriaschoolpatna.in/wp-content/uploads/2016/11/blank-img.jpg"}} style={styles.groupImage}></Image>
+            <Image source={{uri: "https://www.jaipuriaschoolpatna.in/wp-content/uploads/2016/11/blank-img.jpg"}} style={styles.mediaImage}></Image>
             <Text style={styles.name}>Media Type</Text>
+            <Text style={styles.numRecs}># Recommendations</Text>
         </View>
     )
 }
@@ -16,7 +17,7 @@ const styles = StyleSheet.create({
       borderColor: "black",
       borderRadius: 10,
       backgroundColor: "#ffffff",
-      marginVertical: 10,
+      marginVertical: 15,
       marginHorizontal: '2%',
       // ios
       shadowOffset: {width: 10, height: 10}, 
@@ -31,11 +32,11 @@ const styles = StyleSheet.create({
         padding: 15,
         paddingBottom: 0,
     },
-    members: {
+    numRecs: {
         padding: 15,
         paddingTop: 5,
     },
-    groupImage: {
+    mediaImage: {
         marginLeft: 15,
         width: 90,
         height: 90,

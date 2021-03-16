@@ -27,7 +27,28 @@ function PodsTab() {
 
 export default function HomeScreen() {
     return (
-        <Tab.Navigator>
+        <Tab.Navigator  
+        // style tabs 
+        tabBarOptions={{
+          labelStyle: { 
+            fontSize: 14, 
+            marginBottom: 20, 
+            fontWeight: 'bold', 
+            textTransform: 'capitalize',
+          },
+          tabStyle: { width: 200, height: 60 },
+          activeTintColor: '#d68c45',
+          inactiveTintColor: '#ffc9b9',
+          indicatorStyle: { 
+            backgroundColor: '#d68c45', 
+            marginBottom: 10, 
+            height: 15, 
+            width: 130, 
+            marginLeft: 35, 
+            borderRadius: 12, 
+            opacity: 0.5, 
+          }
+        }}>
             {/* set up routes for toggling between tabs  */}
             <Tab.Screen name="Your Pods" component={PodsTab} />
             <Tab.Screen name="All Recommendations" component={RecsTab} />

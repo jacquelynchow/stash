@@ -1,12 +1,17 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
-const Pod = () => {
+const PodTile = (props) => {
+    const navigation = useNavigation();
+
     return (
         <View style={styles.item}>
-            <Image source={{uri: "https://www.jaipuriaschoolpatna.in/wp-content/uploads/2016/11/blank-img.jpg"}} style={styles.groupImage}></Image>
-            <Text style={styles.name}>Group Name</Text>
-            <Text style={styles.members}># Members</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Pod')}>
+                <Image source={{uri: "https://www.jaipuriaschoolpatna.in/wp-content/uploads/2016/11/blank-img.jpg"}} style={styles.groupImage}></Image>
+                <Text style={styles.name}>{props.groupName}</Text>
+                <Text style={styles.members}>{props.numMembers} Members</Text>
+            </TouchableOpacity>
         </View>
     )
 }
@@ -17,7 +22,8 @@ const styles = StyleSheet.create({
       borderColor: "black",
       borderRadius: 10,
       backgroundColor: "#ffffff",
-      marginVertical: 10,
+      marginBottom: 20,
+      marginTop: 0,
       marginHorizontal: '2%',
       // ios
       shadowOffset: {width: 10, height: 10}, 
@@ -45,4 +51,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default Pod
+export default PodTile;

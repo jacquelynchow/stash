@@ -7,7 +7,7 @@ const PodTile = (props) => {
 
     return (
         <View style={styles.item}>
-            <TouchableOpacity onPress={() => navigation.navigate('Pod')}>
+            <TouchableOpacity activeOpacity={.7} onPress={() => navigation.navigate('Pod')}>
                 <Image source={{uri: "https://www.jaipuriaschoolpatna.in/wp-content/uploads/2016/11/blank-img.jpg"}} style={styles.groupImage}></Image>
                 <Text style={styles.name}>{props.groupName}</Text>
                 <Text style={styles.members}>{props.numMembers} Members</Text>

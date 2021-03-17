@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from './screens/Login';
 import HomeScreen from './screens/Home';
 import PodPage from './screens/PodPage';
+import MediaTypePage from './screens/MediaTypePage';
 import Logout from './components/Logout';
 import Back from './components/Back';
 
@@ -22,6 +23,10 @@ export default function App() {
           }}
         />
         <Stack.Screen name="Pod" component={PodPage} 
+          options= {{headerLeft: () => (
+            <Back/>),
+          }}/>
+        <Stack.Screen name="MediaType" component={MediaTypePage} 
           options= {{headerLeft: () => (
             <Back/>),
           }}/>

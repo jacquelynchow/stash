@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
-import { StyleSheet, ScrollView, View, TouchableOpacity, Image, Modal, Pressable, Text, Button } from 'react-native';
+import { StyleSheet, ScrollView, View, TouchableOpacity, Image, Pressable, Text, Button } from 'react-native';
 import PodTile from '../components/PodTile';
 import addPodButton from '../assets/addPodButton.png';
 import closePopUpButton from '../assets/closePopUpButton.png';
+import Modal from 'react-native-modal';
 
 const ByPod = (props) => {
     // TODO: If No Pods, show message screen, else show pods
     // TODO: For loop and showing Pod Tiles with real data
 
-    const [modalVisible, setModalVisible] = useState(false);
-    
+    const [isModalVisible, setModalVisible] = useState(false);
+    const toggleModal = () => {
+        setModalVisible(!isModalVisible);
+    };
     return (
-        <View style={styles.tilesContainer}>
+        <View style={{flex: 1}}>
             <ScrollView contentContainerStyle={styles.container}>
                 <PodTile groupName={"Group Name 1"} numMembers={2} />
                 <PodTile groupName={"Group Name 2"} numMembers={5} />
@@ -28,23 +31,18 @@ const ByPod = (props) => {
             </ScrollView>
 
             {/* Create A Pod PopUp */}
-            <Modal animationType="slide" 
-                transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => {
-                    setModalVisible(!modalVisible);
-                }}>
+            <Modal isVisible={isModalVisible}>
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
                         <Pressable style={[styles.button, styles.buttonClose]}
-                            onPress={() => setModalVisible(!modalVisible)}>
+                            onPress={toggleModal} >
                             <Image source={closePopUpButton} style={{width: 30, height: 30}}/>
                         </Pressable>
                         <Text style={styles.modalTitle}>Create a Pod</Text>
                         <Text style={styles.modalText}>Search for their name or send them an invite!</Text>
                         {/* TODO: Name of group, pod image upload, show current members */}
                         <Pressable style={styles.createPodButton}>
-                            <Text style={styles.createPodText}>CREATE POD</Text>
+                            <Text style={styles.createPodText}>Create Pod</Text>
                         </Pressable>
                     </View>
                 </View>
@@ -55,7 +53,7 @@ const ByPod = (props) => {
                 <Image source={addPodButton} style={styles.floatingAddButton}></Image>
             </View>
             <TouchableOpacity activeOpacity={0.25} 
-                onPress={() => setModalVisible(true)}
+                onPress={toggleModal}
                 style={styles.floatingAddButton}>
             </TouchableOpacity>
 
@@ -65,9 +63,6 @@ const ByPod = (props) => {
 }
 
 const styles = StyleSheet.create({
-    tilesContainer: {
-        flex: 1,
-    },
     floatingAddButton: {
         alignSelf: 'flex-end',
         position: 'absolute',
@@ -131,7 +126,8 @@ const styles = StyleSheet.create({
     },
     createPodText: {
         color: "#D68C45",
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        textTransform: 'uppercase'
     },
     createPodButton: {
         backgroundColor: "white",

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, ScrollView, View, TouchableOpacity, Image, Pressable, Text, Button } from 'react-native';
+import { StyleSheet, ScrollView, View, TouchableOpacity, Image, Pressable, Text, Button, Alert } from 'react-native';
 import PodTile from '../components/PodTile';
 import addPodButton from '../assets/addPodButton.png';
 import closePopUpButton from '../assets/closePopUpButton.png';
@@ -13,6 +13,17 @@ const ByPod = (props) => {
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
     };
+
+    // add new pod dynamically when 'Create a Pod' submitted
+    const [pods, setPods] = useState([]);
+    const addNewPod = () => {
+        // add group name of new pod to existing list
+        // TODO: read group name in from form instead of hardcoding
+        let newPod = { key: pods.length + 1, name: "New Test Pod "}
+        setPods([...pods, newPod.name + newPod.key.toString()]);
+        toggleModal();
+    };
+
     return (
         <View style={{flex: 1}}>
             <ScrollView contentContainerStyle={styles.container}>
@@ -28,6 +39,10 @@ const ByPod = (props) => {
                 <PodTile groupName={"Group Name 3"} numMembers={10} />
                 <PodTile groupName={"Group Name 3"} numMembers={10} />
                 <PodTile groupName={"Group Name 3"} numMembers={10} />
+
+                {/* make a pod for each group name stored in the pods list */}
+                {/* TODO: make numMembers customized to what user submits in form */}
+                {pods.map(name => <PodTile groupName={name} numMembers={2} key={name} />)}
             </ScrollView>
 
             {/* Create A Pod PopUp */}
@@ -41,7 +56,7 @@ const ByPod = (props) => {
                         <Text style={styles.modalTitle}>Create a Pod</Text>
                         <Text style={styles.modalText}>Search for their name or send them an invite!</Text>
                         {/* TODO: Name of group, pod image upload, show current members */}
-                        <Pressable style={styles.createPodButton}>
+                        <Pressable style={styles.createPodButton} onPress={addNewPod}>
                             <Text style={styles.createPodText}>Create Pod</Text>
                         </Pressable>
                     </View>

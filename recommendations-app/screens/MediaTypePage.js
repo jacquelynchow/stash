@@ -1,23 +1,38 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View, ScrollView, TouchableOpacity, Image, Pressable, Text, Button, Alert} from 'react-native';
+import RecTile from '../components/RecTile';
 
 export default function MediaTypePage() {
-    return (
-      <View style={ styles.container }>
-        <Text style={ styles.text }>Screen 4: Media Type Page</Text>
-      </View>
-    );
+
+  return (
+    <View style={{flex: 1}}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <RecTile recName={"Rec 1"} mediaType={"book"}/>
+        <RecTile recName={"Rec 2"} mediaType={"book"}/>
+        <RecTile recName={"Rec 3"} mediaType={"book"}/>
+      </ScrollView>
+    </View>
+
+  )
 }
 
 
+
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: "#d68c45",
-    },
-    text: {
-        color: "#fcfbfb"
-    }
+  container: {
+    marginVertical: 20,
+    marginHorizontal: 10,
+    paddingTop: 30,
+    paddingBottom: 30,
+    flexGrow:1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    backgroundColor: "#d68c45"
+  },
+  text: {
+      color: "#fcfbfb"
+  }
 });

@@ -1,9 +1,10 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View, Dimensions } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import ByPod from './ByPod';
-import MediaGroup from '../components/MediaGroup';
 import ByMedia from './ByMedia';
+
+const windowWidth = Dimensions.get('window').width;
 
 // set up tab navigation
 const Tab = createMaterialTopTabNavigator();
@@ -30,21 +31,22 @@ export default function HomeScreen() {
         <Tab.Navigator  
         // style tabs 
         tabBarOptions={{
+          justifyContent: 'center',
           labelStyle: { 
             fontSize: 14, 
             marginBottom: 20, 
             fontWeight: 'bold', 
             textTransform: 'capitalize',
           },
-          tabStyle: { width: 200, height: 60 },
+          tabStyle: { flex: .5, height: 60 },
           activeTintColor: '#d68c45',
           inactiveTintColor: '#ffc9b9',
           indicatorStyle: { 
             backgroundColor: '#d68c45', 
             marginBottom: 10, 
             height: 15, 
-            width: 130, 
-            marginLeft: 35, 
+            width: windowWidth/2 - 70, 
+            marginLeft: 35,
             borderRadius: 12, 
             opacity: 0.5, 
           }

@@ -21,7 +21,8 @@ const styles = StyleSheet.create({
       borderColor: "black",
       borderRadius: 10,
       backgroundColor: "#ffffff",
-      marginVertical: 15,
+      marginBottom: 20,
+      marginTop: 0,
       marginHorizontal: '2%',
       // ios
       shadowOffset: {width: 10, height: 10}, 

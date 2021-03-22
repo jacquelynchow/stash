@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, ScrollView, View, TouchableOpacity, Image, Pressable, Text, Button, Alert } from 'react-native';
+import { StyleSheet, ScrollView, View, TouchableOpacity, Image, Pressable, Text } from 'react-native';
 import PodTile from '../components/PodTile';
 import addPodButton from '../assets/addPodButton.png';
 import closePopUpButton from '../assets/closePopUpButton.png';
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     buttonClose: {
         position: 'absolute',
         alignSelf: 'flex-start',
-        marginBottom: 5
+        marginBottom: 5,
     },
     textStyle: {
         color: "white",
@@ -131,6 +131,7 @@ const styles = StyleSheet.create({
         textAlign: "center",
         fontWeight: 'bold',
         fontSize: 35,
+        marginTop: 10,
         color: "white",
     },
     modalText: {

@@ -7,7 +7,7 @@ export default function LoginScreen({ navigation }) {
       <View style={ styles.container }>
         <Image source={logo} style={styles.logo} />
         <Text style={ styles.text }>Screen 1: Login & Onboarding</Text>
-        <Button title="Go to Homepage" onPress={() => navigation.navigate('Home')} />
+        <Button title="Go to Homepage" onPress={() => navigation.navigate('Home', {name: "Homfefef"})} />
       </View>
     );
 }

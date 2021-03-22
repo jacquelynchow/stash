@@ -29,7 +29,7 @@ const ByMedia = () => {
 
 const styles = StyleSheet.create({
     container: {
-        marginTop: 5,
+        marginVertical: 20,
         marginHorizontal: 10,
         paddingBottom: 30,
         flexGrow:1,
@@ -38,9 +38,6 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'flex-start' // if you want to fill rows left to right
     },
-    item: {
-        width: '50%' // is 50% of container width
-    }, 
     textBox: {
         margin: 50,
         padding: 30,

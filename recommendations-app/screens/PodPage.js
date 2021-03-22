@@ -214,17 +214,6 @@ const styles = StyleSheet.create({
     color: 'white',
     marginTop: 10,
   },
-  input: {
-    height: 30,
-    width: 150,
-    fontSize: 16,
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 5,
-    paddingHorizontal: 10,
-    marginLeft: 10,
-    marginTop: 5,
-  },
   commentInput: {
     height: 50,
     width: 225,

@@ -9,7 +9,7 @@ const onBoardBtnWidth = (windowWidth/4) - 20;
 
 export default function LoginScreen({ navigation }) {
   const [activeIndex, setActiveIndex] = useState(0);
-  
+
   const clickBtn = index => {
     setActiveIndex(index);
   };
@@ -20,19 +20,19 @@ export default function LoginScreen({ navigation }) {
         <Text style={ styles.title } >Welcome</Text>
         <Text style={ styles.instructions } >Swipe left to see how we work.</Text>
         <View style={ styles.btnRow }>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={ activeIndex == 0 ? styles.active : styles.onboardBtn }
             onPress={() => clickBtn(0)}
           ></TouchableOpacity>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={ activeIndex == 1 ? styles.active : styles.onboardBtn }
             onPress={() => clickBtn(1)}
           ></TouchableOpacity>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={ activeIndex == 2 ? styles.active : styles.onboardBtn }
             onPress={() => clickBtn(2)}
           ></TouchableOpacity>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={ activeIndex == 3 ? styles.active : styles.onboardBtn }
             onPress={() => clickBtn(3)}
           ></TouchableOpacity>
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
       fontSize: 40,
       fontWeight: 'bold',
       textTransform: 'uppercase',
-      marginTop: 60,
+      marginTop: 40,
     },
     instructions: {
       fontStyle: 'italic',
@@ -74,10 +74,10 @@ const styles = StyleSheet.create({
       paddingTop: 0,
       width: 300,
       height: 150,
-    }, 
+    },
     btnRow: {
       flexDirection: 'row',
-      marginTop: windowHeight/5,
+      marginTop: windowHeight/6,
     },
     onboardBtn: {
       borderRadius: 20,
@@ -92,11 +92,12 @@ const styles = StyleSheet.create({
       borderRadius: 20,
       backgroundColor: "#FCFBFB",
       marginTop: 20,
+      marginBottom: 20,
       // ios
-      shadowOffset: {width: 5, height: 10}, 
+      shadowOffset: {width: 5, height: 10},
       shadowOpacity: 0.1,
       shadowRadius: 10,
-      // android 
+      // android
       elevation: 3,
       justifyContent: 'center',
     },
@@ -111,12 +112,12 @@ const styles = StyleSheet.create({
     bottomContainer: {
       flexDirection: 'row',
       position: 'absolute',
-      bottom: 50,
+      bottom: 40,
     },
     bottomText: {
       color: "#FCFBFB",
       fontSize: 18,
-    }, 
+    },
     loginBtn: {
       marginLeft: 20,
       color: "#FCFBFB",

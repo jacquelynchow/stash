@@ -7,9 +7,9 @@ export default function MediaTypePage() {
   return (
     <View style={{flex: 1}}>
       <ScrollView contentContainerStyle={styles.container}>
-        <RecTile recName={"Rec 1"} mediaType={"book"}/>
-        <RecTile recName={"Rec 2"} mediaType={"book"}/>
-        <RecTile recName={"Rec 3"} mediaType={"book"}/>
+        <RecTile recName={"Rec 1"} mediaType={"Book"}/>
+        <RecTile recName={"Rec 2"} mediaType={"Book"}/>
+        <RecTile recName={"Rec 3"} mediaType={"Book"}/>
       </ScrollView>
     </View>
 
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    backgroundColor: "#d68c45"
+    backgroundColor: "#f2f2f2"
   },
   text: {
       color: "#fcfbfb"

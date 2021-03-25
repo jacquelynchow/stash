@@ -30,7 +30,7 @@ export default function PodPage() {
 
   const [mediaType, setmediaType] = useState("");
   const [comment, setComment] = useState("");
-  
+
   function selectMediaType() {
     if (mediaType == "Movie") {
       return (<MovieType></MovieType>)
@@ -42,18 +42,18 @@ export default function PodPage() {
       return (<SongType></SongType>)
     } else if (mediaType == "Image" || mediaType == "Other") {
       return (<JustTitleType></JustTitleType>)
-    } 
+    }
   };
 
     return (
       <View style={{flex: 1}} >
         <ScrollView contentContainerStyle={styles.container}>
-          <RecTile recName={"Rec 1"} mediaType={"book"}/>
-          <RecTile recName={"Rec 2"} mediaType={"movie"}/>
-          <RecTile recName={"Rec 3"} mediaType={"video"}/>
+          <RecTile recName={"Rec 1"} mediaType={"Book"}/>
+          <RecTile recName={"Rec 2"} mediaType={"Movie"}/>
+          <RecTile recName={"Rec 3"} mediaType={"Video"}/>
           {recs.map(name => <RecTile recName={name} mediaType={type} key={name} />)}
         </ScrollView>
-        
+
         {/* Add A Rec PopUp */}
         <Modal isVisible={isModalVisible}>
           <View style={styles.centeredView} >
@@ -63,7 +63,7 @@ export default function PodPage() {
                     <Image source={closePopUpButton} style={{width: 30, height: 30}}/>
                 </Pressable>
                 <Text style={styles.modalTitle}>Add Recommendation</Text>
-                <Text style={styles.modalText}>This will be visible to 
+                <Text style={styles.modalText}>This will be visible to
                   <Text style={{fontWeight: "900"}}> all members</Text> of this pod
                 </Text>
                 <View style={{ flexDirection: 'column', alignSelf: 'flex-start', marginTop: 20}}>
@@ -84,7 +84,7 @@ export default function PodPage() {
                     containerStyle={{height: 40, marginBottom: 15}}
                     onChangeItem={items => setmediaType(items.value)}
                   />
-                  
+
                   { selectMediaType() }
 
                   <Text style={styles.recCategoriesText}>
@@ -95,11 +95,11 @@ export default function PodPage() {
                             onEndEditing={comment => setComment(comment)}
                             maxLength={200}
                             multiline={true}
-                            defaultValue={comment} 
+                            defaultValue={comment}
                             returnKeyType="done"
                             blurOnSubmit={true}
                             onSubmitEditing={()=>{Keyboard.dismiss()}}/>
-                  </SafeAreaView> 
+                  </SafeAreaView>
                 </View>
                 <Pressable style={styles.createRecButton} onPress={addNewRec}>
                     <Text style={styles.createRecText}>Add</Text>
@@ -108,12 +108,12 @@ export default function PodPage() {
             </View>
           </View>
         </Modal>
-        
+
         {/* Add A Rec Button */}
         <View style={{marginRight: 17}}>
             <Image source={addRecButton} style={styles.floatingAddButton}></Image>
         </View>
-        <TouchableOpacity activeOpacity={0.25} 
+        <TouchableOpacity activeOpacity={0.25}
             onPress={toggleModal}
             style={styles.floatingAddButton}>
         </TouchableOpacity>
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    backgroundColor: "#d68c45"
+    backgroundColor: "#f2f2f2"
   },
   text: {
     color: "#fcfbfb"
@@ -152,10 +152,10 @@ const styles = StyleSheet.create({
     padding: 35,
     alignItems: "center",
     // ios
-    shadowOffset: {width: 10, height: 10}, 
+    shadowOffset: {width: 10, height: 10},
     shadowOpacity: 0.1,
     shadowRadius: 10,
-    // android 
+    // android
     elevation: 2,
   },
   button: {
@@ -196,10 +196,10 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     // ios
-    shadowOffset: {width: 10, height: 10}, 
+    shadowOffset: {width: 10, height: 10},
     shadowOpacity: 0.1,
     shadowRadius: 10,
-    // android 
+    // android
     elevation: 2,
   },
   floatingAddButton: {

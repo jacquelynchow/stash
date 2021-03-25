@@ -62,18 +62,18 @@ const ByPod = (props) => {
                     </View>
                 </View>
             </Modal>
-            
+
             {/* Add Pod Button */}
             <View style={{marginRight: 17}}>
                 <Image source={addPodButton} style={styles.floatingAddButton}></Image>
             </View>
-            <TouchableOpacity activeOpacity={0.25} 
+            <TouchableOpacity activeOpacity={0.25}
                 onPress={toggleModal}
                 style={styles.floatingAddButton}>
             </TouchableOpacity>
 
         </View>
-        
+
     )
 }
 
@@ -108,10 +108,10 @@ const styles = StyleSheet.create({
         padding: 35,
         alignItems: "center",
         // ios
-        shadowOffset: {width: 10, height: 10}, 
+        shadowOffset: {width: 10, height: 10},
         shadowOpacity: 0.1,
         shadowRadius: 10,
-        // android 
+        // android
         elevation: 2,
     },
     button: {
@@ -152,10 +152,10 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         paddingHorizontal: 20,
         // ios
-        shadowOffset: {width: 10, height: 10}, 
+        shadowOffset: {width: 10, height: 10},
         shadowOpacity: 0.1,
         shadowRadius: 10,
-        // android 
+        // android
         elevation: 2,
     }
 })

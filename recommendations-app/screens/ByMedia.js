@@ -15,17 +15,17 @@ const ByMedia = () => {
     return (
         <View style={{flex: 1}}>
             <ScrollView contentContainerStyle={styles.container}>
+                <MediaGroup mediaType={"Articles"} numRecs={10} numPeople={2} image={articleIcon}/>
                 <MediaGroup mediaType={"Books"} numRecs={10} numPeople={2} image={bookIcon} />
                 <MediaGroup mediaType={"Movies"} numRecs={10} numPeople={2} image={movieIcon} />
                 <MediaGroup mediaType={"Songs"} numRecs={10} numPeople={2} image={songIcon} />
                 <MediaGroup mediaType={"TikToks"} numRecs={10} numPeople={2} image={tiktokIcon} />
-                <MediaGroup mediaType={"Articles"} numRecs={10} numPeople={2} image={articleIcon}/>
                 <MediaGroup mediaType={"Youtube"} numRecs={10} numPeople={2} image={youtubeIcon} />
             </ScrollView>
         </View>
     )
 }
-// if have no recommendations 
+// if have no recommendations
 
 const styles = StyleSheet.create({
     container: {

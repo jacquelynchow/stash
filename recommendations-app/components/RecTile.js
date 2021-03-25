@@ -25,15 +25,16 @@ const styles = StyleSheet.create({
       marginTop: 0,
       marginHorizontal: '2%',
       // ios
-      shadowOffset: {width: 10, height: 10}, 
+      shadowOffset: {width: 10, height: 10},
       shadowOpacity: 0.1,
       shadowRadius: 10,
-      // android 
+      // android
       elevation: 2,
-    }, 
+    },
     name: {
         fontSize: 20,
         fontWeight: 'bold',
+        color: "#D26D64", //TODO when we have conditionals change colour by type
         padding: 15,
         paddingBottom: 0,
     },

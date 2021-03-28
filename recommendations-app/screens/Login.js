@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
-import { Dimensions, StyleSheet, Text, View, Button, Image, TouchableOpacity, Pressable, SafeAreaView, TextInput } from 'react-native';
+import { Dimensions, StyleSheet, Text, View, StatusBar, Image, TouchableOpacity, Pressable, SafeAreaView, TextInput } from 'react-native';
 import logo from '../assets/stash-transparent.png';
 import closePopUpButton from '../assets/closePopUpButton.png';
 import Modal from 'react-native-modal';
-import { setStatusBarNetworkActivityIndicatorVisible } from 'expo-status-bar';
+import Swiper from 'react-native-swiper';
+import PodIcon from '../assets/onboard-icons/pod.png';
+import InteractIcon from '../assets/onboard-icons/interact.png';
+import SortIcon from '../assets/onboard-icons/sort.png';
+
+// import { setStatusBarNetworkActivityIndicatorVisible } from 'expo-status-bar';
 
 // measurement of screen size for sizing of onboard buttons
 const windowWidth = Dimensions.get('window').width;
@@ -39,27 +44,32 @@ export default function LoginScreen({ navigation }) {
 
     return (
       <View style={ styles.container } >
+        <StatusBar hidden={true}></StatusBar>
         <Image source={logo} style={styles.logo} />
-        <Text style={ styles.title } >Welcome</Text>
-        <Text style={ styles.instructions } >Swipe left to see how we work.</Text>
-        <View style={ styles.btnRow }>
-          <TouchableOpacity
-            style={ activeIndex == 0 ? styles.active : styles.onboardBtn }
-            onPress={() => clickBtn(0)}
-          ></TouchableOpacity>
-          <TouchableOpacity
-            style={ activeIndex == 1 ? styles.active : styles.onboardBtn }
-            onPress={() => clickBtn(1)}
-          ></TouchableOpacity>
-          <TouchableOpacity
-            style={ activeIndex == 2 ? styles.active : styles.onboardBtn }
-            onPress={() => clickBtn(2)}
-          ></TouchableOpacity>
-          <TouchableOpacity
-            style={ activeIndex == 3 ? styles.active : styles.onboardBtn }
-            onPress={() => clickBtn(3)}
-          ></TouchableOpacity>
-        </View>
+
+        {/* Onboard Screens & Buttons */}
+        <Swiper height={320} dot={ <View style={styles.onboardBtn}/> }
+                activeDot={ <View style={styles.active}/> } >
+          <View style={styles.slide}>
+            <Text style={ styles.title } >Welcome</Text>
+            <Text style={ styles.instructions } >Swipe left to see how we work.</Text>
+          </View>
+          <View style={styles.slide}>
+            <Image source={PodIcon} style={styles.icons}></Image>
+            <Text style={ styles.title } >Create a Group</Text>
+            <Text style={ styles.instructions } >Create pods for friends, family, classmates{'\n'}to start sending and receiving recommendations.</Text>
+          </View>
+          <View style={styles.slide}>
+            <Image source={SortIcon} style={styles.icons}></Image>
+            <Text style={ styles.title } >Sort by Group/Type</Text>
+            <Text style={ styles.instructions } >Check out your centralized recommendations{'\n'}by groups or by type of media.</Text>
+          </View>
+          <View style={styles.slide}>
+            <Image source={InteractIcon} style={styles.icons}></Image>
+            <Text style={ styles.title } >Interact With Recs</Text>
+            <Text style={ styles.instructions } >Click on a recommendation for more info, react to it,{'\n'}or swipe left when you’re done checking it out!</Text>
+          </View>
+        </Swiper>
 
         {/* Signup PopUp */}
         <Modal isVisible={isModalVisible}>
@@ -114,7 +124,7 @@ export default function LoginScreen({ navigation }) {
                   </SafeAreaView>
                 </View>
 
-                {/* btn to submit signup */}
+                {/* Button to submit signup */}
                 <Pressable style={styles.signUpButton} onPress={addNewUser}>
                     <Text style={styles.signUpText}>Signup</Text>
                 </Pressable>
@@ -122,9 +132,12 @@ export default function LoginScreen({ navigation }) {
           </View>
         </Modal>
 
+        {/* Signup Button */}
         <TouchableOpacity style={ styles.signupBtn } activeOpacity={.7} onPress={toggleModal} >
           <Text style={ styles.signupBtnText } >Signup</Text>
         </TouchableOpacity>
+        
+        {/* Login Button */}
         <View style={ styles.bottomContainer } >
           <Text style={ styles.bottomText } >Already have an account?</Text>
           <TouchableOpacity style={ styles.loginBtn } >
@@ -143,32 +156,38 @@ const styles = StyleSheet.create({
     },
     title: {
       color: "#FCFBFB",
-      fontSize: 40,
+      fontSize: 31,
       fontWeight: 'bold',
       textTransform: 'uppercase',
-      marginTop: 40,
+      textAlign: 'center'
     },
     instructions: {
       fontStyle: 'italic',
       color: "#FCFBFB",
-      fontSize: 14,
+      fontSize: 12,
       marginTop: 1,
+      textAlign: 'center'
+    },
+    icons: {
+      width: 200,
+      height: 200,
     },
     logo: {
-      marginTop: 125,
+      marginTop: 100,
       paddingTop: 0,
-      width: 300,
+      width: 250,
       height: 150,
     },
-    btnRow: {
-      flexDirection: 'row',
-      marginTop: windowHeight/6,
+    slide: {
+      flex: 1, 
+      alignItems: 'center',
+      justifyContent: 'center'
     },
     onboardBtn: {
-      borderRadius: 20,
-      backgroundColor: '#FFC9B9',
+      backgroundColor: 'rgba(255, 201, 185,.7)',
       width: onBoardBtnWidth,
       height: 15,
+      borderRadius: 20,
       marginHorizontal: (windowWidth - (onBoardBtnWidth*4))/15,
     },
     signupBtn: {
@@ -176,8 +195,7 @@ const styles = StyleSheet.create({
       height: 70,
       borderRadius: 20,
       backgroundColor: "#FCFBFB",
-      marginTop: 20,
-      marginBottom: 20,
+      marginBottom: 120,
       // ios
       shadowOffset: {width: 5, height: 10},
       shadowOpacity: 0.1,
@@ -214,10 +232,10 @@ const styles = StyleSheet.create({
       textTransform: 'uppercase',
     },
     active: {
-      borderRadius: 20,
-      backgroundColor: "#FCFBFB",
+      backgroundColor: 'rgba(252,251,251, 1)',
       width: onBoardBtnWidth,
       height: 15,
+      borderRadius: 20,
       marginHorizontal: (windowWidth - (onBoardBtnWidth*4))/15,
     },
     centeredView: {

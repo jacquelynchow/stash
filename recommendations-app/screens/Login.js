@@ -7,6 +7,8 @@ import Swiper from 'react-native-swiper';
 import PodIcon from '../assets/onboard-icons/pod.png';
 import InteractIcon from '../assets/onboard-icons/interact.png';
 import SortIcon from '../assets/onboard-icons/sort.png';
+import SignupModal from '../components/SignupModal';
+import LoginModal from '../components/LoginModal';
 
 // import { setStatusBarNetworkActivityIndicatorVisible } from 'expo-status-bar';
 
@@ -22,25 +24,14 @@ export default function LoginScreen({ navigation }) {
     setActiveIndex(index);
   };
 
-  // for signup popup
+  // for signup and login pop-ups
   const [isModalVisible, setModalVisible] = useState(false);
-    const toggleModal = () => {
-        setModalVisible(!isModalVisible);
+  const [modalSelected, setModalSelected] = useState("");
+  const toggleModal = (modalName) => {
+      setModalVisible(!isModalVisible);
+      // set appropriate modal to be visible
+      setModalSelected(modalName);
   };
-  const [username, setUsername] = useState("");
-  const [pw, setPw] = useState("");
-  const [phoneNum, setPhoneNum] = useState("");
-
-  const addNewUser = () => {
-    console.log("Username: ", username);
-    console.log("Phone #: ", phoneNum);
-
-    // reset input fields to blank
-    setUsername("");
-    setPw("");
-    setPhoneNum("");
-    toggleModal();
-};
 
     return (
       <View style={ styles.container } >
@@ -72,68 +63,13 @@ export default function LoginScreen({ navigation }) {
         </Swiper>
 
         {/* Signup PopUp */}
-        <Modal isVisible={isModalVisible}>
-        <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-                <Pressable style={[styles.button, styles.buttonClose]}
-                    onPress={toggleModal} >
-                    <Image source={closePopUpButton} style={{width: 30, height: 30}}/>
-                </Pressable>
-                <Text style={styles.modalTitle}>Signup</Text>
-                <Text style={styles.modalText}>Create an account to start joining pods and share recommendations with your friends!</Text>
+        <SignupModal isModalVisible={modalSelected === 'Signup'} setModalVisible={setModalVisible} setModalSelected={setModalSelected} />
 
-                {/* user input: username, password, phone # */}
-                <View style={{ flexDirection: 'row'}}>
-                <Text style={styles.userDetailsText}>
-                    Username:
-                </Text>
-                <SafeAreaView>
-                    <TextInput
-                    onChangeText={username => setUsername(username)}
-                    style={styles.userInput}
-                    defaultValue={username}
-                    placeholder={"Enter a username"}
-                    value={username}
-                    />
-                </SafeAreaView>
-                </View>
-                <View style={{ flexDirection: 'row'}}>
-                  <Text style={styles.userDetailsText}>
-                      Password:
-                  </Text>
-                  <SafeAreaView>
-                      <TextInput
-                          onChangeText={pw => setPw(pw)}
-                          style={styles.userInput}
-                          defaultValue={pw}
-                          placeholder={"Enter a password"}
-                      />
-                  </SafeAreaView>
-                </View>
-                <View style={{ flexDirection: 'row'}}>
-                  <Text style={styles.userDetailsText}>
-                      Phone #:
-                  </Text>
-                  <SafeAreaView>
-                      <TextInput
-                          onChangeText={phoneNum => setPhoneNum(phoneNum)}
-                          style={styles.userInput}
-                          defaultValue={phoneNum}
-                          placeholder={"Enter your phone #"}
-                      />
-                  </SafeAreaView>
-                </View>
-
-                {/* Button to submit signup */}
-                <Pressable style={styles.signUpButton} onPress={addNewUser}>
-                    <Text style={styles.signUpText}>Signup</Text>
-                </Pressable>
-              </View>
-          </View>
-        </Modal>
+        {/* Login PopUp */}
+        <LoginModal isModalVisible={modalSelected === 'Login'} setModalVisible={setModalVisible} setModalSelected={setModalSelected} />
 
         {/* Signup Button */}
-        <TouchableOpacity style={ styles.signupBtn } activeOpacity={.7} onPress={toggleModal} >
+        <TouchableOpacity style={ styles.signupBtn } activeOpacity={.7} onPress={() => toggleModal('Signup')} >
           <Text style={ styles.signupBtnText } >Signup</Text>
         </TouchableOpacity>
 
@@ -141,7 +77,7 @@ export default function LoginScreen({ navigation }) {
         <View style={ styles.bottomContainer } >
           <Text style={ styles.bottomText } >Already have an account?</Text>
           <TouchableOpacity style={ styles.loginBtn } >
-            <Text style={ styles.loginBtnText } onPress={() => navigation.navigate('Home')} >Login</Text>
+            <Text style={ styles.loginBtnText } onPress={() => toggleModal('Login')} >Login</Text>
           </TouchableOpacity>
         </View>
       </View>

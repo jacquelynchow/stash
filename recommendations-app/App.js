@@ -21,7 +21,7 @@ export default function App() {
         />
         <Stack.Screen name="Home" component={HomeScreen} 
           options= {{headerRight: () => (
-            <Logout/>),
+            <Logout/>), headerTintColor: '#6f1d1b'
           }}
         />
         <Stack.Screen name="Pod" component={PodPage} 

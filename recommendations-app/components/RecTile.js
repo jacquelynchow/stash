@@ -10,35 +10,56 @@ const RecTile = (props) => {
       setModalVisible(!isModalVisible);
   };
 {/*TODO: must change image according to media type */}
-    return (
-        <View style={styles.item}>
-            <TouchableOpacity activeOpacity={0.25} onPress={toggleModal}>
-                <Image source={{uri: "https://www.jaipuriaschoolpatna.in/wp-content/uploads/2016/11/blank-img.jpg"}} style={styles.recImage}></Image>
-                <Text style={styles.name}>{props.recName}</Text>
-                <Text style={styles.media}>{props.mediaType}</Text>
-            </TouchableOpacity>
 
-            {/* Rec Details PopUp */}
-            <Modal isVisible={isModalVisible}>
-                <View style={styles.centeredView}>
-                    <View style={styles.modalView}>
-                        <Pressable style={[styles.button, styles.buttonClose]}
-                            onPress={toggleModal} >
-                            <Image source={closePopUpButton} style={{width: 30, height: 30}}/>
-                        </Pressable>
-                        <Image source={{uri: "https://www.jaipuriaschoolpatna.in/wp-content/uploads/2016/11/blank-img.jpg"}} style={styles.recImagePopUp}></Image>
-                        <Text style={styles.modalTitle}> {props.recName} </Text>
-                        <Text style={styles.modalText}> {props.mediaType} </Text>
-                        <Text style={styles.modalText}>Sent by: [username] in {props.groupName} pod</Text>
-                        <Text style={styles.modalText}> Comments: </Text> {/*Need to get comments added for rec*/}
-                        {/* TODO: change image to be the one they uploaded, show sender instead of [username]*/}
-                        {/* TODO: show any extra information for specific media type (year, author,etc.)*/}
-                    </View>
-                </View>
-            </Modal>
+function selectImage() {
+    if (props.mediaType == "Movie") {
+        return movieIcon
+    }
+    else if (props.mediaType == "Song") {
+        return songIcon
+    }
+    else if (props.mediaType == "Book") {
+        return bookIcon
+    }
+    else if (props.mediaType == "TikTok") {
+        return tiktokIcon
+    }
+    else if (props.mediaType == "Video") {
+        return youtubeIcon
+    }
+        
+}
 
-        </View>
-    )
+  return (
+      <View style={styles.item}>
+          <TouchableOpacity activeOpacity={0.25} onPress={toggleModal}>
+              <Image source={selectImage()} style={styles.recImage}></Image>
+              <Text style={styles.name}>{props.recName}</Text>
+              <Text style={styles.media}>{props.mediaType}</Text>
+          </TouchableOpacity>
+
+          {/* Rec Details PopUp */}
+          <Modal isVisible={isModalVisible}>
+              <View style={styles.centeredView}>
+                  <View style={styles.modalView}>
+                      <Pressable style={[styles.button, styles.buttonClose]}
+                          onPress={toggleModal} >
+                          <Image source={closePopUpButton} style={{width: 30, height: 30}}/>
+                      </Pressable>
+                      <Image source={selectImage()} style={styles.recImagePopUp}></Image>
+                      <Text style={styles.modalTitle}> {props.recName} </Text>
+                      <Text style={styles.modalText}> {props.mediaType} </Text>
+                      <Text style={styles.modalText}>Sent by: [username] in {props.groupName} pod</Text>
+                      <Text style={styles.modalText}> Comments: </Text>
+                      {/* TODO: change image to be the one they uploaded, show sender instead of [username]*/}
+                      {/* TODO: show any extra information for specific media type (year, author,etc.)*/}
+
+                  </View>
+              </View>
+          </Modal>
+
+      </View>
+  )
 }
 
 const styles = StyleSheet.create({

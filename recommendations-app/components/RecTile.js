@@ -9,7 +9,7 @@ const RecTile = (props) => {
   const toggleModal = () => {
       setModalVisible(!isModalVisible);
   };
-
+{/*TODO: must change image according to media type */}
     return (
         <View style={styles.item}>
             <TouchableOpacity activeOpacity={0.25} onPress={toggleModal}>
@@ -30,7 +30,9 @@ const RecTile = (props) => {
                         <Text style={styles.modalTitle}> {props.recName} </Text>
                         <Text style={styles.modalText}> {props.mediaType} </Text>
                         <Text style={styles.modalText}>Sent by: [username] in {props.groupName} pod</Text>
+                        <Text style={styles.modalText}> Comments: </Text> {/*Need to get comments added for rec*/}
                         {/* TODO: change image to be the one they uploaded, show sender instead of [username]*/}
+                        {/* TODO: show any extra information for specific media type (year, author,etc.)*/}
                     </View>
                 </View>
             </Modal>

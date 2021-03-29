@@ -56,17 +56,17 @@ export default function LoginScreen({ navigation }) {
           </View>
           <View style={styles.slide}>
             <Image source={PodIcon} style={styles.icons}></Image>
-            <Text style={ styles.title } >Create a Group</Text>
-            <Text style={ styles.instructions } >Create pods for friends, family, classmates{'\n'}to start sending and receiving recommendations.</Text>
+            <Text style={ styles.title2 } >Start a Pod</Text>
+            <Text style={ styles.instructions } >Create groups for friends, family, classmates{'\n'}to start sending and receiving recommendations.</Text>
           </View>
           <View style={styles.slide}>
             <Image source={SortIcon} style={styles.icons}></Image>
-            <Text style={ styles.title } >Sort by Group/Type</Text>
+            <Text style={ styles.title2 } >Sort by Pod or Type</Text>
             <Text style={ styles.instructions } >Check out your centralized recommendations{'\n'}by groups or by type of media.</Text>
           </View>
           <View style={styles.slide}>
             <Image source={InteractIcon} style={styles.icons}></Image>
-            <Text style={ styles.title } >Interact With Recs</Text>
+            <Text style={ styles.title2 } >Interact With Recs</Text>
             <Text style={ styles.instructions } >Click on a recommendation for more info, react to it,{'\n'}or swipe left when you’re done checking it out!</Text>
           </View>
         </Swiper>
@@ -81,17 +81,17 @@ export default function LoginScreen({ navigation }) {
                 </Pressable>
                 <Text style={styles.modalTitle}>Signup</Text>
                 <Text style={styles.modalText}>Create an account to start joining pods and share recommendations with your friends!</Text>
-                
+
                 {/* user input: username, password, phone # */}
                 <View style={{ flexDirection: 'row'}}>
                 <Text style={styles.userDetailsText}>
                     Username:
                 </Text>
                 <SafeAreaView>
-                    <TextInput 
+                    <TextInput
                     onChangeText={username => setUsername(username)}
                     style={styles.userInput}
-                    defaultValue={username} 
+                    defaultValue={username}
                     placeholder={"Enter a username"}
                     value={username}
                     />
@@ -102,10 +102,10 @@ export default function LoginScreen({ navigation }) {
                       Password:
                   </Text>
                   <SafeAreaView>
-                      <TextInput 
+                      <TextInput
                           onChangeText={pw => setPw(pw)}
                           style={styles.userInput}
-                          defaultValue={pw} 
+                          defaultValue={pw}
                           placeholder={"Enter a password"}
                       />
                   </SafeAreaView>
@@ -115,10 +115,10 @@ export default function LoginScreen({ navigation }) {
                       Phone #:
                   </Text>
                   <SafeAreaView>
-                      <TextInput 
+                      <TextInput
                           onChangeText={phoneNum => setPhoneNum(phoneNum)}
                           style={styles.userInput}
-                          defaultValue={phoneNum} 
+                          defaultValue={phoneNum}
                           placeholder={"Enter your phone #"}
                       />
                   </SafeAreaView>
@@ -136,7 +136,7 @@ export default function LoginScreen({ navigation }) {
         <TouchableOpacity style={ styles.signupBtn } activeOpacity={.7} onPress={toggleModal} >
           <Text style={ styles.signupBtnText } >Signup</Text>
         </TouchableOpacity>
-        
+
         {/* Login Button */}
         <View style={ styles.bottomContainer } >
           <Text style={ styles.bottomText } >Already have an account?</Text>
@@ -156,7 +156,14 @@ const styles = StyleSheet.create({
     },
     title: {
       color: "#FCFBFB",
-      fontSize: 31,
+      fontSize: 35,
+      fontWeight: 'bold',
+      textTransform: 'uppercase',
+      textAlign: 'center'
+    },
+    title2: {
+      color: "#FCFBFB",
+      fontSize: 25,
       fontWeight: 'bold',
       textTransform: 'uppercase',
       textAlign: 'center'
@@ -169,17 +176,17 @@ const styles = StyleSheet.create({
       textAlign: 'center'
     },
     icons: {
-      width: 200,
-      height: 200,
+      width: windowHeight/5,
+      height: windowHeight/5,
+      marginTop: 0,
     },
     logo: {
-      marginTop: 100,
-      paddingTop: 0,
+      marginTop: windowHeight/8,
       width: 250,
       height: 150,
     },
     slide: {
-      flex: 1, 
+      flex: 1,
       alignItems: 'center',
       justifyContent: 'center'
     },
@@ -195,7 +202,7 @@ const styles = StyleSheet.create({
       height: 70,
       borderRadius: 20,
       backgroundColor: "#FCFBFB",
-      marginBottom: 120,
+      marginBottom: windowHeight/10,
       // ios
       shadowOffset: {width: 5, height: 10},
       shadowOpacity: 0.1,
@@ -303,7 +310,7 @@ const styles = StyleSheet.create({
     },
     userInput: {
       height: 30,
-      width: 165,
+      width: windowWidth/3,
       fontSize: 16,
       backgroundColor: 'white',
       borderRadius: 10,

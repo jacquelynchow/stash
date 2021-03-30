@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, Pressable } from 'react-native';
+import { Dimensions, StyleSheet, Text, View, Image, TouchableOpacity, Pressable } from 'react-native';
 import closePopUpButton from '../assets/closePopUpButton.png';
 import Modal from 'react-native-modal';
 import bookIcon from '../assets/type-icons/book.png';
@@ -9,14 +9,15 @@ import tiktokIcon from '../assets/type-icons/tiktok.png';
 import articleIcon from '../assets/type-icons/article.png';
 import youtubeIcon from '../assets/type-icons/youtube.png';
 
-const RecTile = (props) => {
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
+const RecTile = (props) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const toggleModal = () => {
       setModalVisible(!isModalVisible);
   };
-{/*TODO: must change image according to media type */}
-
+//To display different icon based on media type
 function selectImage() {
     if (props.mediaType == "Article") {
         return articleIcon
@@ -38,6 +39,7 @@ function selectImage() {
     }
 }
 
+//To display the correct colour for the recommendation title based on media type
 function selectColor() {
     if (props.mediaType == "Article") {
         return styles.articleColor
@@ -59,6 +61,28 @@ function selectColor() {
     }
 }
 
+//To display the correct background colour for the recommendation pop up by media type
+function selectBackgroundColor() {
+    if (props.mediaType == "Article") {
+        return styles.articleBackgroundColor
+    }
+    else if (props.mediaType == "Book") {
+        return styles.bookBackgroundColor
+    }
+    else if (props.mediaType == "Movie") {
+        return styles.movieBackgroundColor
+    }
+    else if (props.mediaType == "Song") {
+        return styles.songBackgroundColor
+    }
+    else if (props.mediaType == "TikTok") {
+        return styles.tiktokBackgroundColor
+    }
+    else if (props.mediaType == "Video") {
+        return styles.videoBackgroundColor
+    }
+}
+
   return (
       <View style={styles.item}>
           <TouchableOpacity activeOpacity={0.25} onPress={toggleModal}>
@@ -70,7 +94,7 @@ function selectColor() {
           {/* Rec Details PopUp */}
           <Modal isVisible={isModalVisible}>
               <View style={styles.centeredView}>
-                  <View style={styles.modalView}>
+                  <View style={[styles.modalView, selectBackgroundColor()]}>
                       <Pressable style={[styles.button, styles.buttonClose]}
                           onPress={toggleModal} >
                           <Image source={closePopUpButton} style={{width: 30, height: 30}}/>
@@ -80,7 +104,7 @@ function selectColor() {
                       <Text style={styles.modalText}> {props.mediaType} </Text>
                       <Text style={styles.modalText}>Sent by: [username] in {props.groupName} pod</Text>
                       <Text style={styles.modalText}> Comments: </Text>
-                      {/* TODO: change image to be the one they uploaded, show sender instead of [username]*/}
+                      {/* TODO: change image to be the one they uploaded?, show sender instead of [username]*/}
                       {/* TODO: show any extra information for specific media type (year, author,etc.)*/}
 
                   </View>
@@ -115,7 +139,7 @@ const styles = StyleSheet.create({
     },
     modalView: {
         margin: 20,
-        backgroundColor: "#D26D64", //TODO when we have conditionals change colour by type
+        //backgroundColor: "#D26D64", //TODO when we have conditionals change colour by type
         borderRadius: 20,
         padding: 80,
         alignItems: "center",
@@ -151,6 +175,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         padding: 15,
         paddingBottom: 0,
+        // colour is determined based on selectColor() function - options below
     },
 
     media: {
@@ -165,11 +190,11 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     recImagePopUp:{
-      width: 150,
-      height: 150,
+      width: windowWidth/3,
+      height: windowWidth/2.5,
       borderRadius: 10,
     },
-    //different colour for background and text based on media type
+    //different colour for recommendation title text based on media type
     articleColor:{
       color: "#D68C45",
     },
@@ -187,6 +212,25 @@ const styles = StyleSheet.create({
     },
     videoColor: {
       color: "#2F4858",
+    },
+    //different colour for recommendation pop up background based on media type
+    articleBackgroundColor:{
+      backgroundColor: "#D68C45",
+    },
+    bookBackgroundColor: {
+      backgroundColor: "#D26D64",
+    },
+    movieBackgroundColor: {
+      backgroundColor: "#B05E7E",
+    },
+    songBackgroundColor: {
+      backgroundColor: "#7D5A86",
+    },
+    tiktokBackgroundColor: {
+      backgroundColor: "#4B5476",
+    },
+    videoBackgroundColor: {
+      backgroundColor: "#2F4858",
     }
 })
 

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, ScrollView, View, TouchableOpacity, Image, Pressable, Text, SafeAreaView, TextInput, Dimensions, FlatList } from 'react-native';
+import { StyleSheet, ScrollView, View, TouchableOpacity, Image, 
+    Pressable, Text, SafeAreaView, TextInput, 
+    Dimensions, FlatList } from 'react-native';
 import PodTile from '../components/PodTile';
 import addPodButton from '../assets/addPodButton.png';
 import closePopUpButton from '../assets/closePopUpButton.png';
@@ -25,25 +27,57 @@ const ByPod = (props) => {
     // add new pod dynamically when 'Create a Pod' submitted
     const [pods, setPods] = useState([]);
     const addNewPod = () => {
-        // add group name of new pod to existing list
-        let newPod = { key: pods.length + 1, name: groupName, size: members.length}
+        // add new pod to existing list
+        let newPod = { key: pods.length + 1, name: groupName.trim(), size: members.length, uri: selectedImage }
         setPods([...pods, newPod]);
         toggleModal();
 
         // reset input fields to blank
         setGroupName("");
-        setMembers([]);
+        setMembers(["MainUser"]);
+        setSelectedImage("https://www.jaipuriaschoolpatna.in/wp-content/uploads/2016/11/blank-img.jpg");
         setSearch('');
         setFilteredDataSource(masterDataSource);
+        setErrors({nameError: '', membersError: ''});
     };
 
+    const [errors, setErrors] = useState({
+        nameError: '', membersError: ''
+    });
+    // check on create pod submit that all fields are filled in & filled in correctly
+    const checkAllFieldsOnSubmit = () => {
+        let validSymbols = /^[\w\-\s]+$/;
+        let allValid = true;
+        let isValid = validSymbols.test(groupName);
+        // check if group name empty or only has whitespace
+        if (groupName === "" || !groupName.replace(/\s/g, '').length) {
+            setErrors({nameError: "Group name field is required"});
+            allValid = false;
+        // check if group name is not valid (not just alphanumeric)
+        } else if (!isValid) {
+            setErrors({nameError: "Group name field must be alphabetic"});
+            allValid = false;
+        }
+        if (members.length == 1) {
+            setErrors({membersError: "Please add at least one user"});
+            allValid = false;
+        }
+        if (selectedImage === null) {
+            setSelectedImage("https://www.jaipuriaschoolpatna.in/wp-content/uploads/2016/11/blank-img.jpg");
+        }
+        // if everything checks out, add to pods list
+        if (allValid) {
+            addNewPod();
+        }
+
+    }
     // for 'Create a Pod' pop-up search bar
     const [search, setSearch] = useState('');
     const [filteredDataSource, setFilteredDataSource] = useState([]);
     const [masterDataSource, setMasterDataSource] = useState([]);
 
     // init empty list of pod tiles
-    const [members, setMembers] = useState([]);
+    const [members, setMembers] = useState(["MainUser"]);
 
     useEffect(() => {
         // placeholder data for users
@@ -107,7 +141,7 @@ const ByPod = (props) => {
     };
 
     // init var for selected pod image
-    const [selectedImage, setSelectedImage] = useState(null);
+    const [selectedImage, setSelectedImage] = useState("https://www.jaipuriaschoolpatna.in/wp-content/uploads/2016/11/blank-img.jpg");
     // function from expo docs tutorial
     let openImagePickerAsync = async () => {
         let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -118,27 +152,25 @@ const ByPod = (props) => {
         }
     
         let pickerResult = await ImagePicker.launchImageLibraryAsync();
-        console.log(pickerResult);
             
-        {/* TO USE THE SELECTED IMAGE */}
         if (pickerResult.cancelled === true) {
           return;
         }
-        setSelectedImage({ localUri: pickerResult.uri });
+        setSelectedImage(pickerResult.uri);
       }
 
     return (
         <View style={{flex: 1}}>
             <ScrollView contentContainerStyle={styles.container}>
-                <PodTile groupName={"Group Name 1"} numMembers={2} key={100} />
-                <PodTile groupName={"Group Name 2"} numMembers={5} key={99} />
-                <PodTile groupName={"Group Name 3"} numMembers={10} key={98} />
-                <PodTile groupName={"Group Name 3"} numMembers={10} key={97} />
-                <PodTile groupName={"Group Name 3"} numMembers={10} key={96} />
-                <PodTile groupName={"Group Name 3"} numMembers={10} key={95} />
+                {pods && pods.length > 0 ?
+                    // make a pod for each group name stored in the pods list 
+                    pods.map(name => <PodTile groupName={name.name} numMembers={name.size} uri={name.uri} key={name.name} />) :
+                    <View style={styles.centeredView}>
+                        <Text style={styles.noPodsYetTitle}>Click the + button to start a pod</Text>
+                        <Text style={styles.noPodsYetText}>Pods can be with one person or a group</Text>
+                    </View>
+                }
 
-                {/* make a pod for each group name stored in the pods list */}
-                {pods.map(name => <PodTile groupName={name.name} numMembers={name.size} key={name.name} />)}
             </ScrollView>
 
             {/* Create A Pod PopUp */}
@@ -166,17 +198,18 @@ const ByPod = (props) => {
                                 />
                             </SafeAreaView>
                         </View>
+                        <Text>{errors.nameError}</Text>
 
                         <View style={{ flexDirection: 'row'}}>
                             <Text style={styles.userDetailsText}>
-                                Pod Photo: 
+                                Pod Image: 
                             </Text>
                             <View style={{flex: 1, alignItems: 'center', marginTop: 5}}>
                                 {/* if image selected, show image; also allow user to re-choose an image */}
                                 {selectedImage && selectedImage != null ? 
                                     <View style={{ flexDirection: 'row'}}> 
                                         <Image
-                                            source={{ uri: selectedImage.localUri }}
+                                            source={{ uri: selectedImage }}
                                             style={styles.thumbnail}
                                         />
                                         <TouchableOpacity onPress={openImagePickerAsync} activeOpacity={0.7}>
@@ -202,9 +235,9 @@ const ByPod = (props) => {
                         <View style={{ height: windowHeight/7 }}> 
                         <ScrollView contentContainerStyle={styles.membersList}>
                             {/* check if any members added yet: if not, display message */}
-                            {members.length == 0 ? 
+                            {members.length === 0 ? 
                             (<View style={{ flexDirection: 'row'}}>
-                                <Text style={styles.membersText}>No members yet! Search below to add members to this pod.</Text>
+                                <Text style={styles.membersText}>No members yet! {"\n"}Search below to add members to this pod.</Text>
                             </View>) : 
                             // members have been added, display each one in a row
                             (members.map(name => 
@@ -213,6 +246,7 @@ const ByPod = (props) => {
                             </View>)
                             )}
                         </ScrollView>
+                        <Text>{errors.membersError}</Text>
                         </View>
 
                         {/* search bar, click on usernames to add members to pod */}
@@ -245,7 +279,7 @@ const ByPod = (props) => {
                             </View>
                         </SafeAreaView>
 
-                        <Pressable style={styles.createPodButton} onPress={addNewPod}>
+                        <Pressable style={styles.createPodButton} onPress={checkAllFieldsOnSubmit}>
                             <Text style={styles.createPodText}>Create Pod</Text>
                         </Pressable>
                     </View>
@@ -289,6 +323,17 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         marginTop: 22,
+    },
+    noPodsYetTitle: {
+        marginTop: windowHeight/4,
+        color: "#6F1D1B",
+        fontWeight: "700",
+        fontSize: 22,
+    },
+    noPodsYetText: {
+        color: "#6F1D1B",
+        fontStyle: 'italic',
+        fontSize: 14
     },
     modalView: {
         margin: 20,

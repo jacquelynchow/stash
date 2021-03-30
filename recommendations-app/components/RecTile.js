@@ -18,14 +18,17 @@ const RecTile = (props) => {
 {/*TODO: must change image according to media type */}
 
 function selectImage() {
-    if (props.mediaType == "Movie") {
+    if (props.mediaType == "Article") {
+        return articleIcon
+    }
+    else if (props.mediaType == "Book") {
+        return bookIcon
+    }
+    else if (props.mediaType == "Movie") {
         return movieIcon
     }
     else if (props.mediaType == "Song") {
         return songIcon
-    }
-    else if (props.mediaType == "Book") {
-        return bookIcon
     }
     else if (props.mediaType == "TikTok") {
         return tiktokIcon
@@ -33,14 +36,34 @@ function selectImage() {
     else if (props.mediaType == "Video") {
         return youtubeIcon
     }
+}
 
+function selectColor() {
+    if (props.mediaType == "Article") {
+        return styles.articleColor
+    }
+    else if (props.mediaType == "Book") {
+        return styles.bookColor
+    }
+    else if (props.mediaType == "Movie") {
+        return styles.movieColor
+    }
+    else if (props.mediaType == "Song") {
+        return styles.songColor
+    }
+    else if (props.mediaType == "TikTok") {
+        return styles.tiktokColor
+    }
+    else if (props.mediaType == "Video") {
+        return styles.videoColor
+    }
 }
 
   return (
       <View style={styles.item}>
           <TouchableOpacity activeOpacity={0.25} onPress={toggleModal}>
               <Image source={selectImage()} style={styles.recImage}></Image>
-              <Text style={styles.name}>{props.recName}</Text>
+              <Text style={[styles.name, selectColor()]}>{props.recName}</Text>
               <Text style={styles.media}>{props.mediaType}</Text>
           </TouchableOpacity>
 
@@ -126,10 +149,10 @@ const styles = StyleSheet.create({
     name: {
         fontSize: 20,
         fontWeight: 'bold',
-        color: "#D26D64", //TODO when we have conditionals change colour by type
         padding: 15,
         paddingBottom: 0,
     },
+
     media: {
         padding: 15,
         paddingTop: 5,
@@ -145,6 +168,25 @@ const styles = StyleSheet.create({
       width: 150,
       height: 150,
       borderRadius: 10,
+    },
+    //different colour for background and text based on media type
+    articleColor:{
+      color: "#D68C45",
+    },
+    bookColor: {
+      color: "#D26D64",
+    },
+    movieColor: {
+      color: "#B05E7E",
+    },
+    songColor: {
+      color: "#7D5A86",
+    },
+    tiktokColor: {
+      color: "#4B5476",
+    },
+    videoColor: {
+      color: "#2F4858",
     }
 })
 

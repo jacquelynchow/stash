@@ -3,8 +3,10 @@ import { StyleSheet, ScrollView, View, TouchableOpacity, Image, Pressable, Text,
 import PodTile from '../components/PodTile';
 import addPodButton from '../assets/addPodButton.png';
 import closePopUpButton from '../assets/closePopUpButton.png';
+import uploadPodImage from '../assets/uploadPodImage.png';
 import Modal from 'react-native-modal';
 import { SearchBar } from 'react-native-elements';
+import * as ImagePicker from 'expo-image-picker';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -104,6 +106,37 @@ const ByPod = (props) => {
         setMembers([...members, newMember.name]);
     };
 
+    // init var for selected pod image
+    const [selectedImage, setSelectedImage] = useState(null);
+    // function from expo docs tutorial
+    let openImagePickerAsync = async () => {
+        let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    
+        if (permissionResult.granted === false) {
+          alert("Permission to access camera roll is required!");
+          return;
+        }
+    
+        let pickerResult = await ImagePicker.launchImageLibraryAsync();
+        console.log(pickerResult);
+            
+        {/* TO USE THE SELECTED IMAGE */}
+        if (pickerResult.cancelled === true) {
+          return;
+        }
+        setSelectedImage({ localUri: pickerResult.uri });
+      }
+    // if (selectedImage !== null) {
+    //     return (
+    //         <View> 
+    //             <Image
+    //                 source={{ uri: selectedImage.localUri }}
+    //                 style={styles.thumbnail}
+    //             />
+    //         </View>
+    //     );
+    // }
+
     return (
         <View style={{flex: 1}}>
             <ScrollView contentContainerStyle={styles.container}>
@@ -148,6 +181,24 @@ const ByPod = (props) => {
                             <Text style={styles.userDetailsText}>
                                 Pod Photo: 
                             </Text>
+                            <View style={{flex: 1, alignItems: 'center', marginTop: 5}}>
+                                {selectedImage && selectedImage != null ? 
+                                    <View style={{ flexDirection: 'row'}}> 
+                                        <Image
+                                            source={{ uri: selectedImage.localUri }}
+                                            style={styles.thumbnail}
+                                        />
+                                        <TouchableOpacity onPress={openImagePickerAsync} activeOpacity={0.7}>
+                                            <Image style={{ width: 40, height: 40}}
+                                                source={uploadPodImage}></Image>
+                                        </TouchableOpacity> 
+                                    </View> :
+                                    <TouchableOpacity onPress={openImagePickerAsync} activeOpacity={0.7}>
+                                        <Image style={{ width: 40, height: 40}}
+                                            source={uploadPodImage}></Image>
+                                    </TouchableOpacity> 
+                                }
+                            </View>
                         </View>
 
                         <View style={{ flexDirection: 'row'}}>
@@ -313,8 +364,8 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "flex-start",
         alignItems: "flex-start",
-      },
-      userInput: {
+    },
+    userInput: {
         height: 30,
         width: windowWidth/3,
         fontSize: 16,
@@ -324,16 +375,16 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         marginLeft: 10,
         marginTop: 15,
-      },
-      itemStyle: {
+    },
+    itemStyle: {
         padding: 10,
         color: 'white'
-      },
-      searchBarContainer: {
+    },
+    searchBarContainer: {
         marginTop: 10,
         color: 'white',
-      },
-      membersList: {
+    },
+    membersList: {
         marginVertical: 5,
         marginHorizontal: 5,
         // paddingBottom: 30,
@@ -343,15 +394,30 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'flex-start',
         color: '#ffc9b9',
-      },
-      membersText: {
+    },
+    membersText: {
         fontSize: 16,
         color: '#ffc9b9',
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
         paddingTop: 7
-      }
+    },
+    podImageContainer: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    button: {
+		padding: 20,
+		textAlign: 'center',
+	},
+    thumbnail: {
+        width: 50,
+        height: 50,
+        resizeMode: "cover",
+        marginRight: 15,
+    }
 })
 
 export default ByPod;

@@ -25,8 +25,8 @@ const ByPod = (props) => {
     // add new pod dynamically when 'Create a Pod' submitted
     const [pods, setPods] = useState([]);
     const addNewPod = () => {
-        // add group name of new pod to existing list
-        let newPod = { key: pods.length + 1, name: groupName, size: members.length}
+        // add new pod to existing list
+        let newPod = { key: pods.length + 1, name: groupName, size: members.length, img: selectedImage.localUri }
         setPods([...pods, newPod]);
         toggleModal();
 
@@ -35,6 +35,7 @@ const ByPod = (props) => {
         setMembers([]);
         setSearch('');
         setFilteredDataSource(masterDataSource);
+        setSelectedImage(null);
     };
 
     // for 'Create a Pod' pop-up search bar
@@ -130,15 +131,15 @@ const ByPod = (props) => {
     return (
         <View style={{flex: 1}}>
             <ScrollView contentContainerStyle={styles.container}>
-                <PodTile groupName={"Group Name 1"} numMembers={2} key={100} />
-                <PodTile groupName={"Group Name 2"} numMembers={5} key={99} />
-                <PodTile groupName={"Group Name 3"} numMembers={10} key={98} />
-                <PodTile groupName={"Group Name 3"} numMembers={10} key={97} />
-                <PodTile groupName={"Group Name 3"} numMembers={10} key={96} />
-                <PodTile groupName={"Group Name 3"} numMembers={10} key={95} />
+                <PodTile groupName={"Group Name 1"} numMembers={2} key={100} img="https://www.jaipuriaschoolpatna.in/wp-content/uploads/2016/11/blank-img.jpg" />
+                <PodTile groupName={"Group Name 2"} numMembers={5} key={99} img="https://www.jaipuriaschoolpatna.in/wp-content/uploads/2016/11/blank-img.jpg" />
+                <PodTile groupName={"Group Name 3"} numMembers={10} key={98} img="https://www.jaipuriaschoolpatna.in/wp-content/uploads/2016/11/blank-img.jpg" />
+                <PodTile groupName={"Group Name 3"} numMembers={10} key={97} img="https://www.jaipuriaschoolpatna.in/wp-content/uploads/2016/11/blank-img.jpg" />
+                <PodTile groupName={"Group Name 3"} numMembers={10} key={96} img="https://www.jaipuriaschoolpatna.in/wp-content/uploads/2016/11/blank-img.jpg" />
+                <PodTile groupName={"Group Name 3"} numMembers={10} key={95} img="https://www.jaipuriaschoolpatna.in/wp-content/uploads/2016/11/blank-img.jpg" />
 
                 {/* make a pod for each group name stored in the pods list */}
-                {pods.map(name => <PodTile groupName={name.name} numMembers={name.size} key={name.name} />)}
+                {pods.map(name => <PodTile groupName={name.name} numMembers={name.size} key={name.name} img={name.img} />)}
             </ScrollView>
 
             {/* Create A Pod PopUp */}
@@ -180,12 +181,12 @@ const ByPod = (props) => {
                                             style={styles.thumbnail}
                                         />
                                         <TouchableOpacity onPress={openImagePickerAsync} activeOpacity={0.7}>
-                                            <Image style={{ width: 40, height: 40}}
+                                            <Image style={{ width: 30, height: 30}}
                                                 source={uploadPodImage}></Image>
                                         </TouchableOpacity> 
                                     </View> :
                                     <TouchableOpacity onPress={openImagePickerAsync} activeOpacity={0.7}>
-                                        <Image style={{ width: 40, height: 40}}
+                                        <Image style={{ width: 30, height: 30}}
                                             source={uploadPodImage}></Image>
                                     </TouchableOpacity> 
                                 }

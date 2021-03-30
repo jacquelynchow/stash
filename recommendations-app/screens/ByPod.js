@@ -126,16 +126,6 @@ const ByPod = (props) => {
         }
         setSelectedImage({ localUri: pickerResult.uri });
       }
-    // if (selectedImage !== null) {
-    //     return (
-    //         <View> 
-    //             <Image
-    //                 source={{ uri: selectedImage.localUri }}
-    //                 style={styles.thumbnail}
-    //             />
-    //         </View>
-    //     );
-    // }
 
     return (
         <View style={{flex: 1}}>
@@ -182,6 +172,7 @@ const ByPod = (props) => {
                                 Pod Photo: 
                             </Text>
                             <View style={{flex: 1, alignItems: 'center', marginTop: 5}}>
+                                {/* if image selected, show image; also allow user to re-choose an image */}
                                 {selectedImage && selectedImage != null ? 
                                     <View style={{ flexDirection: 'row'}}> 
                                         <Image

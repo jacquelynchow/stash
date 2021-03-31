@@ -20,6 +20,7 @@ const ByPod = (props) => {
     const [isModalVisible, setModalVisible] = useState(false);
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
+        resetFields();
     };
 
     const [groupName, setGroupName] = useState("");
@@ -33,14 +34,16 @@ const ByPod = (props) => {
         toggleModal();
 
         // reset input fields to blank
+        resetFields();
+    };
+    const resetFields = () => {
         setGroupName("");
         setMembers(["MainUser"]);
         setSelectedImage("https://www.jaipuriaschoolpatna.in/wp-content/uploads/2016/11/blank-img.jpg");
         setSearch('');
         setFilteredDataSource(masterDataSource);
         setErrors({nameError: '', membersError: ''});
-    };
-
+    }
     const [errors, setErrors] = useState({
         nameError: '', membersError: ''
     });
@@ -51,18 +54,21 @@ const ByPod = (props) => {
         let isValid = validSymbols.test(groupName);
         // check if group name empty or only has whitespace
         if (groupName === "" || !groupName.replace(/\s/g, '').length) {
-            setErrors({nameError: "Group name field is required"});
+            setErrors({nameError: "Group name is required"});
             allValid = false;
         // check if group name is not valid (not just alphanumeric)
         } else if (!isValid) {
-            setErrors({nameError: "Group name field must be alphabetic"});
+            setErrors({nameError: "Group name must be alphabetic"});
             allValid = false;
         }
+        // check if members includes user + other members
         if (members.length == 1) {
             setErrors({membersError: "Please add at least one user"});
             allValid = false;
         }
+        // check if there was a selected image or not
         if (selectedImage === null) {
+            // no image was selected, use default image
             setSelectedImage("https://www.jaipuriaschoolpatna.in/wp-content/uploads/2016/11/blank-img.jpg");
         }
         // if everything checks out, add to pods list
@@ -198,7 +204,9 @@ const ByPod = (props) => {
                                 />
                             </SafeAreaView>
                         </View>
-                        <Text>{errors.nameError}</Text>
+                        <View style={{ display: 'flex', justifyContent: 'flex-start'}}>
+                            <Text style={styles.errorMessage}>{errors.nameError}</Text>
+                        </View>
 
                         <View style={{ flexDirection: 'row'}}>
                             <Text style={styles.userDetailsText}>
@@ -246,7 +254,7 @@ const ByPod = (props) => {
                             </View>)
                             )}
                         </ScrollView>
-                        <Text>{errors.membersError}</Text>
+                        <Text style={styles.errorMessage}>{errors.membersError}</Text>
                         </View>
 
                         {/* search bar, click on usernames to add members to pod */}
@@ -453,6 +461,9 @@ const styles = StyleSheet.create({
         height: 50,
         resizeMode: "cover",
         marginRight: 15,
+    },
+    errorMessage: {
+        color: '#ffc9b9',
     }
 })
 

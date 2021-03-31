@@ -30,6 +30,7 @@ const ByPod = (props) => {
     const addNewPod = () => {
         // add new pod to existing list
         let newPod = { key: pods.length + 1, name: groupName.trim(), size: members.length, uri: selectedImage }
+
         setPods([...pods, newPod]);
         toggleModal();
 
@@ -76,7 +77,9 @@ const ByPod = (props) => {
             addNewPod();
         }
 
-    }
+        setSelectedImage(null);
+    };
+    
     // for 'Create a Pod' pop-up search bar
     const [search, setSearch] = useState('');
     const [filteredDataSource, setFilteredDataSource] = useState([]);
@@ -221,12 +224,12 @@ const ByPod = (props) => {
                                             style={styles.thumbnail}
                                         />
                                         <TouchableOpacity onPress={openImagePickerAsync} activeOpacity={0.7}>
-                                            <Image style={{ width: 40, height: 40}}
+                                            <Image style={{ width: 30, height: 30}}
                                                 source={uploadPodImage}></Image>
                                         </TouchableOpacity> 
                                     </View> :
                                     <TouchableOpacity onPress={openImagePickerAsync} activeOpacity={0.7}>
-                                        <Image style={{ width: 40, height: 40}}
+                                        <Image style={{ width: 30, height: 30}}
                                             source={uploadPodImage}></Image>
                                     </TouchableOpacity> 
                                 }

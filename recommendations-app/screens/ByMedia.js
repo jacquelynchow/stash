@@ -11,6 +11,7 @@ import youtubeIcon from '../assets/type-icons/youtube.png';
 const ByMedia = () => {
     // TODO: If No Recs, show message screen, else show recs by type
     // TODO: For loop and showing Tiles with real data
+        // (need to figure out how many recs are for each type of media)
 
     return (
         <View style={{flex: 1}}>
@@ -21,11 +22,11 @@ const ByMedia = () => {
                 <MediaGroup mediaType={"Songs"} numRecs={10} numPeople={2} image={songIcon} />
                 <MediaGroup mediaType={"TikToks"} numRecs={10} numPeople={2} image={tiktokIcon} />
                 <MediaGroup mediaType={"Youtube"} numRecs={10} numPeople={2} image={youtubeIcon} />
+                {/* is having the number of people neccessary for showing by media? */}
             </ScrollView>
         </View>
     )
 }
-// if have no recommendations
 
 const styles = StyleSheet.create({
     container: {

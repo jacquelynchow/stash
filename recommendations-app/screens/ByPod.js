@@ -9,13 +9,35 @@ import uploadPodImage from '../assets/uploadPodImage.png';
 import Modal from 'react-native-modal';
 import { SearchBar } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
+import * as firebase from 'firebase';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 const ByPod = (props) => {
-    // TODO: If No Pods, show message screen, else show pods
-    // TODO: For loop and showing Pod Tiles with real data
+
+    // firebase - get logged in user's id
+    let currentUserUID = firebase.auth().currentUser.uid;
+    const [username, setUsername] = useState('');
+
+    useEffect(() => {
+        async function getUserInfo(){
+        let doc = await firebase
+        .firestore()
+        .collection('users')
+        .doc(currentUserUID)
+        .get();
+
+        if (!doc.exists){
+            alert('No user data found!')
+        } else {
+            let dataObj = doc.data();
+            // get user's username to display on page
+            setUsername(dataObj.username)
+        }
+        }
+        getUserInfo();
+    })
 
     const [isModalVisible, setModalVisible] = useState(false);
     const toggleModal = () => {
@@ -175,6 +197,7 @@ const ByPod = (props) => {
                     // make a pod for each group name stored in the pods list 
                     pods.map(name => <PodTile groupName={name.name} numMembers={name.size} uri={name.uri} key={name.name} />) :
                     <View style={styles.centeredView}>
+                        <Text style={styles.noPodsYetText}>Welcome, {username}!</Text>
                         <Text style={styles.noPodsYetTitle}>Click the + button to start a pod</Text>
                         <Text style={styles.noPodsYetText}>Pods can be with one person or a group</Text>
                     </View>

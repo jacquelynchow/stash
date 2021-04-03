@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, TextInput, Pressable, SafeAreaView, Dimensions,
 import Modal from 'react-native-modal';
 import closePopUpButton from '../assets/closePopUpButton.png';
 import { useNavigation } from '@react-navigation/native';
+import {signIn} from '../API/firebaseMethods';
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -17,19 +18,22 @@ const LoginModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
         setModalSelected("");
     };
 
-    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
     const [pw, setPw] = useState("");
 
+    // when user presses login
     const authenticateUser = () => {
-      console.log("Username: ", username);
+      // call firebase signin function
+      signIn(email, pw);
 
       // reset input fields to blank
-      setUsername("");
+      setEmail("");
       setPw("");
     
       toggleModal();
-      // go to home page
-      navigation.navigate('Home');
+      
+      // go to loading page to redirect
+      navigation.navigate('Loading');
     };
 
     return (
@@ -43,20 +47,22 @@ const LoginModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
                 <Text style={styles.modalTitle}>Login</Text>
                 <Text style={styles.modalText}>Login to view your pods and start sending recommendations!</Text>
                 
-                {/* user input: username, password */}
+                {/* user input: email, password */}
                 <View style={{ flexDirection: 'row'}}>
-                <Text style={styles.userDetailsText}>
-                    Username:
-                </Text>
-                <SafeAreaView>
-                    <TextInput 
-                    onChangeText={username => setUsername(username)}
-                    style={styles.userInput}
-                    defaultValue={username} 
-                    placeholder={"Enter a username"}
-                    value={username}
-                    />
-                </SafeAreaView>
+                  <Text style={styles.userDetailsText}>
+                      Email:
+                  </Text>
+                  <SafeAreaView>
+                      <TextInput 
+                      onChangeText={email => setEmail(email)}
+                      style={styles.userInput}
+                      defaultValue={email} 
+                      placeholder={"Enter your email"}
+                      value={email}
+                      keyboardType="email-address"
+                      autoCapitalize="none"
+                      />
+                  </SafeAreaView>
                 </View>
                 <View style={{ flexDirection: 'row'}}>
                     <Text style={styles.userDetailsText}>
@@ -68,6 +74,7 @@ const LoginModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
                             style={styles.userInput}
                             defaultValue={pw} 
                             placeholder={"Enter a password"}
+                            secureTextEntry={true}
                         />
                     </SafeAreaView>
                 </View>

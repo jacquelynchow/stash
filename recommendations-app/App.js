@@ -7,10 +7,19 @@ import PodPage from './screens/PodPage';
 import MediaTypePage from './screens/MediaTypePage';
 import Logout from './components/Logout';
 import Back from './components/Back';
+import * as firebase from 'firebase';
+import apiKeys from './config/keys';
+import LoadingScreen from './screens/Loading';
 
 const Stack = createStackNavigator();
 
 export default function App() {
+  // init firebase app with config keys
+  if (!firebase.apps.length) {
+    console.log('Connected with Firebase')
+    firebase.initializeApp(apiKeys.firebaseConfig);
+  }
+
   return (
     <NavigationContainer>
       {/* set initial route upon app opening */}
@@ -29,6 +38,10 @@ export default function App() {
             <Back/>),
           }}/>
         <Stack.Screen name="MediaType" component={MediaTypePage} 
+          options= {{headerLeft: () => (
+            <Back/>),
+          }}/>
+        <Stack.Screen name="Loading" component={LoadingScreen} 
           options= {{headerLeft: () => (
             <Back/>),
           }}/>

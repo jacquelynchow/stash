@@ -3,6 +3,7 @@ import { StyleSheet, Image, TouchableOpacity, View, SafeAreaView, Text, Pressabl
 import logoutButton from '../assets/logout-symbol.png';
 import Modal from 'react-native-modal';
 import { useNavigation } from '@react-navigation/native';
+import {loggingOut} from '../API/firebaseMethods';
 
 // logout icon button
 const Logout = () => {
@@ -12,6 +13,13 @@ const Logout = () => {
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
     };
+
+    const logOut = () => {
+        // call firebase logout function
+        loggingOut();
+        // go to loading page to redirect
+        navigation.navigate('Loading');
+      };
 
     return (
         <SafeAreaView style={{flex: 1}}>
@@ -29,7 +37,7 @@ const Logout = () => {
                         <View style={{ flexDirection: 'row' }}>
                             <View>
                                 <Pressable style={styles.logout}
-                                    onPress={() => navigation.navigate('Login')} >
+                                    onPress={logOut} >
                                     <Text style={styles.logoutText}>Yes</Text>
                                 </Pressable>
                             </View>

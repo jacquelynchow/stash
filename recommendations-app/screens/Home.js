@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect } from 'react';
 import { StyleSheet, View, Dimensions } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import ByPod from './ByPod';
@@ -12,7 +12,7 @@ const Tab = createMaterialTopTabNavigator();
 function PodsTab() {
     return (
       <View style={ styles.container }>
-        <ByPod/>
+        <ByPod />
       </View>
     );
 }
@@ -26,7 +26,7 @@ function PodsTab() {
     );
 }
 
-export default function HomeScreen() {
+export default function HomeScreen() { 
     return (
         <Tab.Navigator  
         // style tabs 

@@ -2,17 +2,42 @@ import React, { useState } from 'react';
 import { StyleSheet, View, ScrollView, TouchableOpacity, Image, Pressable, Text, Button, Alert} from 'react-native';
 import RecTile from '../components/RecTile';
 
+//will create function that shows the recs from only 1 media type
+{/*
+function showMediaType() {
+  if (props.mediaType == "Article") {
+    return 
+  }
+  else if (props.mediaType == "Book") {
+    return 
+  }
+  else if (props.mediaType == "Movie") {
+    return 
+  }
+  else if (props.mediaType == "Song") {
+    return 
+  }
+  else if (props.mediaType == "TikTok") {
+    return 
+  }
+  else if (props.mediaType == "Video") {
+    return 
+  }
+}
+*/}
+
 export default function MediaTypePage() {
 
   return (
     <View style={{flex: 1}}>
       <ScrollView contentContainerStyle={styles.container}>
+        {/*Will get rid of hardcoding*/}
+        {/*instead show the recommendations from only 1 media type*/}
         <RecTile recName={"Rec 1"} mediaType={"Book"}/>
         <RecTile recName={"Rec 2"} mediaType={"Book"}/>
         <RecTile recName={"Rec 3"} mediaType={"Book"}/>
       </ScrollView>
     </View>
-
   )
 }
 

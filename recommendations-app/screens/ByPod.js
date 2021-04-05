@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { StyleSheet, ScrollView, View, TouchableOpacity, Image, 
     Pressable, Text, SafeAreaView, TextInput, 
-    Dimensions, FlatList } from 'react-native';
+    Dimensions, FlatList, RefreshControl } from 'react-native';
 import PodTile from '../components/PodTile';
 import addPodButton from '../assets/addPodButton.png';
 import closePopUpButton from '../assets/closePopUpButton.png';
@@ -10,6 +10,7 @@ import Modal from 'react-native-modal';
 import { SearchBar } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
 import * as firebase from 'firebase';
+import { addPodToDB, getPods } from '../API/firebaseMethods';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -19,54 +20,72 @@ const ByPod = (props) => {
     // firebase - get logged in user's id
     let currentUserUID = firebase.auth().currentUser.uid;
     const [username, setUsername] = useState('');
-
+    
     useEffect(() => {
         async function getUserInfo(){
-        let doc = await firebase
-        .firestore()
-        .collection('users')
-        .doc(currentUserUID)
-        .get();
-
-        if (!doc.exists){
-            alert('No user data found!')
-        } else {
-            let dataObj = doc.data();
-            // get user's username to display on page
-            setUsername(dataObj.username)
-        }
+            let doc = await firebase
+            .firestore()
+            .collection('users')
+            .doc(currentUserUID)
+            .get();
+            
+            if (!doc.exists){
+                alert('No user data found!')
+            } else {
+                let dataObj = doc.data();
+                // get user's username to display on page
+                setUsername(dataObj.username)
+            }
         }
         getUserInfo();
     })
+
+    // call firebase api function getPods on onPodsReceived function to render pods from db
+    useEffect(() => {
+        getPods(onPodsReceived);
+    }, []);
+
 
     const [isModalVisible, setModalVisible] = useState(false);
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
         resetFields();
     };
-
-    const [groupName, setGroupName] = useState("");
-
+    
     // add new pod dynamically when 'Create a Pod' submitted
     const [pods, setPods] = useState([]);
-    const addNewPod = () => {
-        // add new pod to existing list
-        let newPod = { key: pods.length + 1, name: groupName.trim(), size: members.length, uri: selectedImage }
-
+    const [groupName, setGroupName] = useState("");
+    const addNewPod = (pods) => {
+        let podLength = 0;
+        if (pods && pods.length > 0) {
+            podLength = pods.length;
+        }
+        // add new pod to current pods list
+        let newPod = { key: podLength + 1, pod_name: groupName.trim(), num_members: members.length, pod_picture: selectedImage, num_recs: 0 }
         setPods([...pods, newPod]);
+        // add pod object to database using firebase api function
+        addPodToDB(newPod);
+        // close modal
         toggleModal();
-
         // reset input fields to blank
         resetFields();
+
     };
+    // once pods are received, set pods to these received pods
+    const onPodsReceived = (podList) => {
+        setPods(podList);
+    };
+
+    // resets all form fields on create a pod modal
     const resetFields = () => {
         setGroupName("");
-        setMembers(["MainUser"]);
+        setMembers([username]);
         setSelectedImage("https://www.jaipuriaschoolpatna.in/wp-content/uploads/2016/11/blank-img.jpg");
         setSearch('');
         setFilteredDataSource(masterDataSource);
         setErrors({nameError: '', membersError: ''});
     }
+    // init error state for various form fields
     const [errors, setErrors] = useState({
         nameError: '', membersError: ''
     });
@@ -96,10 +115,8 @@ const ByPod = (props) => {
         }
         // if everything checks out, add to pods list
         if (allValid) {
-            addNewPod();
+            addNewPod(pods);
         }
-
-        setSelectedImage(null);
     };
     
     // for 'Create a Pod' pop-up search bar
@@ -108,7 +125,7 @@ const ByPod = (props) => {
     const [masterDataSource, setMasterDataSource] = useState([]);
 
     // init empty list of pod tiles
-    const [members, setMembers] = useState(["MainUser"]);
+    const [members, setMembers] = useState([username]);
 
     useEffect(() => {
         // placeholder data for users
@@ -190,12 +207,27 @@ const ByPod = (props) => {
         setSelectedImage(pickerResult.uri);
       }
 
+    // refresh page function to see new pods 
+    const [refreshing, setRefreshing] = useState(false);
+    const onRefresh = useCallback(async () => {
+            setRefreshing(true);
+            await getPods(onPodsReceived) // use await to refresh until function finished
+            .then(() => setRefreshing(false));
+        }, []);
+
     return (
         <View style={{flex: 1}}>
-            <ScrollView contentContainerStyle={styles.container}>
+            <ScrollView 
+                contentContainerStyle={styles.container}
+                refreshControl={
+                    <RefreshControl
+                      refreshing={refreshing}
+                      onRefresh={onRefresh}
+                    />
+                  }>
                 {pods && pods.length > 0 ?
                     // make a pod for each group name stored in the pods list 
-                    pods.map(name => <PodTile groupName={name.name} numMembers={name.size} uri={name.uri} key={name.name} />) :
+                    pods.map(pod => <PodTile groupName={pod.pod_name} numMembers={pod.num_members} uri={pod.pod_picture} />) :
                     <View style={styles.centeredView}>
                         <Text style={styles.noPodsYetText}>Welcome, {username}!</Text>
                         <Text style={styles.noPodsYetTitle}>Click the + button to start a pod</Text>

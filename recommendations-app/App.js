@@ -30,7 +30,8 @@ export default function App() {
         />
         <Stack.Screen name="Home" component={HomeScreen} 
           options= {{headerRight: () => (
-            <Logout/>), headerTintColor: '#6f1d1b'
+            <Logout/>), headerTintColor: '#6f1d1b', headerLeft: ()=> null, // remove back button, must logout
+            gestureEnabled: false // don't let user accidentally swipe back to login screen
           }}
         />
         <Stack.Screen name="Pod" component={PodPage} 
@@ -42,8 +43,7 @@ export default function App() {
             <Back/>),
           }}/>
         <Stack.Screen name="Loading" component={LoadingScreen} 
-          options= {{headerLeft: () => (
-            <Back/>),
+          options= {{ headerLeft: ()=> null
           }}/>
       </Stack.Navigator>
     </NavigationContainer>

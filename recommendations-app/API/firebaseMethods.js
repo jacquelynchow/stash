@@ -28,7 +28,11 @@ export async function signIn(email, password) {
       .auth()
       .signInWithEmailAndPassword(email, password);
   } catch (err) {
-    Alert.alert("There is something wrong!", err.message);
+    if (err.message === '') {
+      Alert.alert("Login failed!", 'Please try again.');
+    } else {
+      Alert.alert("Login failed!", err.message);
+    }
   }
 }
 

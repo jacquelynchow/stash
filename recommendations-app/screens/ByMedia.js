@@ -11,7 +11,8 @@ import youtubeIcon from '../assets/type-icons/youtube.png';
 const ByMedia = () => {
     // TODO: If No Recs, show message screen, else show recs by type
     // TODO: For loop and showing Tiles with real data
-        // (need to figure out how many recs are for each type of media)
+        // search for recs with certain media_type for USERID & get # of recs for that media
+        // able to show the # of ppl?
 
     return (
         <View style={{flex: 1}}>

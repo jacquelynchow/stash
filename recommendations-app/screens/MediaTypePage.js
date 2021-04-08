@@ -31,8 +31,8 @@ export default function MediaTypePage() {
   return (
     <View style={{flex: 1}}>
       <ScrollView contentContainerStyle={styles.container}>
-        {/*Will get rid of hardcoding*/}
         {/*instead show the recommendations from only 1 media type*/}
+        {/*Show recs with the same media_type for USERID */}
         <RecTile recName={"Rec 1"} mediaType={"Book"}/>
         <RecTile recName={"Rec 2"} mediaType={"Book"}/>
         <RecTile recName={"Rec 3"} mediaType={"Book"}/>

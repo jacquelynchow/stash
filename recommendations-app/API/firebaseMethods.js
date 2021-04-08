@@ -59,6 +59,21 @@ export function addPodToDB(pod) {
     .catch((error) => console.log(error)); // log any errors 
 }
 
+//add new rec object and properties to the db
+{/*export function addRecToDB(rec) {
+  const db = firebase.firestore();
+  db.collection("recs")
+    .add({
+      rec_name: rec.rec_name,
+      //include pod name
+      rec_type: rec.rec_type,
+      rec_author: rec.rec_author,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp() // order recs to show up in order of creation
+    })
+    .catch((error) => console.log(error)); // log any errors 
+}
+*/}
+
 // make a list of pods from the current state of the database and calls callback function to run asyncronously
 export async function getPods(podsRecieved) {
   let podList = []; // init podList

@@ -10,10 +10,11 @@ import Modal from 'react-native-modal';
 import { SearchBar } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
 import * as firebase from 'firebase';
-import { addPodToDB, getPods } from '../API/firebaseMethods';
+import { addPodToDB, getPods, uploadImageToStorage, retrieveImageFromStorage, deleteImage } from '../API/firebaseMethods';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
+const defaultImageUrl = "https://www.jaipuriaschoolpatna.in/wp-content/uploads/2016/11/blank-img.jpg";
 
 const ByPod = (props) => {
 
@@ -55,13 +56,13 @@ const ByPod = (props) => {
     // add new pod dynamically when 'Create a Pod' submitted
     const [pods, setPods] = useState([]);
     const [groupName, setGroupName] = useState("");
-    const addNewPod = (pods) => {
+    const addNewPod = async (pods) => {
         let podLength = 0;
         if (pods && pods.length > 0) {
             podLength = pods.length;
         }
         // add new pod to current pods list
-        let newPod = { key: podLength + 1, pod_name: groupName.trim(), num_members: members.length, pod_picture: selectedImage, num_recs: 0 }
+        let newPod = { key: podLength + 1, pod_name: groupName.trim(), num_members: members.length, pod_picture: selectedImageName, pod_picture_url: selectedImageUrl, num_recs: 0 }
         setPods([...pods, newPod]);
         // add pod object to database using firebase api function
         addPodToDB(newPod);
@@ -75,12 +76,13 @@ const ByPod = (props) => {
     const onPodsReceived = (podList) => {
         setPods(podList);
     };
-
+    
     // resets all form fields on create a pod modal
     const resetFields = () => {
         setGroupName("");
         setMembers([username]);
-        setSelectedImage("https://www.jaipuriaschoolpatna.in/wp-content/uploads/2016/11/blank-img.jpg");
+        setSelectedImageName("");
+        setSelectedImageUrl(defaultImageUrl);
         setSearch('');
         setFilteredDataSource(masterDataSource);
         setErrors({nameError: '', membersError: ''});
@@ -107,11 +109,6 @@ const ByPod = (props) => {
         if (members.length == 1) {
             setErrors({membersError: "Please add at least one user"});
             allValid = false;
-        }
-        // check if there was a selected image or not
-        if (selectedImage === null) {
-            // no image was selected, use default image
-            setSelectedImage("https://www.jaipuriaschoolpatna.in/wp-content/uploads/2016/11/blank-img.jpg");
         }
         // if everything checks out, add to pods list
         if (allValid) {
@@ -189,23 +186,45 @@ const ByPod = (props) => {
     };
 
     // init var for selected pod image
-    const [selectedImage, setSelectedImage] = useState("https://www.jaipuriaschoolpatna.in/wp-content/uploads/2016/11/blank-img.jpg");
+    const [selectedImageName, setSelectedImageName] = useState("");
+    const [selectedImageUrl, setSelectedImageUrl] = useState(defaultImageUrl);
+    const [timestamp, setTimestamp] = useState(0);
+
     // function from expo docs tutorial
     let openImagePickerAsync = async () => {
         let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    
         if (permissionResult.granted === false) {
           alert("Permission to access camera roll is required!");
           return;
         }
     
-        let pickerResult = await ImagePicker.launchImageLibraryAsync();
-            
-        if (pickerResult.cancelled === true) {
+        let result = await ImagePicker.launchImageLibraryAsync();
+        if (result.cancelled === true) {
           return;
         }
-        setSelectedImage(pickerResult.uri);
-      }
+        
+        let uploadUri = Platform.OS === 'ios' ? result.uri.replace('file://', '') : result.uri;
+        // get extension of image and set filename as username and current timestamp
+        const extension = uploadUri.split('.').pop(); 
+        const imageName = currentUserUID + "_" + timestamp + '.' + extension;
+
+        // check if image was changed (the second and following times), delete the old image on db
+        deleteImage(selectedImageName);
+        
+        // setstate sets things asyncronously (after re-render), 
+        // so use imageName instead of selectedImageName to use as variable
+        setSelectedImageName(imageName); 
+
+        // upload image to firebase storage
+        await uploadImageToStorage(uploadUri, imageName)
+            .then(() => {
+                // after uploading image to server, get image url from firebase
+                retrieveImageFromStorage(imageName, setSelectedImageUrl); 
+            })
+            .catch((error) => {
+                console.log("Something went wrong with image upload! " + error);
+        });
+    }
 
     // refresh page function to see new pods 
     const [refreshing, setRefreshing] = useState(false);
@@ -227,7 +246,7 @@ const ByPod = (props) => {
                   }>
                 {pods && pods.length > 0 ?
                     // make a pod for each group name stored in the pods list 
-                    pods.map(pod => <PodTile groupName={pod.pod_name} numMembers={pod.num_members} uri={pod.pod_picture} />) :
+                    pods.map(pod => <PodTile key={pod.key} groupName={pod.pod_name} numMembers={pod.num_members} uri={pod.pod_picture_url} />) :
                     <View style={styles.centeredView}>
                         <Text style={styles.noPodsYetText}>Welcome, {username}!</Text>
                         <Text style={styles.noPodsYetTitle}>Click the + button to start a pod</Text>
@@ -272,10 +291,10 @@ const ByPod = (props) => {
                             </Text>
                             <View style={{flex: 1, alignItems: 'center', marginTop: 5}}>
                                 {/* if image selected, show image; also allow user to re-choose an image */}
-                                {selectedImage && selectedImage != null ? 
+                                {selectedImageUrl && selectedImageUrl != null ? 
                                     <View style={{ flexDirection: 'row'}}> 
                                         <Image
-                                            source={{ uri: selectedImage }}
+                                            source={{ uri: selectedImageUrl }}
                                             style={styles.thumbnail}
                                         />
                                         <TouchableOpacity onPress={openImagePickerAsync} activeOpacity={0.7}>

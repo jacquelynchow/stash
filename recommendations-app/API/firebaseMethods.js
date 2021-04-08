@@ -47,6 +47,7 @@ export function addPodToDB(pod) {
     .add({
       pod_name: pod.pod_name,
       pod_picture: pod.pod_picture,
+      pod_picture_url: pod.pod_picture_url,
       num_members: pod.num_members,
       num_recs: pod.num_recs,
       createdAt: firebase.firestore.FieldValue.serverTimestamp() // order pods to show up in order of creation
@@ -69,4 +70,41 @@ export async function getPods(podsRecieved) {
     });
 
     podsRecieved(podList); // callback function that occurs asyncronously 
+}
+
+// upload image to firebase storage folder called pod_images
+export async function uploadImageToStorage(uploadUri, imageName) {
+  const response = await fetch(uploadUri);
+  const blob = await response.blob();
+
+  var ref = firebase.storage().ref().child("pod_images/" + imageName);
+  return ref.put(blob);
+} 
+
+// retrieve url for image from firebase
+export function retrieveImageFromStorage(imageName, setSelectedImageUrl) {
+  let imageRef = firebase.storage().ref().child("pod_images/" + imageName);
+  imageRef.getDownloadURL()
+  .then((url) => { // on upload finish, set the selected image url to be the server hosted image url
+      setSelectedImageUrl(url);
+      console.log("URL set");
+      return url;
+  })
+  .catch((e) => console.log('getting downloadURL of image error => ', e));
+}
+
+// delete image from firebase (if not chosen as pod image)
+export function deleteImage(selectedImageName) {
+  if (selectedImageName != "") {
+      console.log("not the first time uploading image");
+      let imageRef = firebase.storage().ref().child("pod_images/" + selectedImageName);
+      console.log("prevImage: ", selectedImageName);
+      imageRef
+      .delete()
+      .then(() => {
+          console.log(`${selectedImageName} has been deleted successfully.`);
+      })
+      .catch((e) => console.log('error on image deletion => ', e));
+  }
+  return
 }

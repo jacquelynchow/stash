@@ -23,6 +23,7 @@ export default function PodPage() {
   const addNewRec = () => {
       // add group name of new pod to existing list
       // TODO: read group name in from form instead of hardcoding
+      //will show recs with the same PODID for USERID
       let newRec = { key: recs.length + 1, name: "New Test Rec ", type: "Media Type"}
       setRecs([...recs, newRec.name + newRec.key.toString()]);
       toggleModal();

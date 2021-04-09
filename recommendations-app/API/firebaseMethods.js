@@ -2,6 +2,7 @@ import * as firebase from "firebase";
 import "firebase/firestore";
 import {Alert} from "react-native";
 
+// --------- LOG IN / SIGN UP RELATED --------------------------
 // register new user w/ email & password
 export async function registration(email, password, username) {
   try {
@@ -26,6 +27,7 @@ export async function registration(email, password, username) {
   }
 }
 
+// sign in w/ email & password
 export async function signIn(email, password) {
   try {
    await firebase
@@ -40,6 +42,7 @@ export async function signIn(email, password) {
   }
 }
 
+// log out of account
 export async function loggingOut() {
   try {
     await firebase.auth().signOut();
@@ -48,6 +51,7 @@ export async function loggingOut() {
   }
 }
 
+// --------- CREATING & VIEWING PODS RELATED --------------------------
 // add new pod object and properties to the db
 export function addPodToDB(pod) {
   const db = firebase.firestore();
@@ -60,23 +64,8 @@ export function addPodToDB(pod) {
       num_recs: pod.num_recs,
       createdAt: firebase.firestore.FieldValue.serverTimestamp() // order pods to show up in order of creation
     })
-    .catch((error) => console.log(error)); // log any errors 
+    .catch((error) => console.log(error)); // log any errors
 }
-
-//add new rec object and properties to the db
-{/*export function addRecToDB(rec) {
-  const db = firebase.firestore();
-  db.collection("recs")
-    .add({
-      rec_name: rec.rec_name,
-      //include pod name
-      rec_type: rec.rec_type,
-      rec_author: rec.rec_author,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp() // order recs to show up in order of creation
-    })
-    .catch((error) => console.log(error)); // log any errors 
-}
-*/}
 
 // make a list of pods from the current state of the database and calls callback function to run asyncronously
 export async function getPods(podsRecieved) {
@@ -92,7 +81,7 @@ export async function getPods(podsRecieved) {
       podList.push(doc.data());
     });
 
-    podsRecieved(podList); // callback function that occurs asyncronously 
+    podsRecieved(podList); // callback function that occurs asyncronously
 }
 
 // upload image to firebase storage folder called pod_images
@@ -102,7 +91,7 @@ export async function uploadImageToStorage(uploadUri, imageName) {
 
   var ref = firebase.storage().ref().child("pod_images/" + imageName);
   return ref.put(blob);
-} 
+}
 
 // retrieve url for image from firebase
 export function retrieveImageFromStorage(imageName, setSelectedImageUrl) {
@@ -131,3 +120,20 @@ export function deleteImage(selectedImageName) {
   }
   return
 }
+
+
+// --------- CREATING & VIEWING RECS RELATED --------------------------
+//add new rec object and properties to the db
+{/*export function addRecToDB(rec) {
+  const db = firebase.firestore();
+  db.collection("recs")
+    .add({
+      rec_name: rec.rec_name,
+      //include pod name
+      rec_type: rec.rec_type,
+      rec_author: rec.rec_author,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp() // order recs to show up in order of creation
+    })
+    .catch((error) => console.log(error)); // log any errors
+}
+*/}

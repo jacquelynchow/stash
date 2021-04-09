@@ -18,7 +18,11 @@ export async function registration(email, password, username) {
         username: username,
       });
   } catch (err) {
-    Alert.alert("There is something wrong!!!!", err.message);
+    if (err.message === '') {
+      Alert.alert("Signup failed!", "Please try again.");
+    } else {
+      Alert.alert("Signup failed!", err.message);
+    }
   }
 }
 

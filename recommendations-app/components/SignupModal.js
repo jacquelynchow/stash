@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, Pressable, SafeAreaView, Dimensions, Image, Button, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, TextInput, Pressable, SafeAreaView, Dimensions, Image, Button, TouchableOpacity, Alert } from 'react-native';
 import Modal from 'react-native-modal';
 import closePopUpButton from '../assets/closePopUpButton.png';
 import { registration, updateUsername } from '../API/firebaseMethods';
 import { FirebaseRecaptchaVerifierModal, FirebaseRecaptchaBanner } from 'expo-firebase-recaptcha';
 import * as firebase from 'firebase';
 import { useNavigation } from '@react-navigation/native';
+import { FontAwesome } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -16,6 +18,7 @@ const SignupModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
         setModalVisible(!isModalVisible);
         // reset selected modal
         setModalSelected("");
+        resetFields();
     };
 
     const [username, setUsername] = useState("");
@@ -24,6 +27,45 @@ const SignupModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
     const [email, setEmail] = useState("");
 
     const navigation = useNavigation();
+
+    // check on submit signup that all fields are filled in & filled in correctly
+    const checkAllFieldsOnSubmit = () => {
+      let allValid = true;
+      // check if username empty or only has whitespace
+      if (username === "" || !username.replace(/\s/g, '').length) {
+        setErrors({usernameError: "Username is required"});
+        allValid = false;
+      }
+      // check if email empty or only has whitespace
+      if (email === "" || !email.replace(/\s/g, '').length) {
+          setErrors({emailError: "Email is required"});
+          allValid = false;
+      }
+      // check if password is empty
+      if (pw === "") {
+          setErrors({pwError: "Password is required"});
+          allValid = false;
+      }
+      // check if phone # is empty
+      if (phoneNum === "") {
+        setErrors({phoneError: "Phone number is required"});
+        allValid = false;
+      }
+      // check if confirmation code is empty
+      else if (verificationCode === "") {
+        setErrors({codeError: "Verification code is required"});
+        allValid = false;
+      }
+      // check if user submitted verification code
+      else if (!codeVerified) {
+        setErrors({codeError: "Pleae submit verification code"});
+        allValid = false;
+      }
+      // if everything checks out, proceed to login
+      if (allValid) {
+          addNewUser();
+      }
+  };
 
     // when user clicks signup-------------------------------------------------------
     const addNewUser = () => {
@@ -34,15 +76,23 @@ const SignupModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
         username
       );
 
-      // reset input fields to blank
+      resetFields();
+      toggleModal();
+
+      // go to loading page to redirect
+      navigation.navigate('Loading');
+    };
+
+    // reset all fields on submit or closing modal
+    const resetFields = () => {
       setUsername("");
       setPw("");
       setPhoneNum("");
       setEmail("");
-
-      toggleModal();
-      // go to loading page to redirect
-      navigation.navigate('Loading');
+      setErrors({emailError: '', pwError: '', usernameError: '', phoneError: '', codeError: ''});
+      setInputActive({usernameActive: false, pwActive: false, emailActive: false, phoneActive: false, codeActive: false});
+      setCodeVisible(false);
+      setVerificationCode("");
     };
 
     // init variables for firebase phone authentication-------------------------------
@@ -50,15 +100,20 @@ const SignupModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
     const [verificationId, setVerificationId] = React.useState();
     const [verificationCode, setVerificationCode] = React.useState();
     const firebaseConfig = firebase.apps.length ? firebase.app().options : undefined;
-    const [message, showMessage] = React.useState(
-      !firebaseConfig || Platform.OS === 'web'
-        ? {
-            text:
-              'To get started, provide a valid firebase config in App.js and open this snack on an iOS or Android device.',
-          }
-        : undefined
-    );
     const attemptInvisibleVerification = false;
+
+    // init error state for various form fields
+    const [errors, setErrors] = useState({
+      emailError: '', pwError: '', usernameError: '', phoneError: '', codeError: ''
+    });
+
+    // for styling text input when user clicks in
+    const [inputActive, setInputActive] = useState({
+      usernameActive: false, pwActive: false, emailActive: false, phoneActive: false, codeActive: false
+    });
+
+    const [codeVisible, setCodeVisible] = useState(false);
+    const [codeVerified, setCodeVerified] = useState(false);
 
     return (
       <Modal visible={isModalVisible}>
@@ -71,51 +126,72 @@ const SignupModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
             <Text style={styles.modalTitle}>Signup</Text>
             <Text style={styles.modalText}>Create an account to start joining pods and share recommendations with your friends!</Text>
             
+            <Text style={styles.userDetailsText}>
+                  Username
+            </Text>
             <View style={{ flexDirection: 'row'}}>
-              <Text style={styles.userDetailsText}>
-                  Username:
-              </Text>
+              <FontAwesome name="user-circle-o" size={26} color="white" style={{ marginTop: 8 }} />
               <SafeAreaView>
                   <TextInput 
                   onChangeText={username => setUsername(username)}
-                  style={styles.userInput}
+                  style={ inputActive.usernameActive ? styles.userInputActive : styles.userInput }
                   defaultValue={username} 
-                  placeholder={"Enter a username"}
+                  placeholder={"Enter your username"}
                   value={username}
+                  onFocus={() => setInputActive({ usernameActive: true })}
+                  onBlur={() => setInputActive({ usernameActive: false })}
                   />
               </SafeAreaView>
             </View>
+            {/* error message - username */}
+            <View style={{ display: 'flex', justifyContent: 'flex-start' }}>
+              <Text style={styles.errorMessage}>{errors.usernameError}</Text>
+            </View>
 
-            <View style={{ flexDirection: 'row'}}>
-              <Text style={styles.userDetailsText}>
-                  Password:
+            <Text style={styles.userDetailsText}>
+                  Password
               </Text>
+            <View style={{ flexDirection: 'row'}}>
+            <FontAwesome name="lock" size={30} color="white" style={{ marginTop: 8 }} />
               <SafeAreaView>
                   <TextInput 
                       onChangeText={pw => setPw(pw)}
-                      style={styles.userInput}
+                      style={ inputActive.pwActive ? styles.userInputActive : styles.userInput }
                       defaultValue={pw} 
-                      placeholder={"Enter a password"}
+                      placeholder={"Enter your password"}
                       secureTextEntry={true}
+                      onFocus={() => setInputActive({ pwActive: true })}
+                      onBlur={() => setInputActive({ pwActive: false })}
                   />
               </SafeAreaView>
             </View>
+            {/* error message - password */}
+            <View style={{ display: 'flex', justifyContent: 'flex-start' }}>
+              <Text style={styles.errorMessage}>{errors.pwError}</Text>
+            </View>
 
+            <Text style={styles.userDetailsText}>
+                  Email Address
+            </Text>
             <View style={{ flexDirection: 'row'}}>
-              <Text style={styles.userDetailsText}>
-                  Email:
-              </Text>
+            <MaterialCommunityIcons name="email-outline" size={26} color="white" style={{ marginTop: 8 }} />
               <SafeAreaView>
                   <TextInput 
                   onChangeText={email => setEmail(email)}
-                  style={styles.userInput}
+                  style={ inputActive.emailActive ? styles.userInputActive : styles.userInput }
                   defaultValue={email} 
                   placeholder={"Enter your email"}
                   value={email}
                   keyboardType="email-address"
                   autoCapitalize="none"
+                  onFocus={() => setInputActive({ emailActive: true })}
+                  onBlur={() => setInputActive({ emailActive: false })}
                   />
               </SafeAreaView>
+            </View>
+            {/* error message - email */}
+            <View style={{ display: 'flex', justifyContent: 'flex-start' }}>
+              <Text style={styles.errorMessage}>{errors.emailError}</Text>
             </View>
 
             {/* recaptcha modal (will pop up when user clicks 'send verification code') */}
@@ -125,25 +201,74 @@ const SignupModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
             attemptInvisibleVerification={attemptInvisibleVerification}
             />
 
-            <View style={{ flexDirection: 'row'}}>
-              <Text style={styles.userDetailsText}>
-                  Phone #:
-              </Text>
+            {/* conditional rendering of phone verification fields */}
+            {/* show input to enter 6 digit code and confirmation button after the code has been sent */}
+            {codeVisible ? 
+            [<Text style={styles.userDetailsText}>
+                6-Digit Code
+            </Text>] : 
+            [<Text style={styles.userDetailsText}>
+                Phone Number
+            </Text>]}
+
+            {codeVisible ? 
+            [<View style={{ flexDirection: 'row'}}>
+              <MaterialCommunityIcons name="cellphone-iphone" size={28} color="white" style={{ marginTop: 8 }} />
               <SafeAreaView>
                   <TextInput 
-                      onChangeText={phoneNum => setPhoneNum(phoneNum)}
-                      style={styles.userInput}
-                      defaultValue={phoneNum} 
-                      placeholder={"+1 999 999 9999"}
-                      autoCompleteType="tel"
-                      keyboardType="phone-pad"
-                      textContentType="telephoneNumber"
+                      onChangeText={verificationCode => setVerificationCode(verificationCode)}
+                      style={ inputActive.codeActive ? styles.userInputActive : styles.userInput }
+                      placeholder={"123456"}
+                      editable={!!verificationId}
+                      onFocus={() => setInputActive({ codeActive: true })}
+                      onBlur={() => setInputActive({ codeActive: false })}
+                      keyboardType='number-pad'
+                      returnKeyType='done'
+                      defaultValue={verificationCode}
                   />
               </SafeAreaView>
+            </View>] : 
+            [<View style={{ flexDirection: 'row'}}>
+            <FontAwesome name="phone" size={28} color="white" style={{ marginTop: 8 }} />
+            <SafeAreaView>
+                <TextInput 
+                    onChangeText={phoneNum => setPhoneNum(phoneNum)}
+                    style={ inputActive.phoneActive ? styles.userInputActive : styles.userInput }
+                    defaultValue={phoneNum} 
+                    placeholder={"+1 999 999 9999"}
+                    autoCompleteType="tel"
+                    keyboardType="phone-pad"
+                    returnKeyType='done'
+                    textContentType="telephoneNumber"
+                    onFocus={() => setInputActive({ phoneActive: true })}
+                    onBlur={() => setInputActive({ phoneActive: false })}
+                />
+            </SafeAreaView>
+            </View>]}
+
+            <View style={{ display: 'flex', justifyContent: 'flex-start' }}>
+              <Text style={styles.errorMessage}>{errors.codeError}</Text>
+              <Text style={styles.errorMessage}>{errors.phoneError}</Text>
             </View>
 
-            {/* send verification code button ----------------------------------------------- */}
-            <Pressable style={styles.verificationButton} disabled={!phoneNum} onPress={async () => {
+            {/* confirm verification code button ----------------------------------------------- */}
+            {codeVisible ? 
+            [<TouchableOpacity style={styles.verificationButton} disabled={!verificationId} onPress={async () => {
+              try {
+                const credential = firebase.auth.PhoneAuthProvider.credential(
+                  verificationId,
+                  verificationCode
+                );
+                // await firebase.auth().signInWithCredential(credential);
+                setCodeVerified(true);
+                Alert.alert("Success!", "Phone authentication successful.")
+              } catch (err) {
+                Alert.alert("Authentication failed!", err.message)
+              }
+            }}>
+              <Text style={styles.verificationText}>Confirm Verification Code</Text>
+            </TouchableOpacity>] : 
+            [<TouchableOpacity style={styles.verificationButton} disabled={!phoneNum} onPress={async () => {
               try {
                 const phoneProvider = new firebase.auth.PhoneAuthProvider();
                 const verificationId = await phoneProvider.verifyPhoneNumber(
@@ -151,75 +276,22 @@ const SignupModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
                   recaptchaVerifier.current
                 );
                 setVerificationId(verificationId);
-                showMessage({
-                  text: 'Verification code has been sent to your phone.',
-                });
+                Alert.alert("Success!", "Verification code has been sent to your phone.")
+                setCodeVisible(true);
+                setErrors({codeError: ''});
               } catch (err) {
-                showMessage({ text: `Error: ${err.message}`, color: 'red' });
+                Alert.alert("Authentication failed!", err.message)
               }
             }}>
               <Text style={styles.verificationText}>Send Verification Code</Text>
-            </Pressable>
-
-            <View style={{ flexDirection: 'row'}}>
-              <Text style={styles.userDetailsText}>
-                6-Digit Code:
-              </Text>
-              <SafeAreaView>
-                  <TextInput 
-                      onChangeText={setVerificationCode}
-                      style={styles.userInput}
-                      placeholder={"123456"}
-                      editable={!!verificationId}
-                  />
-              </SafeAreaView>
-            </View>
-
-            {/* confirm verification code button ----------------------------------------------- */}
-            <Pressable style={styles.verificationButton} disabled={!verificationId} onPress={async () => {
-              try {
-                const credential = firebase.auth.PhoneAuthProvider.credential(
-                  verificationId,
-                  verificationCode
-                );
-                // await firebase.auth().signInWithCredential(credential);
-                showMessage({ text: 'Phone authentication successful 👍' });
-                
-              } catch (err) {
-                showMessage({ text: `Error: ${err.message}`, color: 'red' });
-              }
-            }}>
-              <Text style={styles.verificationText}>Confirm Verification Code</Text>
-            </Pressable>
-      
-            {/* alert/error messages ----------------------------------------------- */}
-            {message ? (
-              <TouchableOpacity
-                style={[
-                  StyleSheet.absoluteFill,
-                  { backgroundColor: 0xffffffee, justifyContent: 'center' },
-                ]}
-                onPress={() => showMessage(undefined)}>
-                <Text
-                  style={{
-                    color: message.color || '#6f1d1b',
-                    fontSize: 17,
-                    textAlign: 'center',
-                    margin: 20,
-                  }}>
-                  {message.text}
-                </Text>
-              </TouchableOpacity>
-            ) : (
-              undefined
-            )}
+            </TouchableOpacity>]}
 
         {attemptInvisibleVerification && <FirebaseRecaptchaBanner />}
 
         {/* Button to submit signup */}
-        <Pressable style={styles.signUpButton} onPress={addNewUser}>
+        <TouchableOpacity style={styles.signUpButton} onPress={checkAllFieldsOnSubmit}>
             <Text style={styles.signUpText}>Signup</Text>
-        </Pressable>
+        </TouchableOpacity>
       </View>
     </View>
   </Modal>
@@ -283,23 +355,33 @@ const styles = StyleSheet.create({
       elevation: 2,
     },
     userDetailsText: {
-      fontSize: 18,
+      fontSize: 15,
       color: 'white',
-      marginTop: 17,
-      flex: 1,
-      justifyContent: "flex-start",
-      alignItems: "flex-start",
+      marginRight: 'auto',
+      marginLeft: (windowWidth - windowWidth/1.75)/4
     },
     userInput: {
-      height: 30,
-      width: windowWidth/3,
-      fontSize: 16,
+      height: 35,
+      width: windowWidth/2,
+      fontSize: 17,
       backgroundColor: 'white',
       borderRadius: 10,
       padding: 5,
       paddingHorizontal: 10,
-      marginLeft: 10,
-      marginTop: 15,
+      marginLeft: 12,
+      marginTop: 5,
+    },
+    userInputActive: {
+      height: 35,
+      width: windowWidth/2,
+      fontSize: 17,
+      backgroundColor: 'white',
+      borderRadius: 10,
+      padding: 5,
+      paddingHorizontal: 10,
+      marginLeft: 12,
+      marginTop: 5,
+      backgroundColor: '#FEFEE3'
     },
     modalText: {
       marginTop: 10,
@@ -315,18 +397,24 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   verificationButton: {
-    backgroundColor: "#ffc9b9",
-    borderRadius: 20,
-    marginTop: 20,
+    backgroundColor: '#FEFEE3',
+    borderRadius: 10,
+    marginBottom: 10,
     paddingVertical: 10,
     paddingHorizontal: 20,
-    width: windowWidth/2.1,
+    marginTop: 5,
+    width: windowWidth/2,
     // ios
     shadowOffset: {width: 10, height: 10},
     shadowOpacity: 0.1,
     shadowRadius: 10,
     // android
     elevation: 2,
+  },
+  errorMessage: {
+    color: '#FEFEE3',
+    paddingTop: 3,
+    fontSize: 12
   },
 });
 

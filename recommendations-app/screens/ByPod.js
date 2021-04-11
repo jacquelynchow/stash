@@ -10,7 +10,7 @@ import Modal from 'react-native-modal';
 import { SearchBar } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
 import * as firebase from 'firebase';
-import { addPodToDB, getPods, uploadImageToStorage, retrieveImageFromStorage, deleteImage } from '../API/firebaseMethods';
+import { addPodToDB, getPods, uploadImageToStorage, retrieveImageFromStorage, deleteImage, addRecToDB } from '../API/firebaseMethods';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;

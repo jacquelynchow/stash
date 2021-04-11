@@ -124,16 +124,32 @@ export function deleteImage(selectedImageName) {
 
 // --------- CREATING & VIEWING RECS RELATED --------------------------
 //add new rec object and properties to the db
-{/*export function addRecToDB(rec) {
+{/*
+export function addRecToDB(pod) {
   const db = firebase.firestore();
-  db.collection("recs")
+  db.collection("pods")
+  .doc(pod) 
+  .collection("recs") //want to add rec to pod?
     .add({
       rec_name: rec.rec_name,
       //include pod name
       rec_type: rec.rec_type,
       rec_author: rec.rec_author,
+      rec_year: rec.rec_year,
+      rec_comments: rec.rec_comments,
       createdAt: firebase.firestore.FieldValue.serverTimestamp() // order recs to show up in order of creation
     })
     .catch((error) => console.log(error)); // log any errors
+}
+
+//makes list of recs for pod
+export async function getPodRecs(pod){
+  let recList = [];
+
+}
+
+//makes list of recs for media
+export async function getMediaRecs(){
+
 }
 */}

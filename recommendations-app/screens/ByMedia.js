@@ -8,6 +8,7 @@ import tiktokIcon from '../assets/type-icons/tiktok.png';
 import articleIcon from '../assets/type-icons/article.png';
 import youtubeIcon from '../assets/type-icons/youtube.png';
 
+
 const ByMedia = () => {
     // TODO: If No Recs, show message screen, else show recs by type
     // TODO: For loop and showing Tiles with real data

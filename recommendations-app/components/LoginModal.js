@@ -8,6 +8,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import * as firebase from "firebase";
 import { FontAwesome } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { FirebaseRecaptchaVerifierModal, FirebaseRecaptchaBanner } from 'expo-firebase-recaptcha';
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -24,78 +25,81 @@ const LoginModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
         resetFields();
     };
 
-    const [email, setEmail] = useState("");
-    const [pw, setPw] = useState("");
+    const [phoneNum, setPhoneNum] = useState("");
 
     // init error state for various form fields
     const [errors, setErrors] = useState({
-      emailError: '', pwError: ''
+      phoneError: '', codeError: ''
     });
 
-    // check on submit login that all fields are filled in & filled in correctly
-    const checkAllFieldsOnSubmit = () => {
-        let allValid = true;
-        // check if email empty or only has whitespace
-        if (email === "" || !email.replace(/\s/g, '').length) {
-            setErrors({emailError: "Email is required"});
-            allValid = false;
-        }
-        // check if password is empty
-        if (pw === "") {
-            setErrors({pwError: "Password is required"});
-            allValid = false;
-        }
-        // if everything checks out, proceed to login
-        if (allValid) {
-            authenticateUser();
-        }
+    const checkFieldsOnSendCode = () => {
+      if (phoneNum === "") {
+        setErrors({phoneError: "Phone number is required"});
+      } else {
+        sendCode();
+      }
     };
 
-    // when user presses login
-    const authenticateUser = () => {
-      // call firebase signin function
-      signIn(email, pw);
+    const checkFieldsOnLogin = () => {
+      // check if confirmation code is empty
+      if (verificationCode === "") {
+        setErrors({codeError: "Verification code is required"});
+      } else {
+        completeLogin();
+      }
+    }
 
-      resetFields();
-      toggleModal();
-      
-      // go to loading page to redirect
-      navigation.navigate('Loading');
-    };
+    async function sendCode() {
+      try {
+        const phoneProvider = new firebase.auth.PhoneAuthProvider();
+        const verificationId = await phoneProvider.verifyPhoneNumber(
+          phoneNum,
+          recaptchaVerifier.current
+        );
+        setVerificationId(verificationId);
+        Alert.alert("Success!", "Verification code has been sent to your phone.")
+        setCodeVisible(true);
+        setErrors({codeError: ''});
+      } catch (err) {
+        Alert.alert("Authentication failed!", err.message)
+      }
+    }
+
+    async function completeLogin() {
+      try {
+        const credential = firebase.auth.PhoneAuthProvider.credential(
+          verificationId,
+          verificationCode
+        );
+        await firebase.auth().signInWithCredential(credential);
+        toggleModal();
+      } catch (err) {
+        Alert.alert("Authentication failed!", err.message)
+      }
+    }
 
     // reset all fields on submit or closing modal
     const resetFields = () => {
-      setEmail("");
-      setPw("");
-      setErrors({emailError: '', pwError: ''});
-      setEmailActive(false);
-      setPwActive(false);
+      setPhoneNum("");
+      setErrors({phoneError: '', codeError: ''});
+      setInputActive({phoneActive: false, codeActive: false});
+      setCodeVisible(false);
+      setVerificationCode("");
     };
 
     // for styling text input when user clicks in
-    const [emailActive, setEmailActive] = useState(false);
-    const [pwActive, setPwActive] = useState(false);
+    const [inputActive, setInputActive] = useState({
+      phoneActive: false, codeActive: false
+    });
 
-    // reset password button
-    const resetPassword = () => {
-      const auth = firebase.auth();
+    // init variables for firebase phone authentication-------------------------------
+    const recaptchaVerifier = React.useRef(null);
+    const [verificationId, setVerificationId] = React.useState();
+    const [verificationCode, setVerificationCode] = React.useState();
+    const firebaseConfig = firebase.apps.length ? firebase.app().options : undefined;
+    const attemptInvisibleVerification = false;
 
-      // get user's email from form 
-      if (email === "" || !email.replace(/\s/g, '').length) {
-        setErrors({emailError: "Email is required"});
-      } else {
-        toggleModal();
-        auth.sendPasswordResetEmail(email).then(function() {
-          Alert.alert("Password reset!", "Please check your email.");
-        }).catch(function(error) {
-          if (error.message === '') {
-            Alert.alert("Password reset failed!", 'Please enter a valid email address and try again.');
-          } else {
-            Alert.alert("Password reset failed!", error.message);
-          }
-        });
-      }
-    }
+    const [codeVisible, setCodeVisible] = useState(false);
 
     return (
       <Modal visible={isModalVisible}>
@@ -108,62 +112,73 @@ const LoginModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
                 <Text style={styles.modalTitle}>Login</Text>
                 <Text style={styles.modalText}>Login to view your pods and start sending recommendations!</Text>
                 
-                {/* user input: email, password */}
-                <Text style={styles.userDetailsText}>
-                      Email Address
-                </Text>
-                <View style={{ flexDirection: 'row'}}>
-                  <MaterialCommunityIcons name="email-outline" size={28} color="white" style={{ marginTop: 8 }} />
+                {/* recaptcha modal (will pop up when user clicks 'send verification code') */}
+                <FirebaseRecaptchaVerifierModal
+                ref={recaptchaVerifier}
+                firebaseConfig={firebaseConfig}
+                attemptInvisibleVerification={attemptInvisibleVerification}
+                />
+
+                {/* conditional rendering of phone verification fields */}
+                {/* show input to enter 6 digit code and confirmation button after the code has been sent */}
+                {codeVisible ? 
+                [<Text style={styles.userDetailsText}>
+                    6-Digit Code
+                </Text>] : 
+                [<Text style={styles.userDetailsText}>
+                    Phone Number
+                </Text>]}
+
+                {codeVisible ? 
+                [<View style={{ flexDirection: 'row'}}>
+                  <MaterialCommunityIcons name="cellphone-iphone" size={28} color="white" style={{ marginTop: 8 }} />
                   <SafeAreaView>
                       <TextInput 
-                      onChangeText={email => setEmail(email)}
-                      style={ emailActive ? styles.userInputActive : styles.userInput }
-                      defaultValue={email} 
-                      placeholder={"Enter your email"}
-                      value={email}
-                      keyboardType="email-address"
-                      autoCapitalize="none"
-                      onFocus={() => setEmailActive(true)}
-                      onBlur={() => setEmailActive(false)}
+                          onChangeText={verificationCode => setVerificationCode(verificationCode)}
+                          style={ inputActive.codeActive ? styles.userInputActive : styles.userInput }
+                          placeholder={"123456"}
+                          editable={!!verificationId}
+                          onFocus={() => setInputActive({ codeActive: true })}
+                          onBlur={() => setInputActive({ codeActive: false })}
+                          keyboardType='number-pad'
+                          returnKeyType='done'
+                          defaultValue={verificationCode}
                       />
                   </SafeAreaView>
-                </View>
-                {/* error message - email */}
+                </View>] : 
+                [<View style={{ flexDirection: 'row'}}>
+                <FontAwesome name="phone" size={28} color="white" style={{ marginTop: 8 }} />
+                <SafeAreaView>
+                    <TextInput 
+                        onChangeText={phoneNum => setPhoneNum(phoneNum)}
+                        style={ inputActive.phoneActive ? styles.userInputActive : styles.userInput }
+                        defaultValue={phoneNum} 
+                        placeholder={"+1 999 999 9999"}
+                        autoCompleteType="tel"
+                        keyboardType="phone-pad"
+                        returnKeyType='done'
+                        textContentType="telephoneNumber"
+                        onFocus={() => setInputActive({ phoneActive: true })}
+                        onBlur={() => setInputActive({ phoneActive: false })}
+                    />
+                </SafeAreaView>
+                </View>]}
+
                 <View style={{ display: 'flex', justifyContent: 'flex-start' }}>
-                  <Text style={styles.errorMessage}>{errors.emailError}</Text>
+                  <Text style={styles.errorMessage}>{errors.codeError}</Text>
+                  <Text style={styles.errorMessage}>{errors.phoneError}</Text>
                 </View>
 
-                <Text style={styles.userDetailsText}>
-                    Password
-                </Text>
-                <View style={{ flexDirection: 'row'}}>
-                    <FontAwesome name="lock" size={30} color="white" style={{ marginTop: 8 }} />
-                    <SafeAreaView>
-                        <TextInput 
-                            onChangeText={pw => setPw(pw)}
-                            style={ pwActive ? styles.userInputActive : styles.userInput }
-                            defaultValue={pw} 
-                            placeholder={"Enter your password"}
-                            secureTextEntry={true}
-                            onFocus={() => setPwActive(true)}
-                            onBlur={() => setPwActive(false)}
-                        />
-                    </SafeAreaView>
-                </View>
-                {/* error message - password */}
-                <View style={{ display: 'flex', justifyContent: 'flex-start' }}>
-                  <Text style={styles.errorMessage}>{errors.pwError}</Text>
-                </View>
+                {/* confirm verification code button ----------------------------------------------- */}
+                {codeVisible ? 
+                [<TouchableOpacity style={styles.signUpButton} onPress={checkFieldsOnLogin}>
+                  <Text style={styles.signUpText}>Login</Text>
+                </TouchableOpacity>] : 
+                [<TouchableOpacity style={styles.verificationButton} onPress={checkFieldsOnSendCode}>
+                  <Text style={styles.verificationText}>Send Verification Code</Text>
+                </TouchableOpacity>]}
 
-                {/* Button to submit signup */}
-                <TouchableOpacity style={styles.signUpButton} onPress={checkAllFieldsOnSubmit}>
-                    <Text style={styles.signUpText}>Login</Text>
-                </TouchableOpacity>
-
-                {/* forgot your password button */}
-                <TouchableOpacity style={styles.verificationButton} onPress={resetPassword}>
-                  <Text style={styles.verificationText}>Forgot your password?</Text>
-                </TouchableOpacity>
+            {attemptInvisibleVerification && <FirebaseRecaptchaBanner />}
 
                 </View>
             </View>

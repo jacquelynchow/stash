@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { StyleSheet, ScrollView, View, TouchableOpacity, Image, 
     Pressable, Text, SafeAreaView, TextInput, 
-    Dimensions, FlatList, RefreshControl } from 'react-native';
+    Dimensions, FlatList, RefreshControl, Alert } from 'react-native';
 import PodTile from '../components/PodTile';
 import addPodButton from '../assets/addPodButton.png';
 import closePopUpButton from '../assets/closePopUpButton.png';
@@ -18,27 +18,27 @@ const defaultImageUrl = "https://www.jaipuriaschoolpatna.in/wp-content/uploads/2
 
 const ByPod = (props) => {
 
-    // firebase - get logged in user's id
-    let currentUserUID = firebase.auth().currentUser.uid;
+    let [currentUserUID, setCurrentUser] = useState('');
     const [username, setUsername] = useState('');
     
+    console.log(props.userId);
+
     useEffect(() => {
-        async function getUserInfo(){
-            let doc = await firebase
-            .firestore()
-            .collection('users')
-            .doc(currentUserUID)
-            .get();
-            
-            if (!doc.exists){
-                alert('No user data found!')
+        // get username of current user from database
+        const db = firebase.firestore();
+        var docRef = db.collection("users").doc(props.userId);
+
+        docRef.get().then((doc) => {
+            if (doc.exists) {
+                console.log("Username retrieved!");
+                setUsername(doc.data().username);
             } else {
-                let dataObj = doc.data();
-                // get user's username to display on page
-                setUsername(dataObj.username)
+                // doc.data() will be undefined in this case
+                console.log("No such document!");
             }
-        }
-        getUserInfo();
+        }).catch((error) => {
+            console.log("Error getting document:", error);
+        });    
     })
 
     // call firebase api function getPods on onPodsReceived function to render pods from db

@@ -22,75 +22,74 @@ const SignupModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
     };
 
     const [username, setUsername] = useState("");
-    const [pw, setPw] = useState("");
     const [phoneNum, setPhoneNum] = useState("");
-    const [email, setEmail] = useState("");
 
     const navigation = useNavigation();
 
-    // check on submit signup that all fields are filled in & filled in correctly
-    const checkAllFieldsOnSubmit = () => {
+    const checkFieldsOnSendCode = () => {
       let allValid = true;
       // check if username empty or only has whitespace
       if (username === "" || !username.replace(/\s/g, '').length) {
         setErrors({usernameError: "Username is required"});
         allValid = false;
       }
-      // check if email empty or only has whitespace
-      if (email === "" || !email.replace(/\s/g, '').length) {
-          setErrors({emailError: "Email is required"});
-          allValid = false;
-      }
-      // check if password is empty
-      if (pw === "") {
-          setErrors({pwError: "Password is required"});
-          allValid = false;
-      }
-      // check if phone # is empty
+
       if (phoneNum === "") {
         setErrors({phoneError: "Phone number is required"});
         allValid = false;
       }
-      // check if confirmation code is empty
-      else if (verificationCode === "") {
-        setErrors({codeError: "Verification code is required"});
-        allValid = false;
-      }
-      // check if user submitted verification code
-      else if (!codeVerified) {
-        setErrors({codeError: "Pleae submit verification code"});
-        allValid = false;
-      }
+    
       // if everything checks out, proceed to login
       if (allValid) {
-          addNewUser();
+          sendCode();
       }
-  };
-
-    // when user clicks signup-------------------------------------------------------
-    const addNewUser = () => {
-      // call firebase registration function
-      registration(
-        email,
-        pw,
-        username
-      );
-
-      resetFields();
-      toggleModal();
-
-      // go to loading page to redirect
-      navigation.navigate('Loading');
     };
+
+    const checkFieldsOnSignup = () => {
+      // check if confirmation code is empty
+      if (verificationCode === "") {
+        setErrors({codeError: "Verification code is required"});
+      } else {
+        completeSignup();
+      }
+    }
+
+    async function sendCode() {
+      try {
+        const phoneProvider = new firebase.auth.PhoneAuthProvider();
+        const verificationId = await phoneProvider.verifyPhoneNumber(
+          phoneNum,
+          recaptchaVerifier.current
+        );
+        setVerificationId(verificationId);
+        Alert.alert("Success!", "Verification code has been sent to your phone.")
+        setCodeVisible(true);
+        setErrors({codeError: ''});
+      } catch (err) {
+        Alert.alert("Authentication failed!", err.message)
+      }
+    }
+
+    async function completeSignup() {
+      try {
+        const credential = firebase.auth.PhoneAuthProvider.credential(
+          verificationId,
+          verificationCode
+        );
+        await firebase.auth().signInWithCredential(credential);
+        registration(username, phoneNum);
+        toggleModal();
+      } catch (err) {
+        Alert.alert("Authentication failed!", err.message)
+      }
+    }
 
     // reset all fields on submit or closing modal
     const resetFields = () => {
       setUsername("");
-      setPw("");
       setPhoneNum("");
-      setEmail("");
-      setErrors({emailError: '', pwError: '', usernameError: '', phoneError: '', codeError: ''});
-      setInputActive({usernameActive: false, pwActive: false, emailActive: false, phoneActive: false, codeActive: false});
+      setErrors({usernameError: '', phoneError: '', codeError: ''});
+      setInputActive({usernameActive: false, phoneActive: false, codeActive: false});
       setCodeVisible(false);
       setVerificationCode("");
     };
@@ -104,16 +103,15 @@ const SignupModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
 
     // init error state for various form fields
     const [errors, setErrors] = useState({
-      emailError: '', pwError: '', usernameError: '', phoneError: '', codeError: ''
+      usernameError: '', phoneError: '', codeError: ''
     });
 
     // for styling text input when user clicks in
     const [inputActive, setInputActive] = useState({
-      usernameActive: false, pwActive: false, emailActive: false, phoneActive: false, codeActive: false
+      usernameActive: false, phoneActive: false, codeActive: false
     });
 
     const [codeVisible, setCodeVisible] = useState(false);
-    const [codeVerified, setCodeVerified] = useState(false);
 
     return (
       <Modal visible={isModalVisible}>
@@ -146,52 +144,6 @@ const SignupModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
             {/* error message - username */}
             <View style={{ display: 'flex', justifyContent: 'flex-start' }}>
               <Text style={styles.errorMessage}>{errors.usernameError}</Text>
-            </View>
-
-            <Text style={styles.userDetailsText}>
-                  Password
-              </Text>
-            <View style={{ flexDirection: 'row'}}>
-            <FontAwesome name="lock" size={30} color="white" style={{ marginTop: 8 }} />
-              <SafeAreaView>
-                  <TextInput 
-                      onChangeText={pw => setPw(pw)}
-                      style={ inputActive.pwActive ? styles.userInputActive : styles.userInput }
-                      defaultValue={pw} 
-                      placeholder={"Enter your password"}
-                      secureTextEntry={true}
-                      onFocus={() => setInputActive({ pwActive: true })}
-                      onBlur={() => setInputActive({ pwActive: false })}
-                  />
-              </SafeAreaView>
-            </View>
-            {/* error message - password */}
-            <View style={{ display: 'flex', justifyContent: 'flex-start' }}>
-              <Text style={styles.errorMessage}>{errors.pwError}</Text>
-            </View>
-
-            <Text style={styles.userDetailsText}>
-                  Email Address
-            </Text>
-            <View style={{ flexDirection: 'row'}}>
-            <MaterialCommunityIcons name="email-outline" size={26} color="white" style={{ marginTop: 8 }} />
-              <SafeAreaView>
-                  <TextInput 
-                  onChangeText={email => setEmail(email)}
-                  style={ inputActive.emailActive ? styles.userInputActive : styles.userInput }
-                  defaultValue={email} 
-                  placeholder={"Enter your email"}
-                  value={email}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  onFocus={() => setInputActive({ emailActive: true })}
-                  onBlur={() => setInputActive({ emailActive: false })}
-                  />
-              </SafeAreaView>
-            </View>
-            {/* error message - email */}
-            <View style={{ display: 'flex', justifyContent: 'flex-start' }}>
-              <Text style={styles.errorMessage}>{errors.emailError}</Text>
             </View>
 
             {/* recaptcha modal (will pop up when user clicks 'send verification code') */}
@@ -251,47 +203,17 @@ const SignupModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
               <Text style={styles.errorMessage}>{errors.phoneError}</Text>
             </View>
 
-            {/* confirm verification code button ----------------------------------------------- */}
+            {/* signup button ----------------------------------------------- */}
             {codeVisible ? 
-            [<TouchableOpacity style={styles.verificationButton} disabled={!verificationId} onPress={async () => {
-              try {
-                const credential = firebase.auth.PhoneAuthProvider.credential(
-                  verificationId,
-                  verificationCode
-                );
-                // await firebase.auth().signInWithCredential(credential);
-                setCodeVerified(true);
-                Alert.alert("Success!", "Phone authentication successful.")
-              } catch (err) {
-                Alert.alert("Authentication failed!", err.message)
-              }
-            }}>
-              <Text style={styles.verificationText}>Confirm Verification Code</Text>
+            [<TouchableOpacity style={styles.signUpButton} onPress={checkFieldsOnSignup}>
+              <Text style={styles.signUpText}>Signup</Text>
             </TouchableOpacity>] : 
-            [<TouchableOpacity style={styles.verificationButton} disabled={!phoneNum} onPress={async () => {
-              try {
-                const phoneProvider = new firebase.auth.PhoneAuthProvider();
-                const verificationId = await phoneProvider.verifyPhoneNumber(
-                  phoneNum,
-                  recaptchaVerifier.current
-                );
-                setVerificationId(verificationId);
-                Alert.alert("Success!", "Verification code has been sent to your phone.")
-                setCodeVisible(true);
-                setErrors({codeError: ''});
-              } catch (err) {
-                Alert.alert("Authentication failed!", err.message)
-              }
-            }}>
+            // send verification code button ------------------------------------------
+            [<TouchableOpacity style={styles.verificationButton} onPress={checkFieldsOnSendCode}>
               <Text style={styles.verificationText}>Send Verification Code</Text>
             </TouchableOpacity>]}
 
         {attemptInvisibleVerification && <FirebaseRecaptchaBanner />}
-
-        {/* Button to submit signup */}
-        <TouchableOpacity style={styles.signUpButton} onPress={checkAllFieldsOnSubmit}>
-            <Text style={styles.signUpText}>Signup</Text>
-        </TouchableOpacity>
       </View>
     </View>
   </Modal>

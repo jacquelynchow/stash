@@ -3,11 +3,9 @@ import "firebase/firestore";
 import {Alert} from "react-native";
 
 // --------- LOG IN / SIGN UP RELATED --------------------------
-// register new user w/ email & password
-export async function registration(email, password, username) {
+export async function registration(username, phone) {
   try {
-    // creates new user under "Authentication - Users"
-    await firebase.auth().createUserWithEmailAndPassword(email, password);
+    console.log("signing up");
     const currentUser = firebase.auth().currentUser;
 
     // adds user to users collection in database
@@ -15,10 +13,12 @@ export async function registration(email, password, username) {
     db.collection("users")
       .doc(currentUser.uid)
       .set({
-        email: currentUser.email,
         username: username,
+        phone: phone,
+        pods: {} 
       });
   } catch (err) {
+    console.log("sign up failed");
     if (err.message === '') {
       Alert.alert("Signup failed!", "Please try again.");
     } else {

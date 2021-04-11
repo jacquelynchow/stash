@@ -9,7 +9,8 @@ export default function LoadingScreen({ navigation }) {
       firebase.auth().onAuthStateChanged((user) => {
         if (user) {
           // logged in
-          navigation.navigate('Home');
+          console.log(user.uid);
+          navigation.navigate('Home', {userId: user.uid});
         } else {
           // signed out
           navigation.navigate('Login');

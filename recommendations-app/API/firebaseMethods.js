@@ -161,16 +161,39 @@ export async function getRecs(recsRecieved) {
 
 //makes list of recs for pod
 export async function getPodRecs(pod){
-  let recList = [];
+  let recsInPod = [];
   //TODO: search recs for that user and add to recList the recs
   // with a rec_pod that matches the pod.pod_name for given pod
+  let snapshot = await firebase.firestore() // return a query snapshot of current db
+    .collection("recs")
+    .orderBy("createdAt") // get recs in order of creation
+    .where('rec_pod','==',pod.pod_name)
+    .get()
 
+    // push each pod in db to podList
+    snapshot.forEach((doc) => {
+      podList.push(doc.data());
+    });
+
+    podsRecieved(podList); 
 }
 
 //makes list of recs for media
 export async function getMediaRecs(media_type){
-  let recList = [];
+  let recsInMedia = [];
   //TODO: search recs for that user and add to recList the recs
   //with a rec_type that matches the given media_type
+  let snapshot = await firebase.firestore() // return a query snapshot of current db
+    .collection("recs")
+    .orderBy("createdAt") // get recs in order of creation
+    .where('rec_type','==',media_type)
+    .get()
+
+    // push each rec in db to recList
+    snapshot.forEach((doc) => {
+      recsInMedia.push(doc.data());
+    });
+
+    //need to callback function
 }
 */}

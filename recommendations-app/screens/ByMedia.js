@@ -14,6 +14,8 @@ const ByMedia = () => {
     // TODO: For loop and showing Tiles with real data
         // search for recs with certain media_type for USERID & get # of recs for that media
         // able to show the # of ppl?
+    //TODO: need an "other" category since that is one of the options when sending a rec?
+    //      and maybe an "images" category too? or group these together and make 7 options on screen?
 
     return (
         <View style={{flex: 1}}>

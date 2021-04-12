@@ -78,13 +78,13 @@ export default function PodPage() {
                   <DropDownPicker
                     placeholder="Select a media type"
                     items={[
-                        {label: 'Song', value: 'Song'},
-                        {label: 'Book', value: 'Book'},
-                        {label: 'Movie', value: 'Movie'},
-                        {label: 'Image', value: 'Image'},
                         {label: 'Article', value: 'Article'},
-                        {label: 'YouTube', value: 'YouTube'},
+                        {label: 'Book', value: 'Book'},
+                        {label: 'Image', value: 'Image'},
+                        {label: 'Movie', value: 'Movie'},
+                        {label: 'Song', value: 'Song'},
                         {label: 'TikTok', value: 'TikTok'},
+                        {label: 'YouTube', value: 'YouTube'},
                         {label: 'Other', value: 'Other'},
                     ]}
                     defaultIndex={0}

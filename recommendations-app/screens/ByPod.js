@@ -18,28 +18,8 @@ const defaultImageUrl = "https://www.jaipuriaschoolpatna.in/wp-content/uploads/2
 
 const ByPod = (props) => {
 
-    let [currentUserUID, setCurrentUser] = useState('');
-    const [username, setUsername] = useState('');
-    
-    console.log(props.userId);
-
-    useEffect(() => {
-        // get username of current user from database
-        const db = firebase.firestore();
-        var docRef = db.collection("users").doc(props.userId);
-
-        docRef.get().then((doc) => {
-            if (doc.exists) {
-                console.log("Username retrieved!");
-                setUsername(doc.data().username);
-            } else {
-                // doc.data() will be undefined in this case
-                console.log("No such document!");
-            }
-        }).catch((error) => {
-            console.log("Error getting document:", error);
-        });    
-    })
+    const currentUserUID = props.userId;
+    const username = props.username;
 
     // call firebase api function getPods on onPodsReceived function to render pods from db
     useEffect(() => {

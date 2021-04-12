@@ -35,8 +35,11 @@ const LoginModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
     const checkFieldsOnSendCode = () => {
       if (phoneNum === "") {
         setErrors({phoneError: "Phone number is required"});
+      } else if (phoneNum[0] != "+" || phoneNum.length != 12) {
+        setErrors({phoneError: "Please use the format +1 999 999 9999"});
       } else {
         sendCode();
+        setErrors({phoneError: '', codeError: ''});
       }
     };
 
@@ -44,8 +47,10 @@ const LoginModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
       // check if confirmation code is empty
       if (verificationCode === "") {
         setErrors({codeError: "Verification code is required"});
+      } else if (verificationCode.length != 6) {
+        setErrors({codeError: "Please enter 6 digits"});
       } else {
-        completeLogin();
+        completeSignup();
       }
     }
 
@@ -291,8 +296,8 @@ const styles = StyleSheet.create({
     },
     verificationButton: {
       backgroundColor: '#FEFEE3',
-      borderRadius: 10,
-      marginTop: 50,
+      borderRadius: 20,
+      marginTop: 20,
       paddingVertical: 10,
       paddingHorizontal: 20,
       width: windowWidth/2,

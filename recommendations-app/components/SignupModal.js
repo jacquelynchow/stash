@@ -32,16 +32,34 @@ const SignupModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
       if (username === "" || !username.replace(/\s/g, '').length) {
         setErrors({usernameError: "Username is required"});
         allValid = false;
-      }
-
-      if (phoneNum === "") {
-        setErrors({phoneError: "Phone number is required"});
+      } else if (username.toLowerCase() !== username) {
+        setErrors({usernameError: "Username must be all lowercase"});
         allValid = false;
-      }
-    
-      // if everything checks out, proceed to login
-      if (allValid) {
-          sendCode();
+      } else {
+        // check if username already taken
+        const db = firebase.firestore();
+        db.collection("users").where("username", "==", username)
+        .get().then((querySnapshot) => {
+          // how many matching usernames
+          if (querySnapshot.size != 0) {
+            setErrors({usernameError: "This username is taken!"});
+          } else {
+            // valid username, check phone # 
+            if (phoneNum === "") {
+              setErrors({phoneError: "Phone number is required"});
+              allValid = false;
+            } else if (phoneNum[0] != "+" || phoneNum.length != 12) {
+              setErrors({phoneError: "Please use the format +1 999 999 9999"});
+              allValid = false;
+            }
+          
+            // if everything checks out, proceed to login
+            if (allValid) {
+                sendCode();
+                setErrors({usernameError: '', phoneError: '', codeError: ''});
+            }
+          }
+        });
       }
     };
 
@@ -49,6 +67,8 @@ const SignupModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
       // check if confirmation code is empty
       if (verificationCode === "") {
         setErrors({codeError: "Verification code is required"});
+      } else if (verificationCode.length != 6) {
+        setErrors({codeError: "Please enter 6 digits"});
       } else {
         completeSignup();
       }
@@ -134,10 +154,11 @@ const SignupModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
                   onChangeText={username => setUsername(username)}
                   style={ inputActive.usernameActive ? styles.userInputActive : styles.userInput }
                   defaultValue={username} 
-                  placeholder={"Enter your username"}
+                  placeholder={"Enter a username"}
                   value={username}
                   onFocus={() => setInputActive({ usernameActive: true })}
                   onBlur={() => setInputActive({ usernameActive: false })}
+                  autoCapitalize='none'
                   />
               </SafeAreaView>
             </View>
@@ -320,7 +341,7 @@ const styles = StyleSheet.create({
   },
   verificationButton: {
     backgroundColor: '#FEFEE3',
-    borderRadius: 10,
+    borderRadius: 20,
     marginBottom: 10,
     paddingVertical: 10,
     paddingHorizontal: 20,

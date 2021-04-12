@@ -12,7 +12,7 @@ const Tab = createMaterialTopTabNavigator();
 function PodsTab(props) {
     return (
       <View style={ styles.container }>
-        <ByPod userId={props.userId}/>
+        <ByPod userId={props.userId} username={props.username} />
       </View>
     );
 }
@@ -28,6 +28,8 @@ function PodsTab(props) {
 
 export default function HomeScreen({route}) { 
   const userId = route.params.userId;
+  const username = route.params.username;
+
     return (
         <Tab.Navigator  
         // style tabs 
@@ -53,7 +55,7 @@ export default function HomeScreen({route}) {
           }
         }}>
             {/* set up routes for toggling between tabs  */}
-            <Tab.Screen name="Your Pods" children={()=><PodsTab userId={userId} />}/>
+            <Tab.Screen name="Your Pods" children={()=><PodsTab userId={userId} username={username}/>}/>
             <Tab.Screen name="All Recommendations" component={RecsTab} />
         </Tab.Navigator>
     );

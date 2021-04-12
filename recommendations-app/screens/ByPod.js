@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, ScrollView, View, TouchableOpacity, Image, 
-    Pressable, Text, SafeAreaView, TextInput, 
+import { StyleSheet, ScrollView, View, TouchableOpacity, Image,
+    Pressable, Text, SafeAreaView, TextInput,
     Dimensions, FlatList, RefreshControl, Alert } from 'react-native';
 import PodTile from '../components/PodTile';
 import addPodButton from '../assets/addPodButton.png';
@@ -26,13 +26,13 @@ const ByPod = (props) => {
         getPods(onPodsReceived);
     }, []);
 
-
+    // display pop up when modal view is on
     const [isModalVisible, setModalVisible] = useState(false);
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
         resetFields();
     };
-    
+
     // add new pod dynamically when 'Create a Pod' submitted
     const [pods, setPods] = useState([]);
     const [groupName, setGroupName] = useState("");
@@ -56,8 +56,8 @@ const ByPod = (props) => {
     const onPodsReceived = (podList) => {
         setPods(podList);
     };
-    
-    // resets all form fields on create a pod modal
+
+    // resets all form fields on Create a Pod modal
     const resetFields = () => {
         setGroupName("");
         setMembers([username]);
@@ -95,7 +95,7 @@ const ByPod = (props) => {
             addNewPod(pods);
         }
     };
-    
+
     // for 'Create a Pod' pop-up search bar
     const [search, setSearch] = useState('');
     const [filteredDataSource, setFilteredDataSource] = useState([]);
@@ -116,7 +116,7 @@ const ByPod = (props) => {
             console.error(error);
           });
       }, []);
-    
+
       const searchFilterFunction = (text) => {
         if (text) {
           // filter the data according to what user searched
@@ -159,7 +159,7 @@ const ByPod = (props) => {
         );
     };
 
-    // on-click item in flat list, add new member to pod 
+    // on-click item in flat list, add new member to pod
     const getItem = (item) => {
         let newMember = { key: item.id, name: item.username}
         setMembers([...members, newMember.name]);
@@ -177,36 +177,36 @@ const ByPod = (props) => {
           alert("Permission to access camera roll is required!");
           return;
         }
-    
+
         let result = await ImagePicker.launchImageLibraryAsync();
         if (result.cancelled === true) {
           return;
         }
-        
+
         let uploadUri = Platform.OS === 'ios' ? result.uri.replace('file://', '') : result.uri;
         // get extension of image and set filename as username and current timestamp
-        const extension = uploadUri.split('.').pop(); 
+        const extension = uploadUri.split('.').pop();
         const imageName = currentUserUID + "_" + timestamp + '.' + extension;
 
         // check if image was changed (the second and following times), delete the old image on db
         deleteImage(selectedImageName);
-        
-        // setstate sets things asyncronously (after re-render), 
+
+        // setstate sets things asyncronously (after re-render),
         // so use imageName instead of selectedImageName to use as variable
-        setSelectedImageName(imageName); 
+        setSelectedImageName(imageName);
 
         // upload image to firebase storage
         await uploadImageToStorage(uploadUri, imageName)
             .then(() => {
                 // after uploading image to server, get image url from firebase
-                retrieveImageFromStorage(imageName, setSelectedImageUrl); 
+                retrieveImageFromStorage(imageName, setSelectedImageUrl);
             })
             .catch((error) => {
                 console.log("Something went wrong with image upload! " + error);
         });
     }
 
-    // refresh page function to see new pods 
+    // refresh page function to see new pods
     const [refreshing, setRefreshing] = useState(false);
     const onRefresh = useCallback(async () => {
             setRefreshing(true);
@@ -216,16 +216,19 @@ const ByPod = (props) => {
 
     return (
         <View style={{flex: 1}}>
-            <ScrollView 
+            <ScrollView
                 contentContainerStyle={styles.container}
+
+                // pull screen down for pods refresh
                 refreshControl={
                     <RefreshControl
                       refreshing={refreshing}
                       onRefresh={onRefresh}
                     />
                   }>
+
                 {pods && pods.length > 0 ?
-                    // make a pod for each group name stored in the pods list 
+                    // make a pod for each group name stored in the pods list
                     pods.map(pod => <PodTile key={pod.key} groupName={pod.pod_name} numMembers={pod.num_members} uri={pod.pod_picture_url} />) :
                     <View style={styles.centeredView}>
                         <Text style={styles.noPodsYetText}>Welcome, {username}!</Text>
@@ -252,10 +255,10 @@ const ByPod = (props) => {
                                 Pod Name:
                             </Text>
                             <SafeAreaView>
-                                <TextInput 
+                                <TextInput
                                 onChangeText={groupName => setGroupName(groupName)}
                                 style={styles.userInput}
-                                defaultValue={groupName} 
+                                defaultValue={groupName}
                                 placeholder={"Enter a group name"}
                                 value={groupName}
                                 />
@@ -267,12 +270,12 @@ const ByPod = (props) => {
 
                         <View style={{ flexDirection: 'row'}}>
                             <Text style={styles.userDetailsText}>
-                                Pod Image: 
+                                Pod Image:
                             </Text>
                             <View style={{flex: 1, alignItems: 'center', marginTop: 5}}>
                                 {/* if image selected, show image; also allow user to re-choose an image */}
-                                {selectedImageUrl && selectedImageUrl != null ? 
-                                    <View style={{ flexDirection: 'row'}}> 
+                                {selectedImageUrl && selectedImageUrl != null ?
+                                    <View style={{ flexDirection: 'row'}}>
                                         <Image
                                             source={{ uri: selectedImageUrl }}
                                             style={styles.thumbnail}
@@ -280,12 +283,12 @@ const ByPod = (props) => {
                                         <TouchableOpacity onPress={openImagePickerAsync} activeOpacity={0.7}>
                                             <Image style={{ width: 30, height: 30}}
                                                 source={uploadPodImage}></Image>
-                                        </TouchableOpacity> 
+                                        </TouchableOpacity>
                                     </View> :
                                     <TouchableOpacity onPress={openImagePickerAsync} activeOpacity={0.7}>
                                         <Image style={{ width: 30, height: 30}}
                                             source={uploadPodImage}></Image>
-                                    </TouchableOpacity> 
+                                    </TouchableOpacity>
                                 }
                             </View>
                         </View>
@@ -297,15 +300,15 @@ const ByPod = (props) => {
                         </View>
 
                         {/* display members added to pod so far */}
-                        <View style={{ height: windowHeight/7 }}> 
+                        <View style={{ height: windowHeight/7 }}>
                         <ScrollView contentContainerStyle={styles.membersList}>
                             {/* check if any members added yet: if not, display message */}
-                            {members.length === 0 ? 
+                            {members.length === 0 ?
                             (<View style={{ flexDirection: 'row'}}>
                                 <Text style={styles.membersText}>No members yet! {"\n"}Search below to add members to this pod.</Text>
-                            </View>) : 
+                            </View>) :
                             // members have been added, display each one in a row
-                            (members.map(name => 
+                            (members.map(name =>
                             <View key={name} style={{ flexDirection: 'row'}}>
                                 <Text style={styles.membersText}>{name}</Text>
                             </View>)

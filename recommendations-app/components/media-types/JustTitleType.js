@@ -6,17 +6,20 @@ export default function MovieType() {
   const [description, setDescription] = useState("");
 
   return (
+    //TODO - remove description for this type??
+    //    because we already have comments option for all types
+
     <View>
         <View style={{ flexDirection: 'row'}}>
             <Text style={styles.recCategoriesText}>
                 Title:
             </Text>
             <SafeAreaView>
-                <TextInput 
+                <TextInput
                 autoFocus={true}
                 onEndEditing={title => setTitle(title)}
                 style={styles.input}
-                defaultValue={title} 
+                defaultValue={title}
                 placeholder={"Enter a title"}
                 />
             </SafeAreaView>
@@ -25,11 +28,11 @@ export default function MovieType() {
               Description:
           </Text>
           <SafeAreaView>
-              <TextInput 
+              <TextInput
               autoFocus={true}
               onEndEditing={description => setDescription(description)}
               style={styles.descriptionInput}
-              defaultValue={description} 
+              defaultValue={description}
               placeholder={"Add a description"}
               maxLength={200}
               multiline={true}

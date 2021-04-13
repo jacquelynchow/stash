@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, SafeAreaView } from 'react-native';
 
 export default function SongType() {
-  const [title, setTitle] = useState("");
-  const [artist, setArtist] = useState("");
-  
+  const [recName, setrecName] = useState("");
+  const [recAuthor, setrecAuthor] = useState("");
+
   return (
     <View>
         <View style={{ flexDirection: 'row'}}>
@@ -12,11 +12,11 @@ export default function SongType() {
                 Song Title:
             </Text>
             <SafeAreaView>
-                <TextInput 
+                <TextInput
                 autoFocus={true}
-                onEndEditing={title => setTitle(title)}
+                onEndEditing={recName => setrecName(recName)}
                 style={styles.titleInput}
-                defaultValue={title} 
+                defaultValue={recName}
                 placeholder={"Enter a title"}
                 />
             </SafeAreaView>
@@ -26,11 +26,11 @@ export default function SongType() {
                 Artist(s):
             </Text>
             <SafeAreaView>
-                <TextInput 
+                <TextInput
                     autoFocus={true}
-                    onEndEditing={artist => setArtist(artist)}
+                    onEndEditing={recAuthor => setrecAuthor(recAuthor)}
                     style={styles.input}
-                    defaultValue={artist} 
+                    defaultValue={recAuthor}
                     placeholder={"Add artist(s)"}
                 />
             </SafeAreaView>

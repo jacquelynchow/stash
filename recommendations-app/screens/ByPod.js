@@ -1,388 +1,528 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity, Image, Pressable, Text, TextInput, SafeAreaView, Keyboard, Dimensions, RefreshControl, Alert } from 'react-native';
-import Modal from 'react-native-modal';
-import KeyboardSpacer from 'react-native-keyboard-spacer';
-import DropDownPicker from 'react-native-dropdown-picker';
-// Components for this Screen
-import RecTile from '../components/RecTile';
+import { StyleSheet, ScrollView, View, TouchableOpacity, Image, Pressable, Text, SafeAreaView, TextInput, Dimensions, FlatList, RefreshControl, Alert } from 'react-native';
+import PodTile from '../components/PodTile';
+import addPodButton from '../assets/addPodButton.png';
 import closePopUpButton from '../assets/closePopUpButton.png';
-import addRecButton from '../assets/addRecButton.png';
-// Media Types Components
-import MovieType from '../components/media-types/MovieType';
-import BookType from '../components/media-types/BookType';
-import VideoType from '../components/media-types/VideoType';
-import SongType from '../components/media-types/SongType';
-import JustTitleType from '../components/media-types/JustTitleType';
-// Server Related
+import uploadPodImage from '../assets/uploadPodImage.png';
+import Modal from 'react-native-modal';
+import { SearchBar } from 'react-native-elements';
+import * as ImagePicker from 'expo-image-picker';
 import * as firebase from 'firebase';
-import { addRecToDB, getRecs, getPodRecs } from '../API/firebaseMethods';
+import { addPodToDB, getPods, uploadImageToStorage, retrieveImageFromStorage, deleteImage } from '../API/firebaseMethods';
 
-//LMTODO - update between getRecs and getPodRecs
-
+const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
+const defaultImageUrl = "https://www.jaipuriaschoolpatna.in/wp-content/uploads/2016/11/blank-img.jpg";
 
-const PodPage = (props) => {
+const ByPod = (props) => {
 
-  const currentUserUID = props.userId;
-  const currentPod = props.groupName;
-  const username = props.username;
+    const currentUserUID = props.userId;
+    const username = props.username;
 
-  // call firebase api function getRecs on onRecsReceived function to render recs from db
-  useEffect(() => {
-      getRecs(onRecsReceived);
-  }, []);
+    // call firebase api function getPods on onPodsReceived function to render pods from db
+    useEffect(() => {
+        getPods(onPodsReceived);
+    }, []);
 
-  // display pop up when modal view is on
-  const [isModalVisible, setModalVisible] = useState(false);
-  const toggleModal = () => {
-      setModalVisible(!isModalVisible);
-  };
+    // display pop up when modal view is on
+    const [isModalVisible, setModalVisible] = useState(false);
+    const toggleModal = () => {
+        setModalVisible(!isModalVisible);
+        resetFields();
+    };
 
-  //init various states needed for recs
-  const [recs, setRecs] = useState([]);
-  const [mediaType, setmediaType] = useState("");
-  const [recName, setrecName] = useState("");
-  const [recAuthor, setrecAuthor] = useState("");
-  const [recLink, setrecLink] = useState("");
-  const [recComment, setrecComment] = useState("");
+    // add new pod dynamically when 'Create a Pod' submitted
+    const [pods, setPods] = useState([]);
+    const [groupName, setGroupName] = useState("");
+    const addNewPod = async (pods) => {
+        let podLength = 0;
+        if (pods && pods.length > 0) {
+            podLength = pods.length;
+        }
+        // add new pod to current pods list
+        let newPod = { key: podLength + 1, pod_name: groupName.trim(), num_members: members.length, pod_picture: selectedImageName, pod_picture_url: selectedImageUrl, num_recs: 0 }
+        setPods([...pods, newPod]);
+        // add pod object to database using firebase api function
+        addPodToDB(newPod);
+        // close modal
+        toggleModal();
+        // reset input fields to blank
+        resetFields();
 
-  // init error state for various form fields
-  const [errors, setErrors] = useState({
-      mediaTypeError: '', nameError: '', linkError: ''
-  });
+    };
+    // once pods are received, set pods to these received pods
+    const onPodsReceived = (podList) => {
+        setPods(podList);
+    };
 
-  // add new rec dynamically when 'Send a Rec' submitted
-  const addNewRec = async (recs) => {
-      let recLength = 0;
-      if (recs && recs.length > 0) {
-        recLength = recs.length;
-      }
-      // add group name of new pod to existing list
-  //LMTODO - should only include fields that work for all mediatypes here?
-  //or call with all but they are default blank because of init. Rec tile pop up doesn't open
-      let newRec = { key: recs.length + 1, rec_type: mediaType, rec_title: recName,
-              rec_author: recAuthor, rec_comment: recComment}
-      {/*let newRec = { key: recs.length + 1, rec_sender: username, rec_pod: currentPod,
-              rec_type: mediaType, rec_title: recName, rec_author: recAuthor,
-              rec_link: recLink, rec_comment: recComment} */}
-      setRecs([...recs, newRec]);
-      // add rec object to database using firebase API function
-      addRecToDB(newRec);
-      //close modal pop up
-      toggleModal(); //LMTODO recs are adding without pop up closing
-      //reset input fields to blank
-      resetFields();
-  };
+    // resets all form fields on Create a Pod modal
+    const resetFields = () => {
+        setGroupName("");
+        setMembers([username]);
+        setSelectedImageName("");
+        setSelectedImageUrl(defaultImageUrl);
+        setSearch('');
+        setFilteredDataSource(masterDataSource);
+        setErrors({nameError: '', membersError: ''});
+    }
+    // init error state for various form fields
+    const [errors, setErrors] = useState({
+        nameError: '', membersError: ''
+    });
+    // check on create pod submit that all fields are filled in & filled in correctly
+    const checkAllFieldsOnSubmit = () => {
+        let validSymbols = /^[\w\-\s]+$/;
+        let allValid = true;
+        let isValid = validSymbols.test(groupName);
+        // check if group name empty or only has whitespace
+        if (groupName === "" || !groupName.replace(/\s/g, '').length) {
+            setErrors({nameError: "Group name is required"});
+            allValid = false;
+        // check if group name is not valid (not just alphanumeric)
+        } else if (!isValid) {
+            setErrors({nameError: "Group name must be alphabetic"});
+            allValid = false;
+        }
+        // check if members includes user + other members
+        if (members.length == 1) {
+            setErrors({membersError: "Please add at least one user"});
+            allValid = false;
+        }
+        // if everything checks out, add to pods list
+        if (allValid) {
+            addNewPod(pods);
+        }
+    };
 
-  // once recs are received, set recs to these received recs
-  const onRecsReceived = (recList) => {
-      setRecs(recList);
-  };
+    // for 'Create a Pod' pop-up search bar
+    const [search, setSearch] = useState('');
+    const [filteredDataSource, setFilteredDataSource] = useState([]);
+    const [masterDataSource, setMasterDataSource] = useState([]);
 
-  // resets all form fields on Send a Rec modal
-  const resetFields = () => {
-      setmediaType("");
-      setrecName("");
-      setrecAuthor("");
-      setrecAuthor("");
-      //LMTODO do I need to reset all other fiels in each file too?
-      //or all other possible subcategory of each media type?
-      setrecComment("");
-      setErrors({mediaTypeError: '', nameError: '', linkError: ''});
-  }
+    // init empty list of pod tiles
+    const [members, setMembers] = useState([username]);
 
-//LMTODO - can all error checking be done here? or does it have to be in each type subfile?
-
-  // check on Send Rec submit that all fields are filled in correctly
-  const checkAllFieldsOnSubmit = () => {
-      let validSymbols = /^[\w\-\s]+$/;
-      let allValid = true;
-      let isValid = validSymbols.test(recName);
-    //LMTODO - figure out these testing calls - recs don't add when tests are uncommented
-      {/* // check if media type is selected
-      if (mediaType === "") {
-          setErrors({mediaTypeError: "Recommendation media type is required to continue"});
-          allValid = false;
-      }
-      // check if rec name empty or only has whitespace
-      if (recName === "" || !recName.replace(/\s/g, '').length) {
-          setErrors({nameError: "Title of this recommendation is required"});
-          allValid = false;
-      // check if rec name is not valid (not just alphanumeric)
-      } else if (!isValid) {
-          setErrors({nameError: "Recommendation title must be alphabetic"});
-          allValid = false;
-      }
-      // check if they uploaded link, and if so that it is valid
-      if (recLink !== "" && !validURL(recLink)) {
-          setErrors({linkError: "Please enter a valid link"});
-          allValid = false;
-      } */}
-      // if everything checks out, add to recs list
-      if (allValid) {
-          addNewRec(recs);
-      }
-  };
-
-//LMTODO - when testing actually works, test the URL validator
-  //function to check if link attached to rec is valid
-  function validURL(url) {
-    var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
-      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
-      '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
-      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
-      '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
-      '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
-    return !!pattern.test(url);
-  }
-
-  // refresh page function to see new recs
-  const [refreshing, setRefreshing] = useState(false);
-  const onRefresh = useCallback(async () => {
-          setRefreshing(true);
-          await getRecs(onRecsReceived) // use await to refresh until function finished
-          .then(() => setRefreshing(false));
+    useEffect(() => {
+        // placeholder data for users
+        fetch('https://jsonplaceholder.typicode.com/users')
+          .then((response) => response.json())
+          .then((responseJson) => {
+            setFilteredDataSource(responseJson);
+            setMasterDataSource(responseJson);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
       }, []);
 
-  // determines which fields show in Add a Rec pop up based on selected media type
-  function selectMediaType() {
-    if (mediaType == "Movie") {
-      return (<MovieType></MovieType>)
-    } else if (mediaType == "Book" || mediaType == "Article") {
-      return (<BookType></BookType>)
-    } else if (mediaType == "TikTok" || mediaType == "YouTube") {
-      return (<VideoType></VideoType>)
-    } else if (mediaType == "Song") {
-      return (<SongType></SongType>)
-    } else if (mediaType == "Other") {
-      return (<JustTitleType></JustTitleType>)
+      const searchFilterFunction = (text) => {
+        if (text) {
+          // filter the data according to what user searched
+          // update usernames shown
+          const newData = masterDataSource.filter(function (item) {
+            const itemData = item.username
+              ? item.username.toUpperCase()
+              : ''.toUpperCase();
+            const textData = text.toUpperCase();
+            return itemData.indexOf(textData) > -1;
+          });
+          setFilteredDataSource(newData);
+          setSearch(text);
+        } else {
+          // when search bar clear, show all usernames
+          setFilteredDataSource(masterDataSource);
+          setSearch(text);
+        }
+    };
+
+    // lines between items in flat list
+    const ItemSeparatorView = () => {
+        return (
+          <View
+            style={{
+              height: 0.5,
+              width: '100%',
+              backgroundColor: '#C8C8C8',
+            }}
+          />
+        );
+    };
+
+    // each text component for usernames in flat list
+    const ItemView = ({ item }) => {
+        return (
+          <Text style={styles.itemStyle} onPress={() => getItem(item)}>
+            {item.username}
+          </Text>
+        );
+    };
+
+    // on-click item in flat list, add new member to pod
+    const getItem = (item) => {
+        let newMember = { key: item.id, name: item.username}
+        setMembers([...members, newMember.name]);
+    };
+
+    // init var for selected pod image
+    const [selectedImageName, setSelectedImageName] = useState("");
+    const [selectedImageUrl, setSelectedImageUrl] = useState(defaultImageUrl);
+    const [timestamp, setTimestamp] = useState(0);
+
+    // function from expo docs tutorial
+    let openImagePickerAsync = async () => {
+        let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (permissionResult.granted === false) {
+          alert("Permission to access camera roll is required!");
+          return;
+        }
+
+        let result = await ImagePicker.launchImageLibraryAsync();
+        if (result.cancelled === true) {
+          return;
+        }
+
+        let uploadUri = Platform.OS === 'ios' ? result.uri.replace('file://', '') : result.uri;
+        // get extension of image and set filename as username and current timestamp
+        const extension = uploadUri.split('.').pop();
+        const imageName = currentUserUID + "_" + timestamp + '.' + extension;
+
+        // check if image was changed (the second and following times), delete the old image on db
+        deleteImage(selectedImageName);
+
+        // setstate sets things asyncronously (after re-render),
+        // so use imageName instead of selectedImageName to use as variable
+        setSelectedImageName(imageName);
+
+        // upload image to firebase storage
+        await uploadImageToStorage(uploadUri, imageName)
+            .then(() => {
+                // after uploading image to server, get image url from firebase
+                retrieveImageFromStorage(imageName, setSelectedImageUrl);
+            })
+            .catch((error) => {
+                console.log("Something went wrong with image upload! " + error);
+        });
     }
-  };
+
+    // refresh page function to see new pods
+    const [refreshing, setRefreshing] = useState(false);
+    const onRefresh = useCallback(async () => {
+            setRefreshing(true);
+            await getPods(onPodsReceived) // use await to refresh until function finished
+            .then(() => setRefreshing(false));
+        }, []);
 
     return (
-      <View style={{flex: 1}} >
+        <View style={{flex: 1}}>
 
-        {/* Pull screen down for recommendations refresh */}
-        <ScrollView
-          contentContainerStyle={styles.container}
-          refreshControl={
-              <RefreshControl
-                refreshing={refreshing}
-                onRefresh={onRefresh}
-              />
-            }>
+            {/* pull screen down for pods refresh */}
+            <ScrollView
+                contentContainerStyle={styles.container}
+                refreshControl={
+                    <RefreshControl
+                      refreshing={refreshing}
+                      onRefresh={onRefresh}
+                    />
+                  }>
 
-          {/* make a rec for each rec stored in the recs list */}
-          {recs && recs.length > 0 ?
-              recs.map(rec => <RecTile key={rec.key} recName={rec.rec_title}
-                  mediaType={rec.rec_type} recSender={rec.rec_sender} groupName={rec.rec_pod}
-                  recAuthor={rec.rec_author} recLink={rec.rec_link} recComment={rec.rec_comment}/>) :
-              <View style={styles.centeredView}>
-                  <Text style={styles.noRecsYetTitle}>Click the > button to send a recommendation</Text>
-                  <Text style={styles.noRecsYetText}>Recommendations will be shared with all members of this pod</Text>
-              </View>
-          }
+                {/* make a pod for each group name stored in the pods list */}
+                {pods && pods.length > 0 ?
+                    pods.map(pod => <PodTile key={pod.key} groupName={pod.pod_name} numMembers={pod.num_members} uri={pod.pod_picture_url} />) :
+                    <View style={styles.centeredView}>
+                        <Text style={styles.noPodsYetText}>Welcome, {username}!</Text>
+                        <Text style={styles.noPodsYetTitle}>Click the + button to start a pod</Text>
+                        <Text style={styles.noPodsYetText}>Pods can be with one person or a group</Text>
+                    </View>
+                }
 
-        </ScrollView>
+            </ScrollView>
 
-        {/* Add A Rec PopUp */}
-        <Modal isVisible={isModalVisible}>
-          <View style={styles.centeredView} >
-            <View style={styles.modalView}>
-                <Pressable style={[styles.button, styles.buttonClose]}
-                    onPress={toggleModal} >
-                    <Image source={closePopUpButton} style={{width: 30, height: 30}}/>
-                </Pressable>
-                <Text style={styles.modalTitle}>Add Recommendation</Text>
-                <Text style={styles.modalText}>This will be visible to
-                  <Text style={{fontWeight: "900"}}> all members</Text> of this pod
-                </Text>
+            {/* Create A Pod PopUp */}
+            <Modal isVisible={isModalVisible}>
+                <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+                        <Pressable style={[styles.button, styles.buttonClose]}
+                            onPress={toggleModal} >
+                            <Image source={closePopUpButton} style={{width: 30, height: 30}}/>
+                        </Pressable>
+                        <Text style={styles.modalTitle}>Create a Pod</Text>
+                        <Text style={styles.modalText}>Add your friends by username!</Text>
 
-                {/* prompt users to select a media type */}
-                <View style={{ flexDirection: 'column', alignSelf: 'flex-start', marginTop: 20}}>
-                  <DropDownPicker
-                    placeholder="Select a media type"
-                    items={[
-                        {label: 'Article', value: 'Article'},
-                        {label: 'Book', value: 'Book'},
-                        {label: 'Movie', value: 'Movie'},
-                        {label: 'Song', value: 'Song'},
-                        {label: 'TikTok', value: 'TikTok'},
-                        {label: 'YouTube', value: 'YouTube'},
-                        {label: 'Other', value: 'Other'},
-                    ]}
-                    defaultIndex={0}
-                    dropDownMaxHeight={100}
-                    containerStyle={{height: 40, marginBottom: 15}}
-                    onChangeItem={items => setmediaType(items.value)}
-                  />
+                        <View style={{ flexDirection: 'row'}}>
+                            <Text style={styles.userDetailsText}>
+                                Pod Name:
+                            </Text>
+                            <SafeAreaView>
+                                <TextInput
+                                onChangeText={groupName => setGroupName(groupName)}
+                                style={styles.userInput}
+                                defaultValue={groupName}
+                                placeholder={"Enter a group name"}
+                                value={groupName}
+                                />
+                            </SafeAreaView>
+                        </View>
+                        <View style={{ display: 'flex', justifyContent: 'flex-start'}}>
+                            <Text style={styles.errorMessage}>{errors.nameError}</Text>
+                        </View>
 
-                  {/* display error message if not selected */}
-                  <View style={{ display: 'flex', justifyContent: 'flex-start'}}>
-                      <Text style={styles.errorMessage}>{errors.mediaTypeError}</Text>
-                  </View>
+                        <View style={{ flexDirection: 'row'}}>
+                            <Text style={styles.userDetailsText}>
+                                Pod Image:
+                            </Text>
+                            <View style={{flex: 1, alignItems: 'center', marginTop: 5}}>
+                                {/* if image selected, show image; also allow user to re-choose an image */}
+                                {selectedImageUrl && selectedImageUrl != null ?
+                                    <View style={{ flexDirection: 'row'}}>
+                                        <Image
+                                            source={{ uri: selectedImageUrl }}
+                                            style={styles.thumbnail}
+                                        />
+                                        <TouchableOpacity onPress={openImagePickerAsync} activeOpacity={0.7}>
+                                            <Image style={{ width: 30, height: 30}}
+                                                source={uploadPodImage}></Image>
+                                        </TouchableOpacity>
+                                    </View> :
+                                    <TouchableOpacity onPress={openImagePickerAsync} activeOpacity={0.7}>
+                                        <Image style={{ width: 30, height: 30}}
+                                            source={uploadPodImage}></Image>
+                                    </TouchableOpacity>
+                                }
+                            </View>
+                        </View>
 
-                  {/* display other relevant fields based on selected media type */}
-                  { selectMediaType() }
+                        <View style={{ flexDirection: 'row'}}>
+                            <Text style={styles.userDetailsText}>
+                                Users in this Pod:
+                            </Text>
+                        </View>
 
-                  {/* prompt users to add a comment for any media type */}
-                  <Text style={styles.recCategoriesText}>
-                    Comments:
-                  </Text>
-                  <SafeAreaView>
-                      <TextInput style={styles.commentInput}
-                            onEndEditing={recComment => setrecComment(recComment)}
-                            maxLength={200}
-                            multiline={true}
-                            defaultValue={recComment}
-                            returnKeyType="done"
-                            blurOnSubmit={true}
-                            onSubmitEditing={()=>{Keyboard.dismiss()}}/>
-                  </SafeAreaView>
+                        {/* display members added to pod so far */}
+                        <View style={{ height: windowHeight/7 }}>
+                        <ScrollView contentContainerStyle={styles.membersList}>
+                            {/* check if any members added yet: if not, display message;
+                              if members have been added, display each one in a row */}
+                            {members.length === 0 ?
+                            (<View style={{ flexDirection: 'row'}}>
+                                <Text style={styles.membersText}>No members yet! {"\n"}Search below to add members to this pod.</Text>
+                            </View>) :
+                            (members.map(name =>
+                            <View key={name} style={{ flexDirection: 'row'}}>
+                                <Text style={styles.membersText}>{name}</Text>
+                            </View>)
+                            )}
+                        </ScrollView>
+                        <Text style={styles.errorMessage}>{errors.membersError}</Text>
+                        </View>
+
+                        {/* search bar, click on usernames to add members to pod */}
+                        <View style={{ flexDirection: 'row'}}>
+                            <Text style={styles.userDetailsText}>
+                                Search for Members to Add:
+                            </Text>
+                        </View>
+
+                        <SafeAreaView style={{ flex: 1 }}>
+                            <View style={styles.searchBarContainer}>
+                                <SearchBar
+                                searchIcon={{ size: 24 }}
+                                onChangeText={(text) => searchFilterFunction(text)}
+                                onClear={(text) => searchFilterFunction('')}
+                                placeholder="Enter a username"
+                                value={search}
+                                containerStyle={{ backgroundColor: '#6f1d1b', marginTop: 5, marginBottom: 5, borderTopColor: '#6f1d1b',
+                                borderBottomColor: '#6f1d1b', width: windowWidth/2 }}
+                                inputContainerStyle={{ backgroundColor: 'white', height: 30, borderRadius: 10 }}
+                                inputStyle={{ fontSize: 16 }}
+                                />
+                                {/* flat list displays username data */}
+                                <FlatList
+                                data={filteredDataSource}
+                                keyExtractor={(item, index) => index.toString()}
+                                ItemSeparatorComponent={ItemSeparatorView}
+                                renderItem={ItemView}
+                                />
+                            </View>
+                        </SafeAreaView>
+
+                        <Pressable style={styles.createPodButton} onPress={checkAllFieldsOnSubmit}>
+                            <Text style={styles.createPodText}>Create Pod</Text>
+                        </Pressable>
+                    </View>
                 </View>
+            </Modal>
 
-                <Pressable style={styles.createRecButton} onPress={checkAllFieldsOnSubmit}>
-                    <Text style={styles.createRecText}>Add</Text>
-                </Pressable>
-                <KeyboardSpacer />
+            {/* Add Pod Button */}
+            <View style={{marginRight: 17}}>
+                <Image source={addPodButton} style={styles.floatingAddButton}></Image>
             </View>
-          </View>
-        </Modal>
+            <TouchableOpacity activeOpacity={0.25}
+                onPress={toggleModal}
+                style={styles.floatingAddButton}>
+            </TouchableOpacity>
 
-        {/* Add A Rec Button */}
-        <View style={{marginRight: 17}}>
-            <Image source={addRecButton} style={styles.floatingAddButton}></Image>
         </View>
-        <TouchableOpacity activeOpacity={0.25}
-            onPress={toggleModal}
-            style={styles.floatingAddButton}>
-        </TouchableOpacity>
-
-      </View>
-    );
+    )
 }
 
-
 const styles = StyleSheet.create({
-  container: {
-    marginVertical: 20,
-    marginHorizontal: 10,
-    paddingTop: 30,
-    paddingBottom: 30,
-    flexGrow:1,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    backgroundColor: "#f2f2f2"
-  },
-  text: {
-    color: "#fcfbfb"
-  },
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 22,
-  },
-  noRecsYetTitle: {
-      marginTop: windowHeight/4,
-      textAlign: "center",
-      color: "#6F1D1B",
-      fontWeight: "700",
-      fontSize: 22,
-  },
-  noRecsYetText: {
-      textAlign: "center",
-      color: "#6F1D1B",
-      fontStyle: 'italic',
-      marginTop: 10,
-      fontSize: 14
-  },
-  modalView: {
-    margin: 20,
-    backgroundColor: "#6F1D1B",
-    borderRadius: 20,
-    padding: 35,
-    alignItems: "center",
-    // ios
-    shadowOffset: {width: 10, height: 10},
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    // android
-    elevation: 2,
-  },
-  button: {
-    padding: 10,
-  },
-  buttonClose: {
-    position: 'absolute',
-    alignSelf: 'flex-start',
-    marginBottom: 5,
-  },
-  textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center"
-  },
-  modalTitle: {
-    textAlign: "center",
-    fontWeight: 'bold',
-    fontSize: 22,
-    marginTop: 10,
-    color: "white",
-  },
-  modalText: {
-    marginTop: 5,
-    textAlign: 'center',
-    fontSize: 12,
-    color: "white"
-  },
-  createRecText: {
-    color: "#D68C45",
-    fontWeight: 'bold',
-    textTransform: 'uppercase',
-  },
-  createRecButton: {
-    backgroundColor: "white",
-    borderRadius: 20,
-    marginTop: 20,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    // ios
-    shadowOffset: {width: 10, height: 10},
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    // android
-    elevation: 2,
-  },
-  floatingAddButton: {
-    alignSelf: 'flex-end',
-    position: 'absolute',
-    bottom: 25,
-    height: 60,
-    width: 60,
-  },
-  recCategoriesText: {
-    fontSize: 18,
-    color: 'white',
-    marginTop: 10,
-  },
-  commentInput: {
-    height: 50,
-    width: 225,
-    fontSize: 16,
-    backgroundColor: 'white',
-    borderRadius: 10,
-    paddingTop:10,
-    paddingBottom:10,
-    paddingHorizontal: 10,
-    marginTop: 5,
-  },
-  errorMessage: {
-      color: '#ffc9b9',
-  }
+    floatingAddButton: {
+        alignSelf: 'flex-end',
+        position: 'absolute',
+        bottom: 25,
+        height: 60,
+        width: 60,
+    },
+    container: {
+        marginVertical: 20,
+        marginHorizontal: 10,
+        paddingBottom: 30,
+        flexGrow:1,
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start' // fill rows left to right
+    },
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 22,
+    },
+    noPodsYetTitle: {
+        marginTop: windowHeight/4,
+        color: "#6F1D1B",
+        fontWeight: "700",
+        fontSize: 22,
+    },
+    noPodsYetText: {
+        color: "#6F1D1B",
+        fontStyle: 'italic',
+        marginTop: 10,
+        fontSize: 14
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: "#6F1D1B",
+        borderRadius: 20,
+        padding: 35,
+        alignItems: "center",
+        // ios
+        shadowOffset: {width: 10, height: 10},
+        shadowOpacity: 0.1,
+        shadowRadius: 10,
+        // android
+        elevation: 2,
+    },
+    button: {
+        padding: 10
+    },
+    buttonClose: {
+        position: 'absolute',
+        alignSelf: 'flex-start',
+        marginBottom: 5,
+    },
+    textStyle: {
+        color: "white",
+        fontWeight: "bold",
+        textAlign: "center"
+    },
+    modalTitle: {
+        textAlign: "center",
+        fontWeight: 'bold',
+        fontSize: 30,
+        marginTop: 10,
+        color: "white",
+    },
+    modalText: {
+        marginTop: 10,
+        textAlign: "center",
+        fontSize: 13,
+        color: "white"
+    },
+    createPodText: {
+        color: "#D68C45",
+        fontWeight: 'bold',
+        textTransform: 'uppercase',
+        fontSize: 18,
+    },
+    createPodButton: {
+        backgroundColor: "white",
+        borderRadius: 20,
+        marginTop: 20,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        // ios
+        shadowOffset: {width: 10, height: 10},
+        shadowOpacity: 0.1,
+        shadowRadius: 10,
+        // android
+        elevation: 2,
+    },
+    userDetailsText: {
+        fontSize: 18,
+        color: 'white',
+        marginTop: 17,
+        flex: 1,
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+    },
+    userInput: {
+        height: 30,
+        width: windowWidth/3,
+        fontSize: 16,
+        backgroundColor: 'white',
+        borderRadius: 10,
+        padding: 5,
+        paddingHorizontal: 10,
+        marginLeft: 10,
+        marginTop: 15,
+    },
+    itemStyle: {
+        padding: 10,
+        color: 'white'
+    },
+    searchBarContainer: {
+        marginTop: 10,
+        color: 'white',
+    },
+    membersList: {
+        marginVertical: 5,
+        marginHorizontal: 5,
+        // paddingBottom: 30,
+        // flexGrow:1,
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        color: '#ffc9b9',
+    },
+    membersText: {
+        fontSize: 16,
+        color: '#ffc9b9',
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        paddingTop: 7
+    },
+    podImageContainer: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    button: {
+		padding: 20,
+		textAlign: 'center',
+	},
+    thumbnail: {
+        width: 50,
+        height: 50,
+        resizeMode: "cover",
+        marginRight: 15,
+    },
+    errorMessage: {
+        color: '#ffc9b9',
+    }
 })
 
-export default PodPage;
+export default ByPod;

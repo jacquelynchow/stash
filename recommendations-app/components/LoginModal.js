@@ -50,7 +50,7 @@ const LoginModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
       } else if (verificationCode.length != 6) {
         setErrors({codeError: "Please enter 6 digits"});
       } else {
-        completeSignup();
+        completeLogin();
       }
     }
 

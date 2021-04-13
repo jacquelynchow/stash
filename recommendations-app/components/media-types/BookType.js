@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, SafeAreaView } from 'react-native';
 
 export default function MovieType() {
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  
+  const [recName, setrecName] = useState("");
+  const [recAuthor, setrecAuthor] = useState("");
+
   return (
     <View>
         <View style={{ flexDirection: 'row'}}>
@@ -12,11 +12,11 @@ export default function MovieType() {
                 Title:
             </Text>
             <SafeAreaView>
-                <TextInput 
+                <TextInput
                 autoFocus={true}
-                onEndEditing={title => setTitle(title)}
+                onEndEditing={recName => setrecName(recName)}
                 style={styles.titleInput}
-                defaultValue={title} 
+                defaultValue={recName}
                 placeholder={"Enter a title"}
                 />
             </SafeAreaView>
@@ -26,11 +26,11 @@ export default function MovieType() {
                 Author(s):
             </Text>
             <SafeAreaView>
-                <TextInput 
+                <TextInput
                     autoFocus={true}
-                    onEndEditing={author => setAuthor(author)}
+                    onEndEditing={recAuthor => setrecAuthor(recAuthor)}
                     style={styles.input}
-                    defaultValue={author} 
+                    defaultValue={recAuthor}
                     placeholder={"Add author(s)"}
                 />
             </SafeAreaView>

@@ -193,18 +193,17 @@ export async function getUsers(searchUsername, currentUsername) {
 
 // --------- CREATING & VIEWING RECS RELATED --------------------------
 //add new rec object and properties to the db
-{/*
-export function addRecToDB(pod,rec) {
+export function addRecToDB(rec) {
   const db = firebase.firestore();
   db.collection("recs")
     .add({
-      rec_name: rec.rec_name,
-      rec_pod: pod.pod_name,
-      rec_type: rec.rec_type,
-      rec_author: rec.rec_author,
-      rec_year: rec.rec_year,
       rec_sender: rec.rec_sender,
-      rec_comments: rec.rec_comments,
+      rec_pod: rec.rec_pod,
+      rec_type: rec.rec_type,
+      rec_title: rec.rec_title,
+      rec_author: rec.rec_author,
+      rec_link: rec.rec_link,
+      rec_comment: rec.rec_comment,
       createdAt: firebase.firestore.FieldValue.serverTimestamp() // order recs to show up in order of creation
     })
     .catch((error) => console.log(error)); // log any errors
@@ -217,10 +216,10 @@ export async function getRecs(recsRecieved) {
 
   let snapshot = await firebase.firestore() // return a query snapshot of current db
     .collection("recs")
-    .orderBy("createdAt") // get pods in order of creation
+    .orderBy("createdAt") // get recs in order of creation
     .get()
 
-    // push each rec in db to podList
+    // push each rec in db to recList
     snapshot.forEach((rec) => {
       recList.push(doc.data());
     });
@@ -238,13 +237,11 @@ export async function getPodRecs(pod){
     .orderBy("createdAt") // get recs in order of creation
     .where('rec_pod','==',pod.pod_name)
     .get()
-
     // push each pod in db to podList
     snapshot.forEach((doc) => {
       podList.push(doc.data());
     });
-
-    podsRecieved(podList); 
+    podsRecieved(podList);
 }
 
 //makes list of recs for media
@@ -257,12 +254,9 @@ export async function getMediaRecs(media_type){
     .orderBy("createdAt") // get recs in order of creation
     .where('rec_type','==',media_type)
     .get()
-
     // push each rec in db to recList
     snapshot.forEach((doc) => {
       recsInMedia.push(doc.data());
     });
-
     //need to callback function
 }
-*/}

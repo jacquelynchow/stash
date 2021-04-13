@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, SafeAreaView } from 'react-native';
 
 export default function MovieType() {
-  const [title, setTitle] = useState("");
-  const [genre, setGenre] = useState("");
-  const [year, setYear] = useState(0);
-  
+  const [recName, setrecName] = useState("");
+  const [recGenre, setrecGenre] = useState("");
+  const [recYear, setrecYear] = useState(0);
+
   return (
     <View>
       <View style={{ flexDirection: 'row'}}>
@@ -13,11 +13,11 @@ export default function MovieType() {
           Title:
         </Text>
         <SafeAreaView>
-          <TextInput 
+          <TextInput
             autoFocus={true}
-            onEndEditing={title => setTitle(title)}
+            onEndEditing={recName => setrecName(recName)}
             style={styles.titleInput}
-            defaultValue={title} 
+            defaultValue={recName}
             placeholder={"Enter a title"}
           />
         </SafeAreaView>
@@ -27,11 +27,11 @@ export default function MovieType() {
           Genre:
         </Text>
         <SafeAreaView>
-          <TextInput 
+          <TextInput
               autoFocus={true}
-              onEndEditing={genre => setGenre(genre)}
+              onEndEditing={recGenre => setrecGenre(recGenre)}
               style={styles.input}
-              defaultValue={genre} 
+              defaultValue={recGenre}
               placeholder={"Enter a genre"}
           />
         </SafeAreaView>
@@ -41,11 +41,11 @@ export default function MovieType() {
           Year:
         </Text>
         <SafeAreaView>
-          <TextInput 
+          <TextInput
               autoFocus={true}
-              onEndEditing={year => setYear(year)}
+              onEndEditing={recYear => setrecYear(recYear)}
               style={styles.titleInput}
-              defaultValue={year} 
+              defaultValue={recYear}
               placeholder={"Year Published"}
               keyboardType='number-pad'
               maxLength={4}

@@ -1,27 +1,28 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, ScrollView, TouchableOpacity, Image, Pressable, Text, Button, Alert} from 'react-native';
 import RecTile from '../components/RecTile';
-
+import {getMediaRecs} from '../API/firebaseMethods';
 //will create function that shows the recs from only 1 media type
+//TODO: figure out how to get the mediaType that should be displaying
 {/*
 function showMediaType() {
   if (props.mediaType == "Article") {
-    return 
+    return //list of recs with rec_type == "Article"
   }
   else if (props.mediaType == "Book") {
-    return 
+    return //list of recs with rec_type == "Book"
   }
   else if (props.mediaType == "Movie") {
-    return 
+    return //list of recs with rec_type == "Movi"
   }
   else if (props.mediaType == "Song") {
-    return 
+    return //list of recs with rec_type == "Song"
   }
   else if (props.mediaType == "TikTok") {
-    return 
+    return //list of recs with rec_type == "TikTok"
   }
   else if (props.mediaType == "Video") {
-    return 
+    return //list of recs with rec_type == "Video"
   }
 }
 */}
@@ -32,7 +33,10 @@ export default function MediaTypePage() {
     <View style={{flex: 1}}>
       <ScrollView contentContainerStyle={styles.container}>
         {/*instead show the recommendations from only 1 media type*/}
-        {/*Show recs with the same media_type for USERID */}
+        {/*Show recs with the same media_type for USERID 
+          TODO: call showMediaType
+        */}
+        
         <RecTile recName={"Rec 1"} mediaType={"Book"}/>
         <RecTile recName={"Rec 2"} mediaType={"Book"}/>
         <RecTile recName={"Rec 3"} mediaType={"Book"}/>

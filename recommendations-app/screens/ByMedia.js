@@ -11,6 +11,8 @@ import youtubeIcon from '../assets/type-icons/youtube.png';
 
 const ByMedia = () => {
     // TODO: If No Recs, show message screen, else show recs by type
+        //if recList for all recs for the user is empty then show message screen
+        //else show mediaType tiles with num of recommendations in each
     // TODO: For loop and showing Tiles with real data
         // search for recs with certain media_type for USERID & get # of recs for that media
         // able to show the # of ppl?

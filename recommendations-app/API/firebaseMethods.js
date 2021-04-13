@@ -207,7 +207,17 @@ export function addRecToDB(rec) {
       createdAt: firebase.firestore.FieldValue.serverTimestamp() // order recs to show up in order of creation
     })
     .catch((error) => console.log(error)); // log any errors
-    //TODO: when add rec also update #recs in pod & #recs in media_type
+    //TODO: when add rec also update #recs in pod -> use updateNumRecsInPod
+}
+
+export function updateNumRecsInPod() {
+  const db = firebasee.firestore();
+  db.collection("pods")
+    //TODO: go into pod you want to update
+    .update({
+      num_recs : pod.num_recs + 1 //check if correct
+    })
+    .catch((error) => console.log(error));
 }
 
 // make a list of recs from the current state of the database and calls callback function to run asyncronously
@@ -216,6 +226,7 @@ export async function getRecs(recsRecieved) {
 
   let snapshot = await firebase.firestore() // return a query snapshot of current db
     .collection("recs")
+    //neeed to look at recs for the 1 user
     .orderBy("createdAt") // get recs in order of creation
     .get()
 
@@ -234,8 +245,9 @@ export async function getPodRecs(pod){
   // with a rec_pod that matches the pod.pod_name for given pod
   let snapshot = await firebase.firestore() // return a query snapshot of current db
     .collection("recs")
-    .orderBy("createdAt") // get recs in order of creation
+    //need to only look at recs for the 1 user
     .where('rec_pod','==',pod.pod_name)
+    .orderBy("createdAt") // get recs in order of creation
     .get()
     // push each pod in db to podList
     snapshot.forEach((doc) => {
@@ -252,6 +264,7 @@ export async function getMediaRecs(media_type){
   let snapshot = await firebase.firestore() // return a query snapshot of current db
     .collection("recs")
     .orderBy("createdAt") // get recs in order of creation
+    //need to only look at recs for the 1 user
     .where('rec_type','==',media_type)
     .get()
     // push each rec in db to recList
@@ -260,3 +273,10 @@ export async function getMediaRecs(media_type){
     });
     //need to callback function
 }
+
+//gets number of recs for media type
+{/*//need to create new function or somehow use getMediaRecs to make an accumulator
+  export async function getNumRecsForMedia(){
+    //TODO
+  }
+*/}

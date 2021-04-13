@@ -10,7 +10,6 @@ import articleIcon from '../assets/type-icons/article.png';
 import youtubeIcon from '../assets/type-icons/youtube.png';
 
 const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
 
 const RecTile = (props) => {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -99,13 +98,30 @@ function selectBackgroundColor() {
                           onPress={toggleModal} >
                           <Image source={closePopUpButton} style={{width: 30, height: 30}}/>
                       </Pressable>
+                      {/* icon based on media type */}
                       <Image source={selectImage()} style={styles.recImagePopUp}></Image>
+                      {/* display all recommendation information: */}
                       <Text style={styles.modalTitle}> {props.recName} </Text>
                       <Text style={styles.modalText}> {props.mediaType} </Text>
-                      <Text style={styles.modalText}>Sent by: [username] in {props.groupName} pod</Text>
-                      <Text style={styles.modalText}> Comments: </Text>
-                      {/* TODO: change image to be the one they uploaded?, show sender instead of [username]*/}
-                      {/* TODO: show any extra information for specific media type (year, author,etc.)*/}
+                      {/* TODO: update this in the instance that some fields aren't filled for media type*/}
+                      {/* Author */}
+                      <Text style={styles.modalText}>
+                        <Text style={styles.modalHeading}>By: </Text>
+                        {props.recAuthor}
+                      </Text>
+                      {/* Link */}
+                      <Text style={styles.modalText}>
+                        <Text style={styles.modalHeading}>View at: </Text>
+                        {props.recLink}
+                      </Text>
+                      {/* Comments */}
+                      <Text style={styles.modalText}>
+                        <Text style={styles.modalHeading}>Comments: </Text>
+                        {props.recComment}
+                      </Text>
+                      {/* Sender */}
+                      <Text style={styles.modalSubtitle}>Sent by {props.recSender} in {props.groupName} pod</Text>
+
 
                   </View>
               </View>
@@ -138,8 +154,7 @@ const styles = StyleSheet.create({
         marginTop: 22,
     },
     modalView: {
-        margin: 20,
-        //backgroundColor: "#D26D64", //TODO when we have conditionals change colour by type
+        margin: 15,
         borderRadius: 20,
         padding: 80,
         alignItems: "center",
@@ -164,10 +179,24 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         color: "white",
     },
+    modalHeading: {
+        marginTop: 5,
+        textAlign: "center",
+        fontSize: 13,
+        fontWeight: "900",
+        color: "white"
+    },
     modalText: {
         marginTop: 5,
         textAlign: "center",
         fontSize: 13,
+        color: "white"
+    },
+    modalSubtitle: {
+        marginTop: 20,
+        textAlign: "center",
+        fontSize: 13,
+        fontStyle: "italic",
         color: "white"
     },
     name: {

@@ -12,6 +12,8 @@ import BookType from '../components/media-types/BookType';
 import VideoType from '../components/media-types/VideoType';
 import SongType from '../components/media-types/SongType';
 import JustTitleType from '../components/media-types/JustTitleType';
+//Import fireebaseMethods
+//import {addRecToDB} from '../API/firebaseMethods'; //TODO: uncomment
 
 export default function PodPage() {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -20,14 +22,20 @@ export default function PodPage() {
   };
 
   const [recs, setRecs] = useState([]);
-  const addNewRec = () => {
+  const addNewRec = () => { // const addNewRec = async (recs) => {
       // add group name of new pod to existing list
       // TODO: read group name in from form instead of hardcoding
+      //will show recs with the same PODID for USERID
       let newRec = { key: recs.length + 1, name: "New Test Rec ", type: "Media Type"}
       setRecs([...recs, newRec.name + newRec.key.toString()]);
+      //addRecToDB(pod,newRec); //need current pod or pod_name?
       toggleModal();
   };
 
+  {/*const onRecsRecieveed= (recList) => {
+    setRecs(recList);
+  };
+*/}
   const [mediaType, setmediaType] = useState("");
   const [comment, setComment] = useState("");
 
@@ -70,13 +78,13 @@ export default function PodPage() {
                   <DropDownPicker
                     placeholder="Select a media type"
                     items={[
-                        {label: 'Song', value: 'Song'},
-                        {label: 'Book', value: 'Book'},
-                        {label: 'Movie', value: 'Movie'},
-                        {label: 'Image', value: 'Image'},
                         {label: 'Article', value: 'Article'},
-                        {label: 'YouTube', value: 'YouTube'},
+                        {label: 'Book', value: 'Book'},
+                        {label: 'Image', value: 'Image'},
+                        {label: 'Movie', value: 'Movie'},
+                        {label: 'Song', value: 'Song'},
                         {label: 'TikTok', value: 'TikTok'},
+                        {label: 'YouTube', value: 'YouTube'},
                         {label: 'Other', value: 'Other'},
                     ]}
                     defaultIndex={0}

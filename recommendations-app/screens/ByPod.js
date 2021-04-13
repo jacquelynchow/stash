@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, ScrollView, View, TouchableOpacity, Image, 
-    Pressable, Text, SafeAreaView, TextInput, 
-    Dimensions, FlatList, RefreshControl } from 'react-native';
+import { StyleSheet, ScrollView, View, TouchableOpacity, Image,
+    Pressable, Text, SafeAreaView, TextInput,
+    Dimensions, FlatList, RefreshControl, Alert } from 'react-native';
 import PodTile from '../components/PodTile';
 import addPodButton from '../assets/addPodButton.png';
 import closePopUpButton from '../assets/closePopUpButton.png';
@@ -19,41 +19,21 @@ const defaultImageUrl = "https://www.jaipuriaschoolpatna.in/wp-content/uploads/2
 
 const ByPod = (props) => {
 
-    // firebase - get logged in user's id
-    let currentUserUID = firebase.auth().currentUser.uid;
-    const [username, setUsername] = useState('');
-    
-    useEffect(() => {
-        async function getUserInfo(){
-            let doc = await firebase
-            .firestore()
-            .collection('users')
-            .doc(currentUserUID)
-            .get();
-            
-            if (!doc.exists){
-                alert('No user data found!')
-            } else {
-                let dataObj = doc.data();
-                // get user's username to display on page
-                setUsername(dataObj.username)
-            }
-        }
-        getUserInfo();
-    })
+    const currentUserUID = props.userId;
+    const username = props.username;
 
     // call firebase api function getPods on onPodsReceived function to render pods from db
     useEffect(() => {
         getPods(onPodsReceived);
     }, []);
 
-
+    // display pop up when modal view is on
     const [isModalVisible, setModalVisible] = useState(false);
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
         resetFields();
     };
-    
+
     // add new pod dynamically when 'Create a Pod' submitted
     const [pods, setPods] = useState([]);
     const [groupName, setGroupName] = useState("");
@@ -80,8 +60,8 @@ const ByPod = (props) => {
     const onPodsReceived = (podList) => {
         setPods(podList);
     };
-    
-    // resets all form fields on create a pod modal
+
+    // resets all form fields on Create a Pod modal
     const resetFields = () => {
         setGroupName("");
         setMembers([username]);
@@ -119,7 +99,7 @@ const ByPod = (props) => {
             addNewPod(pods);
         }
     };
-    
+
     // for 'Create a Pod' pop-up search bar
     const [search, setSearch] = useState('');
     const [filteredDataSource, setFilteredDataSource] = useState([]);
@@ -191,12 +171,12 @@ const ByPod = (props) => {
           alert("Permission to access camera roll is required!");
           return;
         }
-    
+
         let result = await ImagePicker.launchImageLibraryAsync();
         if (result.cancelled === true) {
           return;
         }
-        
+
         let uploadUri = Platform.OS === 'ios' ? result.uri.replace('file://', '') : result.uri;
         // get extension of image and set filename as username and current timestamp
         const extension = uploadUri.split('.').pop(); 
@@ -204,23 +184,23 @@ const ByPod = (props) => {
 
         // check if image was changed (the second and following times), delete the old image on db
         deleteImage(selectedImageName);
-        
-        // setstate sets things asyncronously (after re-render), 
+
+        // setstate sets things asyncronously (after re-render),
         // so use imageName instead of selectedImageName to use as variable
-        setSelectedImageName(imageName); 
+        setSelectedImageName(imageName);
 
         // upload image to firebase storage
         await uploadImageToStorage(uploadUri, imageName)
             .then(() => {
                 // after uploading image to server, get image url from firebase
-                retrieveImageFromStorage(imageName, setSelectedImageUrl); 
+                retrieveImageFromStorage(imageName, setSelectedImageUrl);
             })
             .catch((error) => {
                 console.log("Something went wrong with image upload! " + error);
         });
     }
 
-    // refresh page function to see new pods 
+    // refresh page function to see new pods
     const [refreshing, setRefreshing] = useState(false);
     const onRefresh = useCallback(async () => {
             setRefreshing(true);
@@ -230,16 +210,19 @@ const ByPod = (props) => {
 
     return (
         <View style={{flex: 1}}>
-            <ScrollView 
+            <ScrollView
                 contentContainerStyle={styles.container}
+
+                // pull screen down for pods refresh
                 refreshControl={
                     <RefreshControl
                       refreshing={refreshing}
                       onRefresh={onRefresh}
                     />
                   }>
+
                 {pods && pods.length > 0 ?
-                    // make a pod for each group name stored in the pods list 
+                    // make a pod for each group name stored in the pods list
                     pods.map(pod => <PodTile key={pod.key} groupName={pod.pod_name} numMembers={pod.num_members} uri={pod.pod_picture_url} />) :
                     <View style={styles.centeredView}>
                         <Text style={styles.noPodsYetText}>Welcome, {username}!</Text>
@@ -265,7 +248,7 @@ const ByPod = (props) => {
                                 Pod Name:
                             </Text>
                             <SafeAreaView>
-                                <TextInput 
+                                <TextInput
                                 onChangeText={groupName => setGroupName(groupName)}
                                 style={styles.userInput}
                                 defaultValue={groupName} 
@@ -280,7 +263,7 @@ const ByPod = (props) => {
 
                         <View style={{ flexDirection: 'row', marginTop: -5}}>
                             <Text style={styles.userDetailsText}>
-                                Pod Image: 
+                                Pod Image:
                             </Text>
                             <View style={{flex: 1, alignItems: 'center', marginTop: 5}}>
                                 {/* if image selected, show image; also allow user to re-choose an image */}

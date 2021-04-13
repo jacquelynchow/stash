@@ -1,13 +1,11 @@
 import * as firebase from "firebase";
 import "firebase/firestore";
 import {Alert} from "react-native";
-import { cos } from "react-native-reanimated";
 
-// register new user w/ email & password
-export async function registration(email, password, username) {
+// --------- LOG IN / SIGN UP RELATED --------------------------
+export async function registration(username, phone) {
   try {
-    // creates new user under "Authentication - Users"
-    await firebase.auth().createUserWithEmailAndPassword(email, password);
+    console.log("signing up");
     const currentUser = firebase.auth().currentUser;
 
     // adds user to users collection in database
@@ -15,14 +13,21 @@ export async function registration(email, password, username) {
     db.collection("users")
       .doc(currentUser.uid)
       .set({
-        email: currentUser.email,
         username: username,
+        phone: phone,
+        pods: {} 
       });
   } catch (err) {
-    Alert.alert("There is something wrong!!!!", err.message);
+    console.log("sign up failed");
+    if (err.message === '') {
+      Alert.alert("Signup failed!", "Please try again.");
+    } else {
+      Alert.alert("Signup failed!", err.message);
+    }
   }
 }
 
+// sign in w/ email & password
 export async function signIn(email, password) {
   try {
    await firebase
@@ -37,6 +42,7 @@ export async function signIn(email, password) {
   }
 }
 
+// log out of account
 export async function loggingOut() {
   try {
     await firebase.auth().signOut();
@@ -45,6 +51,7 @@ export async function loggingOut() {
   }
 }
 
+// --------- CREATING & VIEWING PODS RELATED --------------------------
 // add new pod object and properties to the db
 export async function addPodToDB(pod) {
   const db = firebase.firestore();
@@ -64,9 +71,9 @@ export async function addPodToDB(pod) {
   const usersDb = db.collection("users");
   
   // add this new pod data to each members' object
-  const fakeList = Object.keys(pod.members); 
+  const usernamesList = Object.keys(pod.members); 
   // get the uids of each user just added to this new pod
-  const userIds = await getListOfUserIds(fakeList, usersDb);
+  const userIds = await getListOfUserIds(usernamesList, usersDb);
   
   // using the uid of each user, update their respective list of pods 
   // by adding the new pod's name to the array without rewriting old data
@@ -79,9 +86,9 @@ export async function addPodToDB(pod) {
 }
 
 // get list of uids from db when given a list of member usernames
-async function getListOfUserIds(usersList, usersDb) {
+async function getListOfUserIds(usernamesList, usersDb) {
   const userIds = []
-  for (const username of usersList) {
+  for (const username of usernamesList) {
     await usersDb.where("username", "==", username)
       .get()
       .then((obj) => {
@@ -131,7 +138,7 @@ export async function uploadImageToStorage(uploadUri, imageName) {
 
   var ref = firebase.storage().ref().child("pod_images/" + imageName);
   return ref.put(blob);
-} 
+}
 
 // retrieve url for image from firebase
 export function retrieveImageFromStorage(imageName, setSelectedImageUrl) {
@@ -183,3 +190,79 @@ export async function getUsers(searchUsername, currentUsername) {
   } 
   return null;
 }
+
+// --------- CREATING & VIEWING RECS RELATED --------------------------
+//add new rec object and properties to the db
+{/*
+export function addRecToDB(pod,rec) {
+  const db = firebase.firestore();
+  db.collection("recs")
+    .add({
+      rec_name: rec.rec_name,
+      rec_pod: pod.pod_name,
+      rec_type: rec.rec_type,
+      rec_author: rec.rec_author,
+      rec_year: rec.rec_year,
+      rec_sender: rec.rec_sender,
+      rec_comments: rec.rec_comments,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp() // order recs to show up in order of creation
+    })
+    .catch((error) => console.log(error)); // log any errors
+    //TODO: when add rec also update #recs in pod & #recs in media_type
+}
+
+// make a list of recs from the current state of the database and calls callback function to run asyncronously
+export async function getRecs(recsRecieved) {
+  let recList = []; // init recList
+
+  let snapshot = await firebase.firestore() // return a query snapshot of current db
+    .collection("recs")
+    .orderBy("createdAt") // get pods in order of creation
+    .get()
+
+    // push each rec in db to podList
+    snapshot.forEach((rec) => {
+      recList.push(doc.data());
+    });
+
+    recsRecieved(recList); // callback function that occurs asyncronously
+}
+
+//makes list of recs for pod
+export async function getPodRecs(pod){
+  let recsInPod = [];
+  //TODO: search recs for that user and add to recList the recs
+  // with a rec_pod that matches the pod.pod_name for given pod
+  let snapshot = await firebase.firestore() // return a query snapshot of current db
+    .collection("recs")
+    .orderBy("createdAt") // get recs in order of creation
+    .where('rec_pod','==',pod.pod_name)
+    .get()
+
+    // push each pod in db to podList
+    snapshot.forEach((doc) => {
+      podList.push(doc.data());
+    });
+
+    podsRecieved(podList); 
+}
+
+//makes list of recs for media
+export async function getMediaRecs(media_type){
+  let recsInMedia = [];
+  //TODO: search recs for that user and add to recList the recs
+  //with a rec_type that matches the given media_type
+  let snapshot = await firebase.firestore() // return a query snapshot of current db
+    .collection("recs")
+    .orderBy("createdAt") // get recs in order of creation
+    .where('rec_type','==',media_type)
+    .get()
+
+    // push each rec in db to recList
+    snapshot.forEach((doc) => {
+      recsInMedia.push(doc.data());
+    });
+
+    //need to callback function
+}
+*/}

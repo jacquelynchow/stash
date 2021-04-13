@@ -22,8 +22,8 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      {/* set initial route upon app opening */}
-      <Stack.Navigator initialRouteName="Login">
+      {/* set initial route upon app opening to loading - redirects to home page if logged in already*/}
+      <Stack.Navigator initialRouteName="Loading">
         {/* set up routes for each screen */}
         <Stack.Screen name="Login" component={LoginScreen} 
           options={{ headerShown: false }}

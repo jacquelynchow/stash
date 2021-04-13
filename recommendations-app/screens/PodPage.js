@@ -110,7 +110,7 @@ export default function PodPage() {
         </Modal>
 
         {/* Add A Rec Button */}
-        <View style={{marginRight: 17}}>
+        <View style={styles.bottomButtonView}>
             <Image source={addRecButton} style={styles.floatingAddButton}></Image>
         </View>
         <TouchableOpacity activeOpacity={0.25}
@@ -123,6 +123,15 @@ export default function PodPage() {
 
 
 const styles = StyleSheet.create({
+  bottomButtonView: {
+    marginRight: 17,
+    // ios
+    shadowOffset: {width: 5, height: 5},
+    shadowOpacity: .5,
+    shadowRadius: 10,
+    // android
+    elevation: 3,
+  },
   container: {
     marginVertical: 20,
     marginHorizontal: 10,

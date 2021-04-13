@@ -8,7 +8,8 @@ import Modal from 'react-native-modal';
 import { SearchBar } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
 import * as firebase from 'firebase';
-import { addPodToDB, getPods, uploadImageToStorage, retrieveImageFromStorage, deleteImage } from '../API/firebaseMethods';
+import { addPodToDB, getPods, uploadImageToStorage, 
+    retrieveImageFromStorage, deleteImage, getUsers } from '../API/firebaseMethods';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -39,8 +40,11 @@ const ByPod = (props) => {
         if (pods && pods.length > 0) {
             podLength = pods.length;
         }
+        // create dictionary of key value pairs, (memberName: true)
+        let membersDictionary = members.reduce((m, member) => ({...m, [member]: true}), {})
         // add new pod to current pods list
-        let newPod = { key: podLength + 1, pod_name: groupName.trim(), num_members: members.length, pod_picture: selectedImageName, pod_picture_url: selectedImageUrl, num_recs: 0 }
+        let newPod = { key: podLength + 1, pod_name: groupName.trim(), num_members: members.length, 
+            pod_picture: selectedImageName, pod_picture_url: selectedImageUrl, num_recs: 0, members: membersDictionary };
         setPods([...pods, newPod]);
         // add pod object to database using firebase api function
         addPodToDB(newPod);
@@ -62,7 +66,7 @@ const ByPod = (props) => {
         setSelectedImageName("");
         setSelectedImageUrl(defaultImageUrl);
         setSearch('');
-        setFilteredDataSource(masterDataSource);
+        setFilteredDataSource([]);
         setErrors({nameError: '', membersError: ''});
     }
     // init error state for various form fields
@@ -76,16 +80,16 @@ const ByPod = (props) => {
         let isValid = validSymbols.test(groupName);
         // check if group name empty or only has whitespace
         if (groupName === "" || !groupName.replace(/\s/g, '').length) {
-            setErrors({nameError: "Group name is required"});
+            setErrors({nameError: "*Group name is required"});
             allValid = false;
         // check if group name is not valid (not just alphanumeric)
         } else if (!isValid) {
-            setErrors({nameError: "Group name must be alphabetic"});
+            setErrors({nameError: "*Group name must be alphabetic"});
             allValid = false;
         }
         // check if members includes user + other members
         if (members.length == 1) {
-            setErrors({membersError: "Please add at least one user"});
+            setErrors({membersError: "*Please add at least one user"});
             allValid = false;
         }
         // if everything checks out, add to pods list
@@ -97,41 +101,24 @@ const ByPod = (props) => {
     // for 'Create a Pod' pop-up search bar
     const [search, setSearch] = useState('');
     const [filteredDataSource, setFilteredDataSource] = useState([]);
-    const [masterDataSource, setMasterDataSource] = useState([]);
 
     // init empty list of pod tiles
     const [members, setMembers] = useState([username]);
 
-    useEffect(() => {
-        // placeholder data for users
-        fetch('https://jsonplaceholder.typicode.com/users')
-          .then((response) => response.json())
-          .then((responseJson) => {
-            setFilteredDataSource(responseJson);
-            setMasterDataSource(responseJson);
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-      }, []);
-
-      const searchFilterFunction = (text) => {
+    const searchFilterFunction = async (text) => {
         if (text) {
-          // filter the data according to what user searched
-          // update usernames shown
-          const newData = masterDataSource.filter(function (item) {
-            const itemData = item.username
-              ? item.username.toUpperCase()
-              : ''.toUpperCase();
-            const textData = text.toUpperCase();
-            return itemData.indexOf(textData) > -1;
-          });
-          setFilteredDataSource(newData);
-          setSearch(text);
+            // grab users from the database that match the searched text or is close to it
+            const users = await getUsers(text.toLowerCase(), username);
+            if (users) {
+                setFilteredDataSource(users);
+            } else {
+                setFilteredDataSource([]);
+            }
+            setSearch(text);
         } else {
-          // when search bar clear, show all usernames
-          setFilteredDataSource(masterDataSource);
-          setSearch(text);
+            // when search bar clear, show all usernames
+            setFilteredDataSource([]);
+            setSearch(text);
         }
     };
 
@@ -157,16 +144,23 @@ const ByPod = (props) => {
         );
     };
 
-    // on-click item in flat list, add new member to pod
+    // on-click item in flat list, add new member to pod, if user re-clicks that same username, 
+    // user will be removed from pod list
     const getItem = (item) => {
-        let newMember = { key: item.id, name: item.username}
-        setMembers([...members, newMember.name]);
+        if (members.indexOf(item.username) == -1) {
+            let newMember = { key: item.id, name: item.username}
+            setMembers([...members, newMember.name]);
+        } else {
+            const removedDeletedMember = members.filter((member) => {
+                return member != item.username
+            })
+            setMembers(removedDeletedMember);
+        }
     };
 
     // init var for selected pod image
     const [selectedImageName, setSelectedImageName] = useState("");
     const [selectedImageUrl, setSelectedImageUrl] = useState(defaultImageUrl);
-    const [timestamp, setTimestamp] = useState(0);
 
     // function from expo docs tutorial
     let openImagePickerAsync = async () => {
@@ -184,7 +178,7 @@ const ByPod = (props) => {
         let uploadUri = Platform.OS === 'ios' ? result.uri.replace('file://', '') : result.uri;
         // get extension of image and set filename as username and current timestamp
         const extension = uploadUri.split('.').pop();
-        const imageName = currentUserUID + "_" + timestamp + '.' + extension;
+        const imageName = currentUserUID + "_" + Date.now() + '.' + extension;
 
         // check if image was changed (the second and following times), delete the old image on db
         deleteImage(selectedImageName);
@@ -234,7 +228,6 @@ const ByPod = (props) => {
                         <Text style={styles.noPodsYetText}>Pods can be with one person or a group</Text>
                     </View>
                 }
-
             </ScrollView>
 
             {/* Create A Pod PopUp */}
@@ -248,7 +241,7 @@ const ByPod = (props) => {
                         <Text style={styles.modalTitle}>Create a Pod</Text>
                         <Text style={styles.modalText}>Add your friends by username!</Text>
 
-                        <View style={{ flexDirection: 'row'}}>
+                        <View style={{ flexDirection: 'row', marginBottom: -10}}>
                             <Text style={styles.userDetailsText}>
                                 Pod Name:
                             </Text>
@@ -257,41 +250,35 @@ const ByPod = (props) => {
                                 onChangeText={groupName => setGroupName(groupName)}
                                 style={styles.userInput}
                                 defaultValue={groupName}
-                                placeholder={"Enter a group name"}
+                                placeholder={"Enter a pod name"}
                                 value={groupName}
                                 />
                             </SafeAreaView>
                         </View>
-                        <View style={{ display: 'flex', justifyContent: 'flex-start'}}>
+                        <View style={{ display: 'flex'}}>
                             <Text style={styles.errorMessage}>{errors.nameError}</Text>
                         </View>
 
-                        <View style={{ flexDirection: 'row'}}>
+                        <View style={{ flexDirection: 'row', marginTop: -5 }}>
                             <Text style={styles.userDetailsText}>
                                 Pod Image:
                             </Text>
                             <View style={{flex: 1, alignItems: 'center', marginTop: 5}}>
                                 {/* if image selected, show image; also allow user to re-choose an image */}
-                                {selectedImageUrl && selectedImageUrl != null ?
-                                    <View style={{ flexDirection: 'row'}}>
-                                        <Image
-                                            source={{ uri: selectedImageUrl }}
-                                            style={styles.thumbnail}
-                                        />
-                                        <TouchableOpacity onPress={openImagePickerAsync} activeOpacity={0.7}>
-                                            <Image style={{ width: 30, height: 30}}
-                                                source={uploadPodImage}></Image>
-                                        </TouchableOpacity>
-                                    </View> :
+                                <View style={{ flexDirection: 'row'}}> 
+                                     <Image
+                                         source={{ uri: selectedImageUrl }}
+                                         style={styles.thumbnail}
+                                     />
                                     <TouchableOpacity onPress={openImagePickerAsync} activeOpacity={0.7}>
                                         <Image style={{ width: 30, height: 30}}
                                             source={uploadPodImage}></Image>
                                     </TouchableOpacity>
-                                }
+                                </View>
                             </View>
                         </View>
 
-                        <View style={{ flexDirection: 'row'}}>
+                        <View style={{ flexDirection: 'row', marginTop: -5}}>
                             <Text style={styles.userDetailsText}>
                                 Users in this Pod:
                             </Text>
@@ -299,73 +286,89 @@ const ByPod = (props) => {
 
                         {/* display members added to pod so far */}
                         <View style={{ height: windowHeight/7 }}>
-                        <ScrollView contentContainerStyle={styles.membersList}>
-                            {/* check if any members added yet: if not, display message;
-                              if members have been added, display each one in a row */}
-                            {members.length === 0 ?
-                            (<View style={{ flexDirection: 'row'}}>
-                                <Text style={styles.membersText}>No members yet! {"\n"}Search below to add members to this pod.</Text>
-                            </View>) :
-                            (members.map(name =>
-                            <View key={name} style={{ flexDirection: 'row'}}>
-                                <Text style={styles.membersText}>{name}</Text>
-                            </View>)
-                            )}
-                        </ScrollView>
-                        <Text style={styles.errorMessage}>{errors.membersError}</Text>
+                            <ScrollView contentContainerStyle={styles.membersList}>
+                                {/* check if any members added yet: if not, display message;
+                                if members have been added, display each one in a row */}
+                                {members.length === 0 ?
+                                    (<View style={{ flexDirection: 'row'}}>
+                                        <Text style={styles.membersText}>No members yet! {"\n"}Search below to add members to this pod.</Text>
+                                    </View>) :
+                                    (members.map(name =>
+                                    <View key={name} style={{ flexDirection: 'row'}}>
+                                        <Text style={styles.membersText}>{name}</Text>
+                                    </View>)
+                                )}
+                            </ScrollView>
+                            <Text style={styles.errorMessage}>{errors.membersError}</Text>
                         </View>
 
                         {/* search bar, click on usernames to add members to pod */}
                         <View style={{ flexDirection: 'row'}}>
-                            <Text style={styles.userDetailsText}>
+                            <Text style={styles.userDetailsTextBottom}>
                                 Search for Members to Add:
                             </Text>
                         </View>
 
                         <SafeAreaView style={{ flex: 1 }}>
-                            <View style={styles.searchBarContainer}>
+                            <View>
                                 <SearchBar
                                 searchIcon={{ size: 24 }}
-                                onChangeText={(text) => searchFilterFunction(text)}
-                                onClear={(text) => searchFilterFunction('')}
+                                onChangeText={(text) => setSearch(text)}
+                                onSubmitEditing={() => searchFilterFunction(search)}
+                                onClear={() => searchFilterFunction('')}
                                 placeholder="Enter a username"
                                 value={search}
-                                containerStyle={{ backgroundColor: '#6f1d1b', marginTop: 5, marginBottom: 5, borderTopColor: '#6f1d1b',
-                                borderBottomColor: '#6f1d1b', width: windowWidth/2 }}
+                                containerStyle={{ backgroundColor: '#6f1d1b', borderTopColor: '#6f1d1b',
+                                 borderBottomColor: '#6f1d1b', width: windowWidth/1.5 }}
                                 inputContainerStyle={{ backgroundColor: 'white', height: 30, borderRadius: 10 }}
                                 inputStyle={{ fontSize: 16 }}
                                 />
                                 {/* flat list displays username data */}
-                                <FlatList
-                                data={filteredDataSource}
-                                keyExtractor={(item, index) => index.toString()}
-                                ItemSeparatorComponent={ItemSeparatorView}
-                                renderItem={ItemView}
-                                />
+                                { filteredDataSource ? 
+                                    <FlatList
+                                    data={filteredDataSource}
+                                    keyExtractor={(item, index) => index.toString()}
+                                    ItemSeparatorComponent={ItemSeparatorView}
+                                    renderItem={ItemView}
+                                    /> :
+                                    <View style={{ flexDirection: 'row'}}>
+                                        <Text style={styles.membersText}>No users with that username...Try a different name!</Text>
+                                    </View>
+                                }
                             </View>
                         </SafeAreaView>
 
-                        <Pressable style={styles.createPodButton} onPress={checkAllFieldsOnSubmit}>
-                            <Text style={styles.createPodText}>Create Pod</Text>
-                        </Pressable>
+                        <View>
+                            <Pressable style={styles.createPodButton} onPress={checkAllFieldsOnSubmit}>
+                                <Text style={styles.createPodText}>Create Pod</Text>
+                            </Pressable>
+                        </View>
                     </View>
                 </View>
             </Modal>
 
             {/* Add Pod Button */}
-            <View style={{marginRight: 17}}>
+            <View style={styles.bottomButtonView}>
                 <Image source={addPodButton} style={styles.floatingAddButton}></Image>
             </View>
             <TouchableOpacity activeOpacity={0.25}
                 onPress={toggleModal}
                 style={styles.floatingAddButton}>
             </TouchableOpacity>
-
         </View>
     )
 }
 
 const styles = StyleSheet.create({
+    bottomButtonView: {
+        marginRight: 17,
+        // ios
+        shadowOffset: {width: 5, height: 5},
+        shadowOpacity: .5,
+        shadowRadius: 10,
+        // android
+        elevation: 3,
+    },
     floatingAddButton: {
         alignSelf: 'flex-end',
         position: 'absolute',
@@ -406,7 +409,6 @@ const styles = StyleSheet.create({
         backgroundColor: "#6F1D1B",
         borderRadius: 20,
         padding: 35,
-        alignItems: "center",
         // ios
         shadowOffset: {width: 10, height: 10},
         shadowOpacity: 0.1,
@@ -445,11 +447,12 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textTransform: 'uppercase',
         fontSize: 18,
+        textAlign: 'center'
     },
     createPodButton: {
         backgroundColor: "white",
         borderRadius: 20,
-        marginTop: 20,
+        marginTop: 55,
         paddingVertical: 10,
         paddingHorizontal: 20,
         // ios
@@ -460,37 +463,39 @@ const styles = StyleSheet.create({
         elevation: 2,
     },
     userDetailsText: {
-        fontSize: 18,
+        fontSize: 16,
         color: 'white',
         marginTop: 17,
         flex: 1,
         justifyContent: "flex-start",
         alignItems: "flex-start",
     },
+    userDetailsTextBottom: {
+        fontSize: 16,
+        color: 'white',
+        marginTop: 0,
+        flex: 1,
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+    },
     userInput: {
         height: 30,
-        width: windowWidth/3,
+        width: windowWidth/2.5,
         fontSize: 16,
         backgroundColor: 'white',
         borderRadius: 10,
         padding: 5,
         paddingHorizontal: 10,
-        marginLeft: 10,
+        marginLeft: 0,
         marginTop: 15,
     },
     itemStyle: {
         padding: 10,
         color: 'white'
     },
-    searchBarContainer: {
-        marginTop: 10,
-        color: 'white',
-    },
     membersList: {
-        marginVertical: 5,
+        marginTop: 0,
         marginHorizontal: 5,
-        // paddingBottom: 30,
-        // flexGrow:1,
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-between',
@@ -522,6 +527,7 @@ const styles = StyleSheet.create({
     },
     errorMessage: {
         color: '#ffc9b9',
+        marginVertical: 5
     }
 })
 

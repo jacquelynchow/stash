@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, SafeAreaView } from 'react-native';
 
 export default function VideoType() {
-  const [title, setTitle] = useState("");
-  const [link, setLink] = useState("");
-  
+  const [recName, setrecName] = useState("");
+  const [recLink, setrecLink] = useState("");
+
   return (
     <View>
       <View style={{ flexDirection: 'row'}}>
@@ -12,11 +12,11 @@ export default function VideoType() {
           Title:
         </Text>
         <SafeAreaView>
-          <TextInput 
+          <TextInput
             autoFocus={true}
-            onEndEditing={title => setTitle(title)}
+            onEndEditing={recName => setrecName(recName)}
             style={styles.input}
-            defaultValue={title} 
+            defaultValue={recName}
             placeholder={"Enter a title"}
           />
         </SafeAreaView>
@@ -26,11 +26,11 @@ export default function VideoType() {
           Link:
         </Text>
         <SafeAreaView>
-          <TextInput 
+          <TextInput
               autoFocus={true}
-              onEndEditing={link => setLink(link)}
+              onEndEditing={recLink => setrecLink(recLink)}
               style={styles.input}
-              defaultValue={link} 
+              defaultValue={recLink} 
               placeholder={"Link to video"}
           />
         </SafeAreaView>

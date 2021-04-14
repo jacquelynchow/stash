@@ -17,7 +17,7 @@ export default function JustTitleType() {
             <SafeAreaView>
                 <TextInput
                 autoFocus={true}
-                onEndEditing={recName => setrecName(recName)}
+                onChangeText={recName => setrecName(recName)}
                 style={styles.input}
                 defaultValue={recName}
                 placeholder={"Enter a title"}
@@ -30,7 +30,7 @@ export default function JustTitleType() {
           <SafeAreaView>
               <TextInput
               autoFocus={true}
-              onEndEditing={description => setDescription(description)}
+              onChangeText={description => setDescription(description)}
               style={styles.descriptionInput}
               defaultValue={description}
               placeholder={"Add a description"}

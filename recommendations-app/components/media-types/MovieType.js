@@ -15,7 +15,7 @@ export default function MovieType() {
         <SafeAreaView>
           <TextInput
             autoFocus={true}
-            onEndEditing={recName => setrecName(recName)}
+            onChangeText={recName => setrecName(recName)}
             style={styles.titleInput}
             defaultValue={recName}
             placeholder={"Enter a title"}
@@ -29,7 +29,7 @@ export default function MovieType() {
         <SafeAreaView>
           <TextInput
               autoFocus={true}
-              onEndEditing={recGenre => setrecGenre(recGenre)}
+              onChangeText={recGenre => setrecGenre(recGenre)}
               style={styles.input}
               defaultValue={recGenre}
               placeholder={"Enter a genre"}

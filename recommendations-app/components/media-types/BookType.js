@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, SafeAreaView } from 'react-native';
 
-export default function MovieType() {
+export default function BookType() {
   const [recName, setrecName] = useState("");
   const [recAuthor, setrecAuthor] = useState("");
 

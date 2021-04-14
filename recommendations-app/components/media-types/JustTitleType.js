@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, SafeAreaView, Keyboard } from 'react-native';
 
-export default function MovieType() {
+export default function JustTitleType() {
   const [recName, setrecName] = useState("");
   const [description, setDescription] = useState("");
 

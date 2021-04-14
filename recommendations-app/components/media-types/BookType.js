@@ -14,7 +14,7 @@ export default function BookType() {
             <SafeAreaView>
                 <TextInput
                 autoFocus={true}
-                onEndEditing={recName => setrecName(recName)}
+                onChangeText={recName => setrecName(recName)}
                 style={styles.titleInput}
                 defaultValue={recName}
                 placeholder={"Enter a title"}
@@ -28,7 +28,7 @@ export default function BookType() {
             <SafeAreaView>
                 <TextInput
                     autoFocus={true}
-                    onEndEditing={recAuthor => setrecAuthor(recAuthor)}
+                    onChangeText={recAuthor => setrecAuthor(recAuthor)}
                     style={styles.input}
                     defaultValue={recAuthor}
                     placeholder={"Add author(s)"}

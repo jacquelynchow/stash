@@ -9,7 +9,7 @@ import { SearchBar } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
 import * as firebase from 'firebase';
 import { addPodToDB, getPods, uploadImageToStorage, 
-    retrieveImageFromStorage, deleteImage, getUsers } from '../API/firebaseMethods';
+    retrieveImageFromStorage, deleteImage, getUsers, deletePodFromDB } from '../API/firebaseMethods';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -194,7 +194,7 @@ const ByPod = (props) => {
                 retrieveImageFromStorage(imageName, setSelectedImageUrl);
             })
             .catch((error) => {
-                console.log("Something went wrong with image upload! " + error);
+                console.log("Something went wrong with image upload! " + error.message + error.code);
         });
     }
 
@@ -221,7 +221,7 @@ const ByPod = (props) => {
 
                 {/* make a pod for each group name stored in the pods list */}
                 {pods && pods.length > 0 ?
-                    pods.map(pod => <PodTile key={pod.key} groupName={pod.pod_name} numMembers={pod.num_members} uri={pod.pod_picture_url} />) :
+                    pods.map(pod => <PodTile key={pod.key} groupName={pod.pod_name} numMembers={pod.num_members} uri={pod.pod_picture_url} deletePod={deletePodFromDB} members={pod.members} refresh={onRefresh} />) :
                     <View style={styles.centeredView}>
                         <Text style={styles.noPodsYetText}>Welcome, {username}!</Text>
                         <Text style={styles.noPodsYetTitle}>Click the + button to start a pod</Text>

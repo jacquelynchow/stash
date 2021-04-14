@@ -10,6 +10,7 @@ import Back from './components/Back';
 import * as firebase from 'firebase';
 import apiKeys from './config/keys';
 import LoadingScreen from './screens/Loading';
+import { MenuProvider } from 'react-native-popup-menu';
 
 const Stack = createStackNavigator();
 
@@ -21,7 +22,8 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
+    <MenuProvider>
+      <NavigationContainer>
       {/* set initial route upon app opening to loading - redirects to home page if logged in already*/}
       <Stack.Navigator initialRouteName="Loading">
         {/* set up routes for each screen */}
@@ -47,5 +49,6 @@ export default function App() {
           }}/>
       </Stack.Navigator>
     </NavigationContainer>
+    </MenuProvider>
   );
 }

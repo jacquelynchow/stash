@@ -85,6 +85,38 @@ export async function addPodToDB(pod) {
   })
 }
 
+// delete existing pod object from the db
+export async function deletePodFromDB(pod) {
+  const db = firebase.firestore();
+  
+  // get pod from db and delete it
+  db.collection('pods').where('pod_name', '==', pod.groupName)
+  .get().then(function(querySnapshot) {
+    querySnapshot.forEach(function(doc) {
+      doc.ref.delete();
+    });
+  });
+
+  // delete this pod data from each members' object
+  const usersDb = db.collection("users");
+  
+  const usernamesList = Object.keys(pod.members); 
+  // get the uids of each user in this pod
+  const userIds = await getListOfUserIds(usernamesList, usersDb);
+  
+  // using the uid of each user, update their respective list of pods 
+  const podName = pod.groupName;
+  userIds.forEach((uid) => {
+    usersDb.doc(uid).update({
+      [`pods.${podName}`]: false,
+    })
+  })
+
+  // todo: delete all recs that were in the pod? delete pod image from firebase?
+
+  console.log("deleting in parent", pod.groupName, pod.members);
+}
+
 // get list of uids from db when given a list of member usernames
 async function getListOfUserIds(usernamesList, usersDb) {
   const userIds = []

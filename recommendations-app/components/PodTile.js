@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, Dimensions, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
 import {
@@ -8,6 +8,8 @@ import {
     MenuOption,
     MenuTrigger,
 } from 'react-native-popup-menu';
+
+const windowWidth = Dimensions.get('window').width;
 
 const PodTile = (props) => {
     const navigation = useNavigation();
@@ -41,7 +43,7 @@ const PodTile = (props) => {
                     <Menu>
                         {/* 3 dots icon triggers menu to open*/}
                         <MenuTrigger customStyles={triggerStyles}>
-                            <FontAwesome name="ellipsis-v" size={26} color="#d68c45" style={{ marginTop: 20, marginRight: 8, opacity: 0.5 }} />
+                            <FontAwesome name="ellipsis-v" size={26} color="#d68c45" style={{ marginTop: 20, marginRight: windowWidth/36, opacity: 0.5 }} />
                         </MenuTrigger>
                         <MenuOptions customStyles={optionsStyles} >
                             <MenuOption onSelect={confirmDeletePod} >

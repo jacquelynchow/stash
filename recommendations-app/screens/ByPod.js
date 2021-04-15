@@ -227,7 +227,14 @@ const ByPod = (props) => {
 
                 {/* make a pod for each group name stored in the pods list */}
                 {pods && pods.length > 0 ?
-                    pods.map(pod => <PodTile key={pod.key} groupName={pod.pod_name} numMembers={pod.num_members} uri={pod.pod_picture_url} />) :
+                    pods.map(pod => 
+                        <PodTile key={pod.key} 
+                            groupName={pod.pod_name} 
+                            numMembers={pod.num_members} 
+                            members={pod.members}
+                            uri={pod.pod_picture_url} 
+                            userId={currentUserUID} 
+                            username={username} />) :
                     <View style={styles.centeredView}>
                         <Text style={styles.noPodsYetText}>Welcome, {username}!</Text>
                         <Text style={styles.noPodsYetTitle}>Click the + button to start a pod</Text>

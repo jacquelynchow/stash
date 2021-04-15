@@ -7,6 +7,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import RecTile from '../components/RecTile';
 import closePopUpButton from '../assets/closePopUpButton.png';
 import addRecButton from '../assets/addRecButton.png';
+import showMembersButton from '../assets/showMembersButton.png';
 // Media Types Components
 import MovieType from '../components/media-types/MovieType';
 import BookType from '../components/media-types/BookType';
@@ -21,12 +22,15 @@ import { addRecToDB, getRecs, getPodRecs } from '../API/firebaseMethods';
 
 const windowHeight = Dimensions.get('window').height;
 
-const PodPage = (props) => {
-
-  const currentUserUID = props.userId;
-  const currentPod = props.groupName;
-  const username = props.username;
-
+const PodPage = ({ navigation, route}) => {
+  const podData = JSON.parse(JSON.stringify(route.params));
+  const numMembers = podData.numMembers;
+  const members = Object.keys(podData.members);
+  const currentUserUID = podData.userId;
+  const username = podData.username;
+  const podName = podData.name;
+  const podImageUri = podData.uri;
+  
   // call firebase api function getRecs on onRecsReceived function to render recs from db
   useEffect(() => {
       getRecs(onRecsReceived);
@@ -36,6 +40,11 @@ const PodPage = (props) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const toggleModal = () => {
       setModalVisible(!isModalVisible);
+  };
+  // display pop up when pod members modal view is on
+  const [isMembersModalVisible, setMembersModalVisible] = useState(false);
+  const toggleMembersModal = () => {
+      setMembersModalVisible(!isMembersModalVisible);
   };
 
   //init various states needed for recs
@@ -184,6 +193,33 @@ const PodPage = (props) => {
           }
 
         </ScrollView>
+
+        {/* Show Members PopUp */}
+        <Modal isVisible={isMembersModalVisible}>
+          <View style={styles} >
+            <View style={styles.membersModalView}>
+                <Pressable style={[styles.button, styles.buttonClose]}
+                    onPress={toggleMembersModal} >
+                    <Image source={closePopUpButton} style={{width: 30, height: 30}}/>
+                </Pressable>
+                <Text style={styles.membersModalTitle}>Pod Members</Text>
+                <Text style={styles.membersModalText}>{numMembers} Members</Text>
+                { members ? members.map(memberName => 
+                  <Text style={styles.memberNamesText}>{memberName}</Text>): 
+                  <Text style={styles.memberNamesText}>No members in this pod.</Text> 
+                }
+            </View>
+          </View>
+        </Modal>
+        {/* Show Pod Members Button */}
+        <View style={{marginRight: 17}}>
+            <Image source={showMembersButton} style={styles.floatingShowMembersButton}></Image>
+        </View>
+        <TouchableOpacity activeOpacity={0.25}
+            onPress={toggleMembersModal}
+            style={styles.floatingShowMembersButton}>
+        </TouchableOpacity>
+        
 
         {/* Add A Rec PopUp */}
         <Modal isVisible={isModalVisible}>
@@ -361,6 +397,41 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     position: 'absolute',
     bottom: 25,
+    height: 60,
+    width: 60,
+  },
+  membersModalTitle: {
+    fontWeight: 'bold',
+    fontSize: 35,
+    marginTop: 10,
+    color: "white",
+  },
+  membersModalText: {
+    marginBottom: 25,
+    fontSize: 18,
+    color: "white"
+  },
+  memberNamesText: {
+    fontSize: 16,
+    color: "white",
+    marginBottom: 5
+  },
+  membersModalView: {
+    margin: 20,
+    backgroundColor: "#6F1D1B",
+    borderRadius: 20,
+    padding: 35,
+    // ios
+    shadowOffset: {width: 10, height: 10},
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    // android
+    elevation: 2,
+  },
+  floatingShowMembersButton: {
+    alignSelf: 'flex-end',
+    position: 'absolute',
+    bottom: 100,
     height: 60,
     width: 60,
   },

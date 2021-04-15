@@ -7,7 +7,9 @@ const PodTile = (props) => {
 
     return (
         <View style={styles.item}>
-            <TouchableOpacity activeOpacity={.7} onPress={() => navigation.navigate('Pod')}>
+            <TouchableOpacity activeOpacity={.7} onPress={() => navigation.navigate('Pod',
+                    { name: props.groupName, numMembers: props.numMembers, members: props.members,
+                        uri: props.uri, userId: props.userId, username: props.username })}>
                 <Image source={{uri: props.uri}} style={styles.groupImage}></Image>
                 <Text style={styles.name}>{props.groupName}</Text>
                 <Text style={styles.members}>{props.numMembers} Members</Text>

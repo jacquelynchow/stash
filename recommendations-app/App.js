@@ -19,7 +19,8 @@ export default function App() {
     console.log('Connected with Firebase')
     firebase.initializeApp(apiKeys.firebaseConfig);
   }
-
+  const headerTitleStyles = { color: "#D68C45", fontWeight: "700", fontSize: 20 }
+  const homeTitleStyles = { color: '#6f1d1b', fontWeight: "700", fontSize: 20 }
   return (
     <NavigationContainer>
       {/* set initial route upon app opening to loading - redirects to home page if logged in already*/}
@@ -29,21 +30,29 @@ export default function App() {
           options={{ headerShown: false }}
         />
         <Stack.Screen name="Home" component={HomeScreen} 
-          options= {{headerRight: () => (
-            <Logout/>), headerTintColor: '#6f1d1b', headerLeft: ()=> null, // remove back button, must logout
+          options= {{
+            headerRight: () => (<Logout/>), 
+            headerTitleStyle: homeTitleStyles, 
+            headerLeft: ()=> null, // remove back button, must logout
             gestureEnabled: false // don't let user accidentally swipe back to login screen
           }}
         />
         <Stack.Screen name="Pod" component={PodPage} 
-          options= {{headerLeft: () => (
-            <Back/>),
-          }}/>
+          options= { 
+            ({ route }) => ({ title: route.params.name, 
+              headerLeft: () => <Back/>,
+              headerTitleStyle: headerTitleStyles
+            })
+          }/>
         <Stack.Screen name="MediaType" component={MediaTypePage} 
-          options= {{headerLeft: () => (
-            <Back/>),
+          options= {{
+            headerLeft: () => (<Back/>),
+            headerTitleStyle: headerTitleStyles
           }}/>
         <Stack.Screen name="Loading" component={LoadingScreen} 
-          options= {{ headerLeft: ()=> null
+          options= {{ 
+            headerLeft: ()=> null,
+            headerTitleStyle: headerTitleStyles
           }}/>
       </Stack.Navigator>
     </NavigationContainer>

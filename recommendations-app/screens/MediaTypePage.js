@@ -1,7 +1,7 @@
 import React, { useEffect, useState,useCallback } from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity, Image, Pressable, Text, Button, Alert, Dimensions} from 'react-native';
+import { StyleSheet, View, ScrollView, TouchableOpacity, Image, Pressable, Text, Button, Alert, Dimensions, RefreshControl} from 'react-native';
 import RecTile from '../components/RecTile';
-import {getMediaRecs} from '../API/firebaseMethods';
+import {getMediaRecs, getNumRecsForMedia, getRecs} from '../API/firebaseMethods';
 //will create function that shows the recs from only 1 media type
 //TODO: figure out how to get the mediaType that should be displaying
 {/*
@@ -29,6 +29,22 @@ function showMediaType() {
 const windowHeight = Dimensions.get('window').height;
 
 export default function MediaTypePage() {
+  const [recs, setRecs] = useState([]);
+  useEffect(() => {
+    getMediaRecs(onRecsReceived);
+  }, []); 
+
+  const onRecsReceived = (recList) => {
+    setRecs(recList);
+  };  
+
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = useCallback(async () => {
+          setRefreshing(true);
+          await getMediaRecs(onRecsReceived) // use await to refresh until function finished
+          .then(() => setRefreshing(false));
+      }, []);
+
    {/*const [recs] = useState([]);
   useEffect(() => {
     getMediaRecs(onRecsReceived);
@@ -42,13 +58,26 @@ export default function MediaTypePage() {
   */}
   return (
     <View style={{flex: 1}}>
-      <ScrollView contentContainerStyle={styles.container}>
-        {/*instead show the recommendations from only 1 media type*/}
-        {/*Show recs with the same media_type for USERID */}
-        <RecTile recName={"Rec 1"} mediaType={"Book"}/>
-        <RecTile recName={"Rec 2"} mediaType={"Book"}/>
-        <RecTile recName={"Rec 3"} mediaType={"Book"}/>
-      </ScrollView>
+      <ScrollView
+          contentContainerStyle={styles.container}
+          refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+              />
+            }>
+
+          {/* make a rec for each rec stored in the recs list */}
+          {recs && recs.length > 0 ?
+              recs.map(rec => <RecTile key={rec.key} recName={rec.rec_title}
+                  mediaType={rec.rec_type} recSender={rec.rec_sender} groupName={rec.rec_pod}
+                  recAuthor={rec.rec_author} recLink={rec.rec_link} recComment={rec.rec_comment}/>) :
+              <View style={styles.centeredView}>
+                  <Text>No recommendations yet</Text>
+              </View>
+          }
+
+        </ScrollView>
     </View>
   )
 }

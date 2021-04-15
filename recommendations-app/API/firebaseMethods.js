@@ -291,29 +291,21 @@ export async function getPodRecs(pod){
 }
 
 //makes list of recs for media
-export async function getMediaRecs(media_type){
+export async function getMediaRecs(recsRecieved){
   let recsInMedia = [];
-  //TODO:search recs for that user and add to recList the recs
-  //with a rec_type that matches the given media_type
-  const currentUserUid = firebase.auth().currentUser.uid;
-  await firebase.firestore().collection("users")
-    .doc(currentUserUid)
-    .get()
-    .then((doc) => {
-      pods = Object.keys(doc.data().pods) // save the pods keys (aka pod names) to pods list
-    })
-  let snapshot = await firebase.firestore() // return a query snapshot of current db
-    .collection("recs")
-    .orderBy("createdAt") // get recs in order of creation
-    //need to only look at recs for the 1 user
-    .where('rec_pod','in',pods)
-    .where('rec_type','==',media_type)
-    .get()
-    // push each rec in db to recList
-    snapshot.forEach((doc) => {
-      recsInMedia.push(doc.data());
-    });
-    //need to callback function
+  let snapshot = await firebase.firestore()
+  .collection("recs")
+  //neeed to look at recs for the 1 user
+  .orderBy("createdAt") // get recs in order of creation
+  //.where("rec_type","==",media_type)
+  .get()
+
+  // push each rec in db to recList
+  snapshot.forEach((doc) => {
+    recsInMedia.push(doc.data());
+  });
+
+  recsRecieved(recsInMedia);
 }
 
 //get number of all recs for user

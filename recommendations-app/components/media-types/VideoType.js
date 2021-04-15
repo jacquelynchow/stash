@@ -14,7 +14,7 @@ export default function VideoType() {
         <SafeAreaView>
           <TextInput
             autoFocus={true}
-            onEndEditing={recName => setrecName(recName)}
+            onChangeText={recName => setrecName(recName)}
             style={styles.input}
             defaultValue={recName}
             placeholder={"Enter a title"}
@@ -28,9 +28,9 @@ export default function VideoType() {
         <SafeAreaView>
           <TextInput
               autoFocus={true}
-              onEndEditing={recLink => setrecLink(recLink)}
+              onChangeText={recLink => setrecLink(recLink)}
               style={styles.input}
-              defaultValue={recLink} 
+              defaultValue={recLink}
               placeholder={"Link to video"}
           />
         </SafeAreaView>

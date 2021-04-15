@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, SafeAreaView, Keyboard } from 'react-native';
 
-export default function MovieType() {
+export default function JustTitleType() {
   const [recName, setrecName] = useState("");
   const [description, setDescription] = useState("");
 
@@ -17,7 +17,7 @@ export default function MovieType() {
             <SafeAreaView>
                 <TextInput
                 autoFocus={true}
-                onEndEditing={recName => setrecName(recName)}
+                onChangeText={recName => setrecName(recName)}
                 style={styles.input}
                 defaultValue={recName}
                 placeholder={"Enter a title"}
@@ -30,7 +30,7 @@ export default function MovieType() {
           <SafeAreaView>
               <TextInput
               autoFocus={true}
-              onEndEditing={description => setDescription(description)}
+              onChangeText={description => setDescription(description)}
               style={styles.descriptionInput}
               defaultValue={description}
               placeholder={"Add a description"}

@@ -10,6 +10,7 @@ import Back from './components/Back';
 import * as firebase from 'firebase';
 import apiKeys from './config/keys';
 import LoadingScreen from './screens/Loading';
+import { MenuProvider } from 'react-native-popup-menu';
 
 const Stack = createStackNavigator();
 
@@ -22,7 +23,8 @@ export default function App() {
   const headerTitleStyles = { color: "#D68C45", fontWeight: "700", fontSize: 20 }
   const homeTitleStyles = { color: '#6f1d1b', fontWeight: "700", fontSize: 20 }
   return (
-    <NavigationContainer>
+    <MenuProvider>
+      <NavigationContainer>
       {/* set initial route upon app opening to loading - redirects to home page if logged in already*/}
       <Stack.Navigator initialRouteName="Loading">
         {/* set up routes for each screen */}
@@ -31,7 +33,7 @@ export default function App() {
         />
         <Stack.Screen name="Home" component={HomeScreen} 
           options= {{
-            headerRight: () => (<Logout/>), 
+            headerRight: () => <Logout/>, 
             headerTitleStyle: homeTitleStyles, 
             headerLeft: ()=> null, // remove back button, must logout
             gestureEnabled: false // don't let user accidentally swipe back to login screen
@@ -46,7 +48,7 @@ export default function App() {
           }/>
         <Stack.Screen name="MediaType" component={MediaTypePage} 
           options= {{
-            headerLeft: () => (<Back/>),
+            headerLeft: () => <Back/>,
             headerTitleStyle: headerTitleStyles
           }}/>
         <Stack.Screen name="Loading" component={LoadingScreen} 
@@ -56,5 +58,6 @@ export default function App() {
           }}/>
       </Stack.Navigator>
     </NavigationContainer>
+    </MenuProvider>
   );
 }

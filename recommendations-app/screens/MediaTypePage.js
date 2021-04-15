@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity, Image, Pressable, Text, Button, Alert} from 'react-native';
+import React, { useEffect, useState,useCallback } from 'react';
+import { StyleSheet, View, ScrollView, TouchableOpacity, Image, Pressable, Text, Button, Alert, Dimensions} from 'react-native';
 import RecTile from '../components/RecTile';
 import {getMediaRecs} from '../API/firebaseMethods';
 //will create function that shows the recs from only 1 media type
@@ -26,17 +26,25 @@ function showMediaType() {
   }
 }
 */}
+const windowHeight = Dimensions.get('window').height;
 
 export default function MediaTypePage() {
+   {/*const [recs] = useState([]);
+  useEffect(() => {
+    getMediaRecs(onRecsReceived);
+  }, []);
 
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await getMediaRecs(onRecsReceived) // use await to refresh until function finished
+    .then(() => setRefreshing(false));
+  }, []);
+  */}
   return (
     <View style={{flex: 1}}>
       <ScrollView contentContainerStyle={styles.container}>
         {/*instead show the recommendations from only 1 media type*/}
-        {/*Show recs with the same media_type for USERID 
-          TODO: call showMediaType
-        */}
-        
+        {/*Show recs with the same media_type for USERID */}
         <RecTile recName={"Rec 1"} mediaType={"Book"}/>
         <RecTile recName={"Rec 2"} mediaType={"Book"}/>
         <RecTile recName={"Rec 3"} mediaType={"Book"}/>

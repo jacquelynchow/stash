@@ -40,6 +40,7 @@ const PodPage = ({ navigation, route}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const toggleModal = () => {
       setModalVisible(!isModalVisible);
+      //resetFields();
   };
   // display pop up when pod members modal view is on
   const [isMembersModalVisible, setMembersModalVisible] = useState(false);
@@ -50,6 +51,9 @@ const PodPage = ({ navigation, route}) => {
   //init various states needed for recs
   const [recs, setRecs] = useState([]);
   const [mediaType, setmediaType] = useState("");
+
+//TODO figure these out because initialised here and in [Media]Type.js files
+//so the names and author don't actually save here
   const [recName, setrecName] = useState("");
   const [recAuthor, setrecAuthor] = useState("");
   const [recLink, setrecLink] = useState("");
@@ -66,19 +70,17 @@ const PodPage = ({ navigation, route}) => {
       if (recs && recs.length > 0) {
         recLength = recs.length;
       }
+      console.log("recName in PodPage:", recName)
       // add group name of new pod to existing list
-  //LMTODO - should only include fields that work for all mediatypes here?
-  //or call with all but they are default blank because of init. Rec tile pop up doesn't open
-      let newRec = { key: recs.length + 1, rec_type: mediaType, rec_title: recName,
-              rec_author: recAuthor, rec_comment: recComment}
-      {/*let newRec = { key: recs.length + 1, rec_sender: username, rec_pod: currentPod,
+      let newRec = { key: recs.length + 1, rec_sender: username, rec_pod: currentPod,
               rec_type: mediaType, rec_title: recName, rec_author: recAuthor,
-              rec_link: recLink, rec_comment: recComment} */}
+              rec_link: recLink, rec_comment: recComment}
       setRecs([...recs, newRec]);
       // add rec object to database using firebase API function
+      console.log("adding rec to firebase...")
       addRecToDB(newRec);
       //close modal pop up
-      toggleModal(); //LMTODO recs are adding without pop up closing
+      toggleModal();
       //reset input fields to blank
       resetFields();
   };
@@ -89,27 +91,25 @@ const PodPage = ({ navigation, route}) => {
   };
 
   // resets all form fields on Send a Rec modal
-  const resetFields = () => {
+const resetFields = () => {
       setmediaType("");
       setrecName("");
       setrecAuthor("");
-      setrecAuthor("");
-      //LMTODO do I need to reset all other fiels in each file too?
-      //or all other possible subcategory of each media type?
+      setrecLink("");
       setrecComment("");
       setErrors({mediaTypeError: '', nameError: '', linkError: ''});
   }
 
 //LMTODO - can all error checking be done here? or does it have to be in each type subfile?
+// because currently these things aren't reading properly here
 
   // check on Send Rec submit that all fields are filled in correctly
   const checkAllFieldsOnSubmit = () => {
       let validSymbols = /^[\w\-\s]+$/;
       let allValid = true;
       let isValid = validSymbols.test(recName);
-    //LMTODO - figure out these testing calls - recs don't add when tests are uncommented
-      {/* // check if media type is selected
-      if (mediaType === "") {
+      // check if media type is selected
+      {/*if (mediaType === "") {
           setErrors({mediaTypeError: "Recommendation media type is required to continue"});
           allValid = false;
       }
@@ -126,9 +126,10 @@ const PodPage = ({ navigation, route}) => {
       if (recLink !== "" && !validURL(recLink)) {
           setErrors({linkError: "Please enter a valid link"});
           allValid = false;
-      } */}
+      }*/}
       // if everything checks out, add to recs list
       if (allValid) {
+          //console.log("test")
           addNewRec(recs);
       }
   };
@@ -167,6 +168,12 @@ const PodPage = ({ navigation, route}) => {
       return (<JustTitleType></JustTitleType>)
     }
   };
+
+  {/*function testFunction() {
+    console.log("arrived at testfunction")
+    console.log("booktype in podpage is")
+    recName => setrecName(BookType.recName)
+  }*/}
 
     return (
       <View style={{flex: 1}} >
@@ -261,13 +268,15 @@ const PodPage = ({ navigation, route}) => {
                   {/* display other relevant fields based on selected media type */}
                   { selectMediaType() }
 
+                  {/* testFunction() */}
+
                   {/* prompt users to add a comment for any media type */}
                   <Text style={styles.recCategoriesText}>
                     Comments:
                   </Text>
                   <SafeAreaView>
                       <TextInput style={styles.commentInput}
-                            onEndEditing={recComment => setrecComment(recComment)}
+                            onChangeText={recComment => setrecComment(recComment)}
                             maxLength={200}
                             multiline={true}
                             defaultValue={recComment}
@@ -286,7 +295,7 @@ const PodPage = ({ navigation, route}) => {
         </Modal>
 
         {/* Add A Rec Button */}
-        <View style={{marginRight: 17}}>
+        <View style={styles.bottomButtonView}>
             <Image source={addRecButton} style={styles.floatingAddButton}></Image>
         </View>
         <TouchableOpacity activeOpacity={0.25}
@@ -300,6 +309,15 @@ const PodPage = ({ navigation, route}) => {
 
 
 const styles = StyleSheet.create({
+  bottomButtonView: {
+    marginRight: 17,
+    // ios
+    shadowOffset: {width: 5, height: 5},
+    shadowOpacity: .5,
+    shadowRadius: 10,
+    // android
+    elevation: 3,
+  },
   container: {
     marginVertical: 20,
     marginHorizontal: 10,
@@ -333,6 +351,8 @@ const styles = StyleSheet.create({
       textAlign: "center",
       color: "#6F1D1B",
       fontStyle: 'italic',
+      marginLeft:25,
+      marginRight:25,
       marginTop: 10,
       fontSize: 14
   },

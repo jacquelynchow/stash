@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, SafeAreaView } from 'react-native';
 
-export default function MovieType() {
+export default function BookType() {
   const [recName, setrecName] = useState("");
   const [recAuthor, setrecAuthor] = useState("");
+
+  console.log("recName in book type:", recName)
 
   return (
     <View>
@@ -14,7 +16,7 @@ export default function MovieType() {
             <SafeAreaView>
                 <TextInput
                 autoFocus={true}
-                onEndEditing={recName => setrecName(recName)}
+                onChangeText={recName => setrecName(recName)}
                 style={styles.titleInput}
                 defaultValue={recName}
                 placeholder={"Enter a title"}
@@ -28,7 +30,7 @@ export default function MovieType() {
             <SafeAreaView>
                 <TextInput
                     autoFocus={true}
-                    onEndEditing={recAuthor => setrecAuthor(recAuthor)}
+                    onChangeText={recAuthor => setrecAuthor(recAuthor)}
                     style={styles.input}
                     defaultValue={recAuthor}
                     placeholder={"Add author(s)"}

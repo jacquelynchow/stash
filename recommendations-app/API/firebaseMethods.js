@@ -15,7 +15,7 @@ export async function registration(username, phone) {
       .set({
         username: username,
         phone: phone,
-        pods: {} 
+        pods: {}
       });
   } catch (err) {
     console.log("sign up failed");
@@ -66,16 +66,16 @@ export async function addPodToDB(pod) {
       members: pod.members,
       createdAt: firebase.firestore.FieldValue.serverTimestamp() // order pods to show up in order of creation
     })
-    .catch((error) => console.log(error)); // log any errors 
-  
+    .catch((error) => console.log(error)); // log any errors
+
   const usersDb = db.collection("users");
-  
+
   // add this new pod data to each members' object
-  const usernamesList = Object.keys(pod.members); 
+  const usernamesList = Object.keys(pod.members);
   // get the uids of each user just added to this new pod
   const userIds = await getListOfUserIds(usernamesList, usersDb);
-  
-  // using the uid of each user, update their respective list of pods 
+
+  // using the uid of each user, update their respective list of pods
   // by adding the new pod's name to the array without rewriting old data
   const podName = pod.pod_name;
   userIds.forEach((uid) => {
@@ -83,6 +83,38 @@ export async function addPodToDB(pod) {
       [`pods.${podName}`]: true,
     })
   })
+}
+
+// delete existing pod object from the db
+export async function deletePodFromDB(pod) {
+  const db = firebase.firestore();
+
+  // get pod from db and delete it
+  db.collection('pods').where('pod_name', '==', pod.groupName)
+  .get().then(function(querySnapshot) {
+    querySnapshot.forEach(function(doc) {
+      doc.ref.delete();
+    });
+  });
+
+  // delete this pod data from each members' object
+  const usersDb = db.collection("users");
+
+  const usernamesList = Object.keys(pod.members);
+  // get the uids of each user in this pod
+  const userIds = await getListOfUserIds(usernamesList, usersDb);
+
+  // using the uid of each user, update their respective list of pods
+  const podName = pod.groupName;
+  userIds.forEach((uid) => {
+    usersDb.doc(uid).update({
+      [`pods.${podName}`]: false,
+    })
+  })
+
+  // todo: delete all recs that were in the pod? delete pod image from firebase?
+
+  console.log("deleting in parent", pod.groupName, pod.members);
 }
 
 // get list of uids from db when given a list of member usernames
@@ -128,7 +160,7 @@ export async function getPods(podsRecieved) {
       })
       .catch((e) => console.log("error in adding pods to podList: " + e));
   }
-  podsRecieved(podList); // callback function that occurs asyncronously 
+  podsRecieved(podList); // callback function that occurs asyncronously
 }
 
 // upload image to firebase storage folder called pod_images
@@ -171,7 +203,7 @@ export function deleteImage(selectedImageName) {
 // get users that match the username or is close to the username
 export async function getUsers(searchUsername, currentUsername) {
   let usersList = []; // init usersList
-  
+
   // username query not case-sensitive, searchUsername was changed to all lowercase
   let snapshot = await firebase.firestore() // return a query snapshot of current db
     .collection("users")
@@ -187,7 +219,7 @@ export async function getUsers(searchUsername, currentUsername) {
   if (usersList) {
     // use filter method to make a new list of usernames without current user's username
     return usersList.filter((userData) => { return userData.username != currentUsername })
-  } 
+  }
   return null;
 }
 
@@ -197,25 +229,27 @@ export function addRecToDB(rec) {
   const db = firebase.firestore();
   db.collection("recs")
     .add({
-      rec_sender: rec.rec_sender,
-      rec_pod: rec.rec_pod,
       rec_type: rec.rec_type,
       rec_title: rec.rec_title,
       rec_author: rec.rec_author,
-      rec_link: rec.rec_link,
+      //rec_sender: rec.rec_sender,
+      //rec_pod: rec.rec_pod,
+      //rec_link: rec.rec_link,
       rec_comment: rec.rec_comment,
       createdAt: firebase.firestore.FieldValue.serverTimestamp() // order recs to show up in order of creation
     })
-    .catch((error) => console.log(error)); // log any errors
+    console.log("successfully added the rec to firebase")
+    //.catch((error) => console.log(error)); // log any errors
     //TODO: when add rec also update #recs in pod -> use updateNumRecsInPod
 }
 
-export function updateNumRecsInPod() {
-  const db = firebasee.firestore();
+export function updateNumRecsInPod(pod) {
+  const db = firebase.firestore();
+  const increment = firebase.firestore.FieldValue.increment(1);
   db.collection("pods")
-    //TODO: go into pod you want to update
+  .where('pod_name','==',pod.pod_name)
     .update({
-      num_recs : pod.num_recs + 1 //check if correct
+      num_recs : increment
     })
     .catch((error) => console.log(error));
 }
@@ -231,7 +265,7 @@ export async function getRecs(recsRecieved) {
     .get()
 
     // push each rec in db to recList
-    snapshot.forEach((rec) => {
+    snapshot.forEach((doc) => {
       recList.push(doc.data());
     });
 
@@ -251,20 +285,28 @@ export async function getPodRecs(pod){
     .get()
     // push each pod in db to podList
     snapshot.forEach((doc) => {
-      podList.push(doc.data());
+      recsInPod.push(doc.data());
     });
-    podsRecieved(podList);
+    podsRecieved(recsInPod);
 }
 
 //makes list of recs for media
 export async function getMediaRecs(media_type){
   let recsInMedia = [];
-  //TODO: search recs for that user and add to recList the recs
+  //TODO:search recs for that user and add to recList the recs
   //with a rec_type that matches the given media_type
+  const currentUserUid = firebase.auth().currentUser.uid;
+  await firebase.firestore().collection("users")
+    .doc(currentUserUid)
+    .get()
+    .then((doc) => {
+      pods = Object.keys(doc.data().pods) // save the pods keys (aka pod names) to pods list
+    })
   let snapshot = await firebase.firestore() // return a query snapshot of current db
     .collection("recs")
     .orderBy("createdAt") // get recs in order of creation
     //need to only look at recs for the 1 user
+    .where('rec_pod','in',pods)
     .where('rec_type','==',media_type)
     .get()
     // push each rec in db to recList
@@ -274,9 +316,41 @@ export async function getMediaRecs(media_type){
     //need to callback function
 }
 
+//get number of all recs for user
+export async function getNumRecsForUser(){
+  const currentUserUid = firebase.auth().currentUser.uid;
+  await firebase.firestore().collection("users")
+    .doc(currentUserUid)
+    .get()
+    .then((doc) => {
+      pods = Object.keys(doc.data().pods) // save the pods keys (aka pod names) to pods list
+    })
+  db.collection("recs")
+  .where('rec_pod','in',pods) //need to get it for only the user
+  .get()
+  .then(function(querySnapshot) { 
+    (querySnapshot.numChildren());
+});
+
+}
+
 //gets number of recs for media type
-{/*//need to create new function or somehow use getMediaRecs to make an accumulator
-  export async function getNumRecsForMedia(){
-    //TODO
+  export async function getNumRecsForMedia(media_type){
+    const currentUserUid = firebase.auth().currentUser.uid;
+  await firebase.firestore().collection("users")
+    .doc(currentUserUid)
+    .get()
+    .then((doc) => {
+      pods = Object.keys(doc.data().pods) // save the pods keys (aka pod names) to pods list
+    })
+    db.collection("recs")
+    .where('rec_pod','in',pods)
+    .where('rec_type', '==', media_type) 
+    .get()
+    .then(function(querySnapshot) { 
+      console.log(querySnapshot.numChildren());
+  });
   }
-*/}
+
+
+

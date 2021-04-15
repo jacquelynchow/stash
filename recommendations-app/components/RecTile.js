@@ -103,7 +103,8 @@ function selectBackgroundColor() {
                       {/* display all recommendation information: */}
                       <Text style={styles.modalTitle}> {props.recName} </Text>
                       <Text style={styles.modalText}> {props.mediaType} </Text>
-                      {/* TODO: update this in the instance that some fields aren't filled for media type*/}
+                      {/* TODO: update this in the instance that some fields aren't filled for media type
+                      example - don't want "view at" for link if it's a book*/}
                       {/* Author */}
                       <Text style={styles.modalText}>
                         <Text style={styles.modalHeading}>By: </Text>

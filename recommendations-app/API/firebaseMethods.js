@@ -244,11 +244,12 @@ export function addRecToDB(rec) {
 }
 
 export function updateNumRecsInPod(pod) {
-  const db = firebasee.firestore();
+  const db = firebase.firestore();
+  const increment = firebase.firestore.FieldValue.increment(1);
   db.collection("pods")
   .where('pod_name','==',pod.pod_name)
     .update({
-      num_recs : pod.num_recs + 1 //check if correct
+      num_recs : increment
     })
     .catch((error) => console.log(error));
 }

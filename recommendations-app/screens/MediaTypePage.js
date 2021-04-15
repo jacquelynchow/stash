@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import {React, useState } from 'react';
 import { StyleSheet, View, ScrollView, TouchableOpacity, Image, Pressable, Text, Button, Alert} from 'react-native';
 import RecTile from '../components/RecTile';
 import {getMediaRecs} from '../API/firebaseMethods';
@@ -28,7 +28,7 @@ function showMediaType() {
 */}
 
 export default function MediaTypePage() {
-  const [recs] = useState([]);
+  {/*const [recs] = useState([]);
   useEffect(() => {
     getMediaRecs(onRecsReceived);
   }, []);
@@ -38,6 +38,7 @@ export default function MediaTypePage() {
     await getMediaRecs(onRecsReceived) // use await to refresh until function finished
     .then(() => setRefreshing(false));
   }, []);
+   */}
   return (
     <View style={{flex: 1}}>
       <ScrollView contentContainerStyle={styles.container}>

@@ -1,4 +1,4 @@
-import React from 'react';
+import {React,useEffect} from 'react';
 import { StyleSheet, View, ScrollView } from 'react-native';
 import MediaGroup from '../components/MediaGroup';
 import bookIcon from '../assets/type-icons/book.png';

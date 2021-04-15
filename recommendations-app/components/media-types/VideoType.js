@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, SafeAreaView } from 'react-native';
 
-export default function VideoType() {
+export default function VideoType(props) {
   const [recName, setrecName] = useState("");
   const [recLink, setrecLink] = useState("");
 
@@ -14,7 +14,7 @@ export default function VideoType() {
         <SafeAreaView>
           <TextInput
             autoFocus={true}
-            onChangeText={recName => setrecName(recName)}
+            onChangeText={recName => props.setrecName(recName)}
             style={styles.input}
             defaultValue={recName}
             placeholder={"Enter a title"}
@@ -28,7 +28,7 @@ export default function VideoType() {
         <SafeAreaView>
           <TextInput
               autoFocus={true}
-              onChangeText={recLink => setrecLink(recLink)}
+              onChangeText={recLink => props.setrecLink(recLink)}
               style={styles.input}
               defaultValue={recLink}
               placeholder={"Link to video"}

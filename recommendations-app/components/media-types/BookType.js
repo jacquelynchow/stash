@@ -5,6 +5,8 @@ export default function BookType() {
   const [recName, setrecName] = useState("");
   const [recAuthor, setrecAuthor] = useState("");
 
+  console.log("recName in book type:", recName)
+
   return (
     <View>
         <View style={{ flexDirection: 'row'}}>

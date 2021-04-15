@@ -8,7 +8,7 @@ import Modal from 'react-native-modal';
 import { SearchBar } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
 import * as firebase from 'firebase';
-import { addPodToDB, getPods, uploadImageToStorage, 
+import { addPodToDB, getPods, uploadImageToStorage,
     retrieveImageFromStorage, deleteImage, getUsers, deletePodFromDB } from '../API/firebaseMethods';
 
 const windowWidth = Dimensions.get('window').width;
@@ -43,7 +43,7 @@ const ByPod = (props) => {
         // create dictionary of key value pairs, (memberName: true)
         let membersDictionary = members.reduce((m, member) => ({...m, [member]: true}), {})
         // add new pod to current pods list
-        let newPod = { key: podLength + 1, pod_name: groupName.trim(), num_members: members.length, 
+        let newPod = { key: podLength + 1, pod_name: groupName.trim(), num_members: members.length,
             pod_picture: selectedImageName, pod_picture_url: selectedImageUrl, num_recs: 0, members: membersDictionary };
         setPods([...pods, newPod]);
         // add pod object to database using firebase api function
@@ -144,7 +144,7 @@ const ByPod = (props) => {
         );
     };
 
-    // on-click item in flat list, add new member to pod, if user re-clicks that same username, 
+    // on-click item in flat list, add new member to pod, if user re-clicks that same username,
     // user will be removed from pod list
     const getItem = (item) => {
         if (members.indexOf(item.username) == -1) {
@@ -265,7 +265,7 @@ const ByPod = (props) => {
                             </Text>
                             <View style={{flex: 1, alignItems: 'center', marginTop: 5}}>
                                 {/* if image selected, show image; also allow user to re-choose an image */}
-                                <View style={{ flexDirection: 'row'}}> 
+                                <View style={{ flexDirection: 'row'}}>
                                      <Image
                                          source={{ uri: selectedImageUrl }}
                                          style={styles.thumbnail}
@@ -324,7 +324,7 @@ const ByPod = (props) => {
                                 inputStyle={{ fontSize: 16 }}
                                 />
                                 {/* flat list displays username data */}
-                                { filteredDataSource ? 
+                                { filteredDataSource ?
                                     <FlatList
                                     data={filteredDataSource}
                                     keyExtractor={(item, index) => index.toString()}

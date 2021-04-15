@@ -242,10 +242,10 @@ export function addRecToDB(rec) {
     //TODO: when add rec also update #recs in pod -> use updateNumRecsInPod
 }
 
-export function updateNumRecsInPod() {
+export function updateNumRecsInPod(pod) {
   const db = firebasee.firestore();
   db.collection("pods")
-    //TODO: go into pod you want to update
+  .where('pod_name','==',pod.pod_name)
     .update({
       num_recs : pod.num_recs + 1 //check if correct
     })
@@ -283,20 +283,28 @@ export async function getPodRecs(pod){
     .get()
     // push each pod in db to podList
     snapshot.forEach((doc) => {
-      podList.push(doc.data());
+      recsInPod.push(doc.data());
     });
-    podsRecieved(podList);
+    podsRecieved(recsInPod);
 }
 
 //makes list of recs for media
 export async function getMediaRecs(media_type){
   let recsInMedia = [];
-  //TODO: search recs for that user and add to recList the recs
+  //TODO:search recs for that user and add to recList the recs
   //with a rec_type that matches the given media_type
+  const currentUserUid = firebase.auth().currentUser.uid;
+  await firebase.firestore().collection("users")
+    .doc(currentUserUid)
+    .get()
+    .then((doc) => {
+      pods = Object.keys(doc.data().pods) // save the pods keys (aka pod names) to pods list
+    })
   let snapshot = await firebase.firestore() // return a query snapshot of current db
     .collection("recs")
     .orderBy("createdAt") // get recs in order of creation
     //need to only look at recs for the 1 user
+    .where('rec_pod','in',pods)
     .where('rec_type','==',media_type)
     .get()
     // push each rec in db to recList
@@ -306,9 +314,38 @@ export async function getMediaRecs(media_type){
     //need to callback function
 }
 
+//get number of all recs for user
+export async function getNumRecsForUser(){
+  const currentUserUid = firebase.auth().currentUser.uid;
+  await firebase.firestore().collection("users")
+    .doc(currentUserUid)
+    .get()
+    .then((doc) => {
+      pods = Object.keys(doc.data().pods) // save the pods keys (aka pod names) to pods list
+    })
+  db.collection("recs")
+  .where('rec_pod','in',pods) //need to get it for only the user
+  .get()
+  .then(function(querySnapshot) { 
+    (querySnapshot.numChildren());
+});
+
+}
+
 //gets number of recs for media type
-{/*//need to create new function or somehow use getMediaRecs to make an accumulator
-  export async function getNumRecsForMedia(){
-    //TODO
+  export async function getNumRecsForMedia(media_type){
+    const currentUserUid = firebase.auth().currentUser.uid;
+  await firebase.firestore().collection("users")
+    .doc(currentUserUid)
+    .get()
+    .then((doc) => {
+      pods = Object.keys(doc.data().pods) // save the pods keys (aka pod names) to pods list
+    })
+    db.collection("recs")
+    .where('rec_pod','in',pods)
+    .where('rec_type', '==', media_type) 
+    .get()
+    .then(function(querySnapshot) { 
+      console.log(querySnapshot.numChildren());
+  });
   }
-*/}

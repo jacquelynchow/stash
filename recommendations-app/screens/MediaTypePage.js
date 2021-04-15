@@ -28,7 +28,16 @@ function showMediaType() {
 */}
 
 export default function MediaTypePage() {
+  const [recs] = useState([]);
+  useEffect(() => {
+    getMediaRecs(onRecsReceived);
+  }, []);
 
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await getMediaRecs(onRecsReceived) // use await to refresh until function finished
+    .then(() => setRefreshing(false));
+  }, []);
   return (
     <View style={{flex: 1}}>
       <ScrollView contentContainerStyle={styles.container}>

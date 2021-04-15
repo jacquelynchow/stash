@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, SafeAreaView } from 'react-native';
 
-export default function BookType() {
+export default function BookType(props) {
   const [recName, setrecName] = useState("");
   const [recAuthor, setrecAuthor] = useState("");
-
-  console.log("recName in book type:", recName)
 
   return (
     <View>
@@ -16,7 +14,7 @@ export default function BookType() {
             <SafeAreaView>
                 <TextInput
                 autoFocus={true}
-                onChangeText={recName => setrecName(recName)}
+                onChangeText={recName => props.setrecName(recName)}
                 style={styles.titleInput}
                 defaultValue={recName}
                 placeholder={"Enter a title"}
@@ -30,7 +28,7 @@ export default function BookType() {
             <SafeAreaView>
                 <TextInput
                     autoFocus={true}
-                    onChangeText={recAuthor => setrecAuthor(recAuthor)}
+                    onChangeText={recAuthor => props.setrecAuthor(recAuthor)}
                     style={styles.input}
                     defaultValue={recAuthor}
                     placeholder={"Add author(s)"}

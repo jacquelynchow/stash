@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, SafeAreaView, Keyboard } from 'react-native';
 
-export default function JustTitleType() {
+export default function JustTitleType(props) {
   const [recName, setrecName] = useState("");
-  const [description, setDescription] = useState("");
 
   return (
-    //TODO - remove description for this type??
-    //    because we already have comments option for all types
+    //TODO - do we want to keep this type? If so it's 7 types and we need another
+    //  icon & colour
 
     <View>
         <View style={{ flexDirection: 'row'}}>
@@ -17,30 +16,13 @@ export default function JustTitleType() {
             <SafeAreaView>
                 <TextInput
                 autoFocus={true}
-                onChangeText={recName => setrecName(recName)}
+                onChangeText={recName => props.setrecName(recName)}
                 style={styles.input}
                 defaultValue={recName}
                 placeholder={"Enter a title"}
                 />
             </SafeAreaView>
         </View>
-          <Text style={styles.recCategoriesText}>
-              Description:
-          </Text>
-          <SafeAreaView>
-              <TextInput
-              autoFocus={true}
-              onChangeText={description => setDescription(description)}
-              style={styles.descriptionInput}
-              defaultValue={description}
-              placeholder={"Add a description"}
-              maxLength={200}
-              multiline={true}
-              returnKeyType="done"
-              blurOnSubmit={true}
-              onSubmitEditing={()=>{Keyboard.dismiss()}}
-              />
-          </SafeAreaView>
     </View>
   );
 }

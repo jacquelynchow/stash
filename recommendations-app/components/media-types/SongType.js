@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, SafeAreaView } from 'react-native';
 
-export default function SongType() {
+export default function SongType(props) {
   const [recName, setrecName] = useState("");
   const [recAuthor, setrecAuthor] = useState("");
 
@@ -14,7 +14,7 @@ export default function SongType() {
             <SafeAreaView>
                 <TextInput
                 autoFocus={true}
-                onChangeText={recName => setrecName(recName)}
+                onChangeText={recName => props.setrecName(recName)}
                 style={styles.titleInput}
                 defaultValue={recName}
                 placeholder={"Enter a title"}
@@ -28,7 +28,7 @@ export default function SongType() {
             <SafeAreaView>
                 <TextInput
                     autoFocus={true}
-                    onChangeText={recAuthor => setrecAuthor(recAuthor)}
+                    onChangeText={recAuthor => props.setrecAuthor(recAuthor)}
                     style={styles.input}
                     defaultValue={recAuthor}
                     placeholder={"Add artist(s)"}

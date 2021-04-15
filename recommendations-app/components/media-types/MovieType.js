@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, SafeAreaView } from 'react-native';
 
-export default function MovieType() {
+export default function MovieType(props) {
   const [recName, setrecName] = useState("");
   const [recGenre, setrecGenre] = useState("");
   const [recYear, setrecYear] = useState(0);
+  //TODO change these to props below when implemeted in PodPage
 
   return (
     <View>
@@ -15,7 +16,7 @@ export default function MovieType() {
         <SafeAreaView>
           <TextInput
             autoFocus={true}
-            onChangeText={recName => setrecName(recName)}
+            onChangeText={recName => props.setrecName(recName)}
             style={styles.titleInput}
             defaultValue={recName}
             placeholder={"Enter a title"}

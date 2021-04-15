@@ -33,7 +33,7 @@ function selectImage() {
     else if (props.mediaType == "TikTok") {
         return tiktokIcon
     }
-    else if (props.mediaType == "Video") {
+    else if (props.mediaType == "YouTube") {
         return youtubeIcon
     }
 }
@@ -55,7 +55,7 @@ function selectColor() {
     else if (props.mediaType == "TikTok") {
         return styles.tiktokColor
     }
-    else if (props.mediaType == "Video") {
+    else if (props.mediaType == "YouTube") {
         return styles.videoColor
     }
 }
@@ -175,9 +175,8 @@ const styles = StyleSheet.create({
     modalTitle: {
         textAlign: "center",
         fontWeight: 'bold',
-        fontSize: 35,
-        marginTop: 10,
-        marginBottom: 10,
+        fontSize: 30,
+        marginBottom: 5,
         color: "white",
     },
     modalHeading: {
@@ -190,7 +189,7 @@ const styles = StyleSheet.create({
     modalText: {
         marginTop: 5,
         textAlign: "center",
-        fontSize: 13,
+        fontSize: 15,
         color: "white"
     },
     modalSubtitle: {

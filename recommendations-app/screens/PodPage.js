@@ -42,13 +42,11 @@ const PodPage = (props) => {
   //init various states needed for recs
   const [recs, setRecs] = useState([]);
   const [mediaType, setmediaType] = useState("");
-
-//TODO figure these out because initialised here and in [Media]Type.js files
-//so the names and author don't actually save here
   const [recName, setrecName] = useState("");
   const [recAuthor, setrecAuthor] = useState("");
   const [recLink, setrecLink] = useState("");
   const [recComment, setrecComment] = useState("");
+  //TODO include the others here - genre and year for movie - and call them below
 
   // init error state for various form fields
   const [errors, setErrors] = useState({
@@ -61,7 +59,6 @@ const PodPage = (props) => {
       if (recs && recs.length > 0) {
         recLength = recs.length;
       }
-      console.log("recName in PodPage:", recName)
       // add group name of new pod to existing list
       let newRec = { key: recs.length + 1, rec_sender: username, rec_pod: currentPod,
               rec_type: mediaType, rec_title: recName, rec_author: recAuthor,
@@ -147,24 +144,18 @@ const resetFields = () => {
 
   // determines which fields show in Add a Rec pop up based on selected media type
   function selectMediaType() {
-    if (mediaType == "Movie") {
-      return (<MovieType></MovieType>)
+    if (mediaType == "Movie") { //TODO add others for movies as well
+      return (<MovieType setrecName={setrecName} ></MovieType>)
     } else if (mediaType == "Book" || mediaType == "Article") {
-      return (<BookType></BookType>)
+      return (<BookType setrecName={setrecName} setrecAuthor={setrecAuthor}> </BookType>)
     } else if (mediaType == "TikTok" || mediaType == "YouTube") {
-      return (<VideoType></VideoType>)
+      return (<VideoType setrecName={setrecName} setrecLink={setrecLink}></VideoType>)
     } else if (mediaType == "Song") {
-      return (<SongType></SongType>)
-    } else if (mediaType == "Other") {
-      return (<JustTitleType></JustTitleType>)
-    }
+      return (<SongType setrecName={setrecName} setrecAuthor={setrecAuthor}></SongType>)
+    } //else if (mediaType == "Other") {
+      //return (<JustTitleType setrecName={setrecName}></JustTitleType>)
+    //}
   };
-
-  {/*function testFunction() {
-    console.log("arrived at testfunction")
-    console.log("booktype in podpage is")
-    recName => setrecName(BookType.recName)
-  }*/}
 
     return (
       <View style={{flex: 1}} >
@@ -216,7 +207,7 @@ const resetFields = () => {
                         {label: 'Song', value: 'Song'},
                         {label: 'TikTok', value: 'TikTok'},
                         {label: 'YouTube', value: 'YouTube'},
-                        {label: 'Other', value: 'Other'},
+                        //{label: 'Other', value: 'Other'},
                     ]}
                     defaultIndex={0}
                     dropDownMaxHeight={100}

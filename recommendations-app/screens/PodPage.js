@@ -30,7 +30,7 @@ const PodPage = ({ navigation, route}) => {
   const username = podData.username;
   const podName = podData.name;
   const podImageUri = podData.uri;
-  
+
   // call firebase api function getRecs on onRecsReceived function to render recs from db
   useEffect(() => {
       getRecs(onRecsReceived);
@@ -69,7 +69,7 @@ const PodPage = ({ navigation, route}) => {
         recLength = recs.length;
       }
       // add group name of new pod to existing list
-      let newRec = { key: recs.length + 1, rec_sender: username, rec_pod: currentPod,
+      let newRec = { key: recs.length + 1, rec_sender: username, rec_pod: podName,
               rec_type: mediaType, rec_title: recName, rec_author: recAuthor,
               rec_link: recLink, rec_comment: recComment}
       setRecs([...recs, newRec]);
@@ -202,9 +202,9 @@ const resetFields = () => {
                 </Pressable>
                 <Text style={styles.membersModalTitle}>Pod Members</Text>
                 <Text style={styles.membersModalText}>{numMembers} Members</Text>
-                { members ? members.map(memberName => 
-                  <Text style={styles.memberNamesText}>{memberName}</Text>): 
-                  <Text style={styles.memberNamesText}>No members in this pod.</Text> 
+                { members ? members.map(memberName =>
+                  <Text style={styles.memberNamesText}>{memberName}</Text>):
+                  <Text style={styles.memberNamesText}>No members in this pod.</Text>
                 }
             </View>
           </View>
@@ -217,7 +217,7 @@ const resetFields = () => {
             onPress={toggleMembersModal}
             style={styles.floatingShowMembersButton}>
         </TouchableOpacity>
-        
+
 
         {/* Add A Rec PopUp */}
         <Modal isVisible={isModalVisible}>

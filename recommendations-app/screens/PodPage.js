@@ -14,15 +14,16 @@ import BookType from '../components/media-types/BookType';
 import VideoType from '../components/media-types/VideoType';
 import SongType from '../components/media-types/SongType';
 import JustTitleType from '../components/media-types/JustTitleType';
-import PersonIcon from '../assets/person-icon.png';
 // Server Related
 import * as firebase from 'firebase';
 import { addRecToDB, getRecs, getPodRecs } from '../API/firebaseMethods';
 
 //LMTODOs:
 //- fix the recYear for Movie Type
-//- update between getRecs and getPodRecs
-//- fix error handling for all send recs
+//- update between getRecs and getPodRecs -- display recs in that pod
+//- error handling - how to reset it once they HAVE selected the thing?
+//    instead of having to close the window and reopen to reset
+//- provide option to copy and paste into input window for links
 
 const windowHeight = Dimensions.get('window').height;
 
@@ -40,12 +41,13 @@ const PodPage = ({ navigation, route}) => {
       getRecs(onRecsReceived);
   }, []);
 
-  // display pop up when modal view is on
+  // display pop up when send rec modal view is on
   const [isModalVisible, setModalVisible] = useState(false);
   const toggleModal = () => {
       setModalVisible(!isModalVisible);
       resetFields();
   };
+
   // display pop up when pod members modal view is on
   const [isMembersModalVisible, setMembersModalVisible] = useState(false);
   const toggleMembersModal = () => {
@@ -62,7 +64,7 @@ const PodPage = ({ navigation, route}) => {
   //const [recYear, setrecYear] = useState(0); //TODO - fix recYear for movies
   const [recComment, setrecComment] = useState("");
 
-  // init error state for various form fields
+  // init error state for various send rec form fields
   const [errors, setErrors] = useState({
       mediaTypeError: '', nameError: '', linkError: ''
   });
@@ -81,7 +83,6 @@ const PodPage = ({ navigation, route}) => {
               rec_comment: recComment}
       setRecs([...recs, newRec]);
       // add rec object to database using firebase API function
-      console.log("adding to database...")
       addRecToDB(newRec);
       //close modal pop up
       toggleModal();
@@ -106,16 +107,17 @@ const PodPage = ({ navigation, route}) => {
       setErrors({mediaTypeError: '', nameError: '', linkError: ''});
   }
 
-//LMTODO - test and fix all error checking
-
   // check on Send Rec submit that all fields are filled in correctly
+  // required fields: mediaType, name of rec, and a link for videos
+  // all other fields are optional and will display as "not provided" if user
+  // doesn't provide input for them
   const checkAllFieldsOnSubmit = () => {
       let validSymbols = /^[\w\-\s]+$/;
       let allValid = true;
       let isValid = validSymbols.test(recName);
-      {/*// check if media type is selected
+      // check if media type is selected
       if (mediaType === "") {
-          setErrors({mediaTypeError: "*Recommendation media type is required to continue"});
+          setErrors({mediaTypeError: "*Media type is required to continue"});
           allValid = false;
       }
       // check if rec name empty or only has whitespace
@@ -131,15 +133,14 @@ const PodPage = ({ navigation, route}) => {
       if (recLink !== "" && !validURL(recLink)) {
           setErrors({linkError: "*Please enter a valid link"});
           allValid = false;
-      }*/}
+      }
       // if everything checks out, add to recs list
       if (allValid) {
           addNewRec(recs);
       }
   };
 
-//LMTODO - when testing actually works, test the URL validator
-  //function to check if link attached to rec is valid
+  //function to check if link inputed for Video type recs are valid
   function validURL(url) {
     var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
       '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
@@ -186,7 +187,7 @@ const PodPage = ({ navigation, route}) => {
               />
             }>
 
-          {/* make a rec for each rec stored in the recs list
+          {/* Make a rec for each rec stored in the recs list
             TODO add recYear back here when working */}
           {recs && recs.length > 0 ?
               recs.map(rec =>
@@ -217,16 +218,14 @@ const PodPage = ({ navigation, route}) => {
                 </Pressable>
                 <Text style={styles.membersModalTitle}>Pod Members</Text>
                 <Text style={styles.membersModalText}>{numMembers} Members</Text>
-                { members ? members.map(memberName => 
-                  <View style={{ flexDirection: 'row'}}>
-                    <Image source={PersonIcon} style={{width: 20, height: 20, marginRight: 5}}></Image>
-                    <Text style={styles.memberNamesText}>{memberName}</Text> 
-                  </View>) :
-                  <Text style={styles.memberNamesText}>No members in this pod.</Text> 
+                { members ? members.map(memberName =>
+                  <Text style={styles.memberNamesText}>{memberName}</Text>):
+                  <Text style={styles.memberNamesText}>No members in this pod.</Text>
                 }
             </View>
           </View>
         </Modal>
+
         {/* Show Pod Members Button */}
         <View style={{marginRight: 17}}>
             <Image source={showMembersButton} style={styles.floatingShowMembersButton}></Image>
@@ -269,9 +268,12 @@ const PodPage = ({ navigation, route}) => {
                     onChangeItem={items => setmediaType(items.value)}
                   />
 
-                  {/* display error message if media type is not selected
-                    TODO - fix this and add call to other errors */}
-                  <Text style={styles.errorMessage}>{errors.mediaTypeError}</Text>
+                  {/* display error message if media type is not selected */}
+                  <Text style={styles.errorMessage}>
+                    {errors.mediaTypeError}
+                    {errors.nameError}
+                    {errors.linkError}
+                  </Text>
 
                   {/* display other relevant fields based on selected media type */}
                   { selectMediaType() }
@@ -300,7 +302,7 @@ const PodPage = ({ navigation, route}) => {
           </View>
         </Modal>
 
-        {/* Add A Rec Button */}
+        {/* Send A Rec Button */}
         <View style={styles.bottomButtonView}>
             <Image source={addRecButton} style={styles.floatingAddButton}></Image>
         </View>
@@ -319,7 +321,7 @@ const styles = StyleSheet.create({
     marginRight: 17,
     // ios
     shadowOffset: {width: 5, height: 5},
-    shadowOpacity: .3,
+    shadowOpacity: .5,
     shadowRadius: 10,
     // android
     elevation: 3,
@@ -327,6 +329,7 @@ const styles = StyleSheet.create({
   container: {
     marginVertical: 20,
     marginHorizontal: 10,
+    paddingTop: 30,
     paddingBottom: 30,
     flexGrow:1,
     flexDirection: 'row',

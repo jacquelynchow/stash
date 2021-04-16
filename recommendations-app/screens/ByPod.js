@@ -1,16 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, ScrollView, View, TouchableOpacity, Image, Pressable, Text, SafeAreaView, TextInput, Dimensions, FlatList, RefreshControl, ActivityIndicator } from 'react-native';
-import Modal from 'react-native-modal';
-import { SearchBar } from 'react-native-elements';
-import * as ImagePicker from 'expo-image-picker';
-import * as ImageManipulator from 'expo-image-manipulator';
-import * as firebase from 'firebase';
-// icon images for buttons
+import { StyleSheet, ScrollView, View, TouchableOpacity, Image, Pressable, Text, SafeAreaView, TextInput, Dimensions, FlatList, RefreshControl, Alert } from 'react-native';
+import PodTile from '../components/PodTile';
 import addPodButton from '../assets/addPodButton.png';
 import closePopUpButton from '../assets/closePopUpButton.png';
 import uploadPodImage from '../assets/uploadPodImage.png';
-// exported components and functions
-import PodTile from '../components/PodTile';
+import Modal from 'react-native-modal';
+import { SearchBar } from 'react-native-elements';
+import * as ImagePicker from 'expo-image-picker';
+import * as firebase from 'firebase';
 import { addPodToDB, getPods, uploadImageToStorage,
     retrieveImageFromStorage, deleteImage, getUsers, deletePodFromDB } from '../API/firebaseMethods';
 
@@ -19,6 +16,7 @@ const windowHeight = Dimensions.get('window').height;
 const defaultImageUrl = "https://www.jaipuriaschoolpatna.in/wp-content/uploads/2016/11/blank-img.jpg";
 
 const ByPod = (props) => {
+
     const currentUserUID = props.userId;
     const username = props.username;
 
@@ -27,39 +25,16 @@ const ByPod = (props) => {
         getPods(onPodsReceived);
     }, []);
 
-    // display pop up when modal view is on, and hide when modal view is off
+    // display pop up when add pod modal view is on
     const [isModalVisible, setModalVisible] = useState(false);
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
+        resetFields();
     };
-    // init pods list for getting pods asyncronously from firebase server
-    const [pods, setPods] = useState([]);
-    const [podNames, setPodNames] = useState({});
-    // init variables for new pod being added
-    const [groupName, setGroupName] = useState("");
-    const [members, setMembers] = useState([username]);
-    // init vars for selected pod image
-    const [selectedImageName, setSelectedImageName] = useState("");
-    const [selectedImageUrl, setSelectedImageUrl] = useState(defaultImageUrl);
-    // init error state for various form fields
-    const [errors, setErrors] = useState({
-        nameError: '', membersError: ''
-    });
-    // init vars for 'Create a Pod' pop-up search bar
-    const [search, setSearch] = useState('');
-    const [filteredDataSource, setFilteredDataSource] = useState([]);
-    // init var for when image upload is still loading
-    // const [isLoading, setLoading] = useState(false);
-
-    // refresh page function to see new pods
-    const [refreshing, setRefreshing] = useState(false);
-    const onRefresh = useCallback(async () => {
-            setRefreshing(true);
-            await getPods(onPodsReceived) // use await to refresh until function finished
-            .then(() => setRefreshing(false));
-        }, []);
 
     // add new pod dynamically when 'Create a Pod' submitted
+    const [pods, setPods] = useState([]);
+    const [groupName, setGroupName] = useState("");
     const addNewPod = async (pods) => {
         let podLength = 0;
         if (pods && pods.length > 0) {
@@ -77,18 +52,15 @@ const ByPod = (props) => {
         toggleModal();
         // reset input fields to blank
         resetFields();
+
     };
     // once pods are received, set pods to these received pods
     const onPodsReceived = (podList) => {
         setPods(podList);
-        // just extract the pod names & add each one to the dictionary
-        let listOfPodNames = podList.reduce((p, podName) => ({...p, [podName.pod_name]: true}), {});
-        setPodNames(listOfPodNames);
     };
 
     // resets all form fields on Create a Pod modal
     const resetFields = () => {
-        // setLoading(false);
         setGroupName("");
         setMembers([username]);
         setSelectedImageName("");
@@ -97,6 +69,11 @@ const ByPod = (props) => {
         setFilteredDataSource([]);
         setErrors({nameError: '', membersError: ''});
     }
+
+    // init error state for various add pod form fields
+    const [errors, setErrors] = useState({
+        nameError: '', membersError: ''
+    });
 
     // check on create pod submit that all fields are filled in & filled in correctly
     const checkAllFieldsOnSubmit = () => {
@@ -111,10 +88,6 @@ const ByPod = (props) => {
         } else if (!isValid) {
             setErrors({nameError: "*Group name must be alphabetic"});
             allValid = false;
-        // check if user isn't already in a pod with this same pod name
-        } else if (groupName in podNames) {
-            setErrors({nameError: "*This is an existing group name"});
-            allValid = false;
         }
         // check if members includes user + other members
         if (members.length == 1) {
@@ -123,28 +96,32 @@ const ByPod = (props) => {
         }
         // if everything checks out, add to pods list
         if (allValid) {
-            // setLoading(true);
             addNewPod(pods);
         }
     };
 
-    // as user searches for usernames, grab from firebase users that match user search input
+    // for 'Create a Pod' pop-up search bar
+    const [search, setSearch] = useState('');
+    const [filteredDataSource, setFilteredDataSource] = useState([]);
+
+    // init empty list of pod tiles
+    const [members, setMembers] = useState([username]);
+
     const searchFilterFunction = async (text) => {
         if (text) {
             // grab users from the database that match the searched text or is close to it
             const users = await getUsers(text.toLowerCase(), username);
-            // if there are users, set the filtered data to results, if not set to empty list
             if (users) {
                 setFilteredDataSource(users);
             } else {
                 setFilteredDataSource([]);
             }
+            setSearch(text);
         } else {
-            // when search bar clear, clear usernames
+            // when search bar clear, show all usernames
             setFilteredDataSource([]);
+            setSearch(text);
         }
-        // set searchbar to current text
-        setSearch(text);
     };
 
     // lines between items in flat list
@@ -169,8 +146,8 @@ const ByPod = (props) => {
         );
     };
 
-    // on-click item in flat list, add new member to pod, if user re-clicks that same username,
-    // user will be removed from pod list
+    // on-click item in flat list, add new member to pod, if user re-clicks that
+    // same username, user will be removed from pod list
     const getItem = (item) => {
         if (members.indexOf(item.username) == -1) {
             let newMember = { key: item.id, name: item.username}
@@ -182,54 +159,59 @@ const ByPod = (props) => {
             setMembers(removedDeletedMember);
         }
     };
-    // wait for user to choose an image (if given permission), resize image and set it to be selectedImage, 
-    // send image to firebase server, store the image URL once uploaded;
-    // if the user wishes to choose a different image, the old image will be deleted from the firebase server
+
+    // init var for selected pod image
+    const [selectedImageName, setSelectedImageName] = useState("");
+    const [selectedImageUrl, setSelectedImageUrl] = useState(defaultImageUrl);
+
+    // function from expo docs tutorial
     let openImagePickerAsync = async () => {
         let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (permissionResult.granted === false) {
           alert("Permission to access camera roll is required!");
           return;
         }
+
         let result = await ImagePicker.launchImageLibraryAsync();
         if (result.cancelled === true) {
           return;
         }
 
-        // resize image before upload to firebase server
-        let resizedImage = await ImageManipulator.manipulateAsync(
-            result.uri,
-            [{ resize: { width: 300 } }], // resize to width of 130 and preserve aspect ratio 
-            { compress: 1, format: 'png' },
-        );
-
+        let uploadUri = Platform.OS === 'ios' ? result.uri.replace('file://', '') : result.uri;
         // get extension of image and set filename as username and current timestamp
-        const extension = resizedImage.uri.split('.').pop();
+        const extension = uploadUri.split('.').pop();
         const imageName = currentUserUID + "_" + Date.now() + '.' + extension;
 
         // check if image was changed (the second and following times), delete the old image on db
         deleteImage(selectedImageName);
-        
+
         // setstate sets things asyncronously (after re-render),
         // so use imageName instead of selectedImageName to use as variable
         setSelectedImageName(imageName);
 
         // upload image to firebase storage
-        await uploadImageToStorage(resizedImage.uri, imageName)
-            .then(async () => {
-                // setLoading(true);
+        await uploadImageToStorage(uploadUri, imageName)
+            .then(() => {
                 // after uploading image to server, get image url from firebase
-                await retrieveImageFromStorage(imageName, setSelectedImageUrl);
+                retrieveImageFromStorage(imageName, setSelectedImageUrl);
             })
             .catch((error) => {
-                // setLoading(false);
                 console.log("Something went wrong with image upload! " + error.message + error.code);
         });
     }
 
+    // refresh page function to see new pods
+    const [refreshing, setRefreshing] = useState(false);
+    const onRefresh = useCallback(async () => {
+            setRefreshing(true);
+            await getPods(onPodsReceived) // use await to refresh until function finished
+            .then(() => setRefreshing(false));
+        }, []);
+
     return (
         <View style={{flex: 1}}>
-            {/* Refresh feature; pull screen down for pods refresh */}
+
+            {/* pull screen down for pods refresh */}
             <ScrollView
                 contentContainerStyle={styles.container}
                 refreshControl={
@@ -237,9 +219,9 @@ const ByPod = (props) => {
                       refreshing={refreshing}
                       onRefresh={onRefresh}
                     />
-                }>
+                  }>
 
-                {/* Show pods stored in the list as PodTiles; if no pods yet, show onboard screen message */}
+                {/* make a pod for each group name stored in the pods list */}
                 {pods && pods.length > 0 ?
                     pods.map(pod =>
                         <PodTile key={pod.key}
@@ -259,23 +241,15 @@ const ByPod = (props) => {
 
             {/* Create A Pod PopUp */}
             <Modal isVisible={isModalVisible}>
-                <View style={styles.centeredViewModal}>
-                    {/* {isLoading && <View style={styles.loadingIndicator} pointerEvents={"none"}>
-                            <ActivityIndicator size="large" color='#ffc9b9'/>
-                        </View>} */}
+                <View style={styles.centeredView}>
                     <View style={styles.modalView}>
-                        {/* Modal -- x button to close modal */}
                         <Pressable style={[styles.button, styles.buttonClose]}
-                            // close modal, then delete old image (if one was chosen by user), then reset all fields
-                            onPress={() => { toggleModal(); deleteImage(selectedImageName); resetFields(); } } >
+                            onPress={toggleModal} >
                             <Image source={closePopUpButton} style={{width: 30, height: 30}}/>
                         </Pressable>
-
-                        {/* Modal -- Title and description */}
                         <Text style={styles.modalTitle}>Create a Pod</Text>
                         <Text style={styles.modalText}>Add your friends by username!</Text>
 
-                        {/* Modal -- Add a name for the pod */}
                         <View style={{ flexDirection: 'row', marginBottom: -10}}>
                             <Text style={styles.userDetailsText}>
                                 Pod Name:
@@ -290,12 +264,11 @@ const ByPod = (props) => {
                                 />
                             </SafeAreaView>
                         </View>
-                        {/* Show error if a pod name was not entered or contains non-alphanumeric symbols */}
+
                         <View style={{ display: 'flex'}}>
                             <Text style={styles.errorMessage}>{errors.nameError}</Text>
                         </View>
 
-                        {/* Modal -- Choose a pod image */}
                         <View style={{ flexDirection: 'row', marginTop: -5 }}>
                             <Text style={styles.userDetailsText}>
                                 Pod Image:
@@ -315,12 +288,13 @@ const ByPod = (props) => {
                             </View>
                         </View>
 
-                        {/* Modal -- display members added to the pod so far */}
                         <View style={{ flexDirection: 'row', marginTop: -5}}>
                             <Text style={styles.userDetailsText}>
                                 Users in this Pod:
                             </Text>
                         </View>
+
+                        {/* Display members added to pod so far */}
                         <View style={{ height: windowHeight/7 }}>
                             <ScrollView contentContainerStyle={styles.membersList}>
                                 {/* check if any members added yet: if not, display message;
@@ -335,16 +309,16 @@ const ByPod = (props) => {
                                     </View>)
                                 )}
                             </ScrollView>
-                            {/* Show error if no members added to pod before submit */}
                             <Text style={styles.errorMessage}>{errors.membersError}</Text>
                         </View>
 
-                        {/* Modal -- Searchbar for searching members */}
+                        {/* search bar, click on usernames to add members to pod */}
                         <View style={{ flexDirection: 'row'}}>
                             <Text style={styles.userDetailsTextBottom}>
                                 Search for Members to Add:
                             </Text>
                         </View>
+
                         <SafeAreaView style={{ flex: 1 }}>
                             <View>
                                 <SearchBar
@@ -359,7 +333,7 @@ const ByPod = (props) => {
                                 inputContainerStyle={{ backgroundColor: 'white', height: 30, borderRadius: 10 }}
                                 inputStyle={{ fontSize: 16 }}
                                 />
-                                {/* Flat list displays username data after user submits username they are searching for */}
+                                {/* flat list displays username data */}
                                 { filteredDataSource ?
                                     <FlatList
                                     data={filteredDataSource}
@@ -374,7 +348,7 @@ const ByPod = (props) => {
                             </View>
                         </SafeAreaView>
 
-                        {/* Modal -- Create a Pod Button */}
+                        {/* Add A Pod Button */}
                         <View>
                             <Pressable style={styles.createPodButton} onPress={checkAllFieldsOnSubmit}>
                                 <Text style={styles.createPodText}>Create Pod</Text>
@@ -401,7 +375,7 @@ const styles = StyleSheet.create({
         marginRight: 17,
         // ios
         shadowOffset: {width: 5, height: 5},
-        shadowOpacity: .3,
+        shadowOpacity: .5,
         shadowRadius: 10,
         // android
         elevation: 3,
@@ -425,12 +399,6 @@ const styles = StyleSheet.create({
     },
     centeredView: {
         flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        marginTop: 22,
-    },
-    centeredViewModal: {
-        position: 'absolute',
         justifyContent: "center",
         alignItems: "center",
         marginTop: 22,
@@ -571,16 +539,6 @@ const styles = StyleSheet.create({
     errorMessage: {
         color: '#ffc9b9',
         marginVertical: 5
-    },
-    loadingIndicator: {
-        position: 'absolute',
-        top: 0,
-        bottom: 0,
-        right: 0,
-        left: 0,
-        justifyContent:'center',
-        alignItems:'center',
-        zIndex: 100000,
     }
 })
 

@@ -5,7 +5,7 @@ export default function MovieType(props) {
   const [recName, setrecName] = useState("");
   const [recGenre, setrecGenre] = useState("");
   const [recYear, setrecYear] = useState(0);
-  //TODO change these to props below when implemeted in PodPage
+  //TODO - change recYear back to props below when working
 
   return (
     <View>
@@ -30,7 +30,7 @@ export default function MovieType(props) {
         <SafeAreaView>
           <TextInput
               autoFocus={true}
-              onChangeText={recGenre => setrecGenre(recGenre)}
+              onChangeText={recGenre => props.setrecGenre(recGenre)}
               style={styles.input}
               defaultValue={recGenre}
               placeholder={"Enter a genre"}

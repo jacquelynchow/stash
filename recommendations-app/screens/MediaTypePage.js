@@ -11,12 +11,13 @@ export default function MediaTypePage({navigation, route }) {
   const [recs, setRecs] = useState([]);
   useEffect(() => {
     getMediaRecs(onRecsReceived,media_Type);
-  }, []); 
+  }, []);
 
   const onRecsReceived = (recList) => {
     setRecs(recList);
-  };  
+  };
 
+  // refresh page function to see new recs
   const [refreshing, setRefreshing] = useState(false);
   const onRefresh = useCallback(async () => {
           setRefreshing(true);
@@ -26,6 +27,7 @@ export default function MediaTypePage({navigation, route }) {
 
   return (
     <View style={{flex: 1}}>
+      {/* Pull screen down for recommendations refresh */}
       <ScrollView
           contentContainerStyle={styles.container}
           refreshControl={
@@ -37,17 +39,24 @@ export default function MediaTypePage({navigation, route }) {
 
           {/* make a rec for each rec stored in the recs list */}
           {recs && recs.length > 0 ?
-              recs.map(rec => <RecTile key={rec.key} recName={rec.rec_title}
-                  mediaType={rec.rec_type} recSender={rec.rec_sender} groupName={rec.rec_pod}
-                  recAuthor={rec.rec_author} recLink={rec.rec_link} recComment={rec.rec_comment}/>) :
+              recs.map(rec =>
+                <RecTile key={rec.key}
+                  recName={rec.rec_title}
+                  mediaType={rec.rec_type}
+                  recSender={rec.rec_sender}
+                  groupName={rec.rec_pod}
+                  recAuthor={rec.rec_author}
+                  recLink={rec.rec_link}
+                  recComment={rec.rec_comment}/>) :
               <View style={styles.centeredView}>
-                  <Text>No recommendations yet</Text>
+                  <Text style={styles.noRecsYetTitle}>No recommendations of this type yet</Text>
+                  <Text style={styles.noRecsYetText}>Send/receive recommendations in a pod and they will appear here</Text>
               </View>
           }
 
         </ScrollView>
     </View>
-  )
+  );
 }
 
 
@@ -68,5 +77,23 @@ const styles = StyleSheet.create({
   },
   text: {
       color: "#fcfbfb"
+  },
+  noRecsYetTitle: {
+      marginTop: windowHeight/4,
+      textAlign: "center",
+      color: "#6F1D1B",
+      fontWeight: "700",
+      marginLeft:25,
+      marginRight:25,
+      fontSize: 22,
+  },
+  noRecsYetText: {
+      textAlign: "center",
+      color: "#6F1D1B",
+      fontStyle: 'italic',
+      marginLeft:25,
+      marginRight:25,
+      marginTop: 10,
+      fontSize: 14
   }
 });

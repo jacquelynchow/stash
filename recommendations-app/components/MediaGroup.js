@@ -14,7 +14,7 @@ const MediaGroup = (props) => {
         else if (props.mediaType == 'Movies') {
             return 'Movie'
         }
-        else if (props.mediType == 'Songs') {
+        else if (props.mediaType == 'Songs') {
             return 'Song'
         }
         else if (props.mediaType == 'TikToks') {

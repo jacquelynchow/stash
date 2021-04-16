@@ -1,5 +1,5 @@
-import React, { useEffect, useState,useCallback } from 'react';
-import { StyleSheet, View, ScrollView, RefreshControl } from 'react-native';
+import React, {useEffect, useState, useCallback} from 'react';
+import { StyleSheet, View, ScrollView } from 'react-native';
 import MediaGroup from '../components/MediaGroup';
 import bookIcon from '../assets/type-icons/book.png';
 import movieIcon from '../assets/type-icons/movie.png';
@@ -7,48 +7,51 @@ import songIcon from '../assets/type-icons/song.png';
 import tiktokIcon from '../assets/type-icons/tiktok.png';
 import articleIcon from '../assets/type-icons/article.png';
 import youtubeIcon from '../assets/type-icons/youtube.png';
+import {getMediaRecs } from '../API/firebaseMethods';
+
 
 
 const ByMedia = () => {
-        //else show mediaType tiles with num of recommendations in each
-    // TODO: For loop and showing Tiles with real data
-        // search for recs with certain media_type for USERID & get # of recs for that media
-        // able to show the # of ppl?
 
-    // TODO - implement refresh on this page too:
-    // refresh page function to see new recs
-    // const [refreshing, setRefreshing] = useState(false);
-    // const onRefresh = useCallback(async () => {
-    //         setRefreshing(true);
-    //         await getMediaRecs(onRecsReceived,media_Type) // use await to refresh until function finished
-    //         .then(() => setRefreshing(false));
-    //     }, []);
+    function numRecsForMedia(media_Type) {
+        const [recs, setRecs] = useState([]);
+        useEffect(() => {
+        getMediaRecs(onRecsReceived,media_Type);
+        }, []); 
+
+        const onRecsReceived = (recList) => {
+        setRecs(recList);
+        };  
+  
+
+        const [refreshing, setRefreshing] = useState(false);
+        const onRefresh = useCallback(async () => {
+            setRefreshing(true);
+            await getMediaRecs(onRecsReceived,media_Type) // use await to refresh until function finished
+            .then(() => setRefreshing(false));
+        }, []);
+        const numRecs = recs.length;
+        return numRecs;
+    }
+  
 
     return (
         <View style={{flex: 1}}>
 
-          {/* TODO - Pull screen down for recommendations refresh */}
-          {/*<ScrollView
-              contentContainerStyle={styles.container}
-              refreshControl={
-                  <RefreshControl
-                    refreshing={refreshing}
-                    onRefresh={onRefresh}
-                  />
-                }> */}
 
             {/* Show various rec types */}
             <ScrollView contentContainerStyle={styles.container}>
-                <MediaGroup mediaType={"Articles"} numRecs={10} numPeople={2} image={articleIcon}/>
-                <MediaGroup mediaType={"Books"} numRecs={10} numPeople={2} image={bookIcon} />
-                <MediaGroup mediaType={"Movies"} numRecs={10} numPeople={2} image={movieIcon} />
-                <MediaGroup mediaType={"Songs"} numRecs={10} numPeople={2} image={songIcon} />
-                <MediaGroup mediaType={"TikToks"} numRecs={10} numPeople={2} image={tiktokIcon} />
-                <MediaGroup mediaType={"Youtube"} numRecs={10} numPeople={2} image={youtubeIcon} />
+                <MediaGroup mediaType={"Articles"} numRecs={numRecsForMedia('Article')} numPeople={2} image={articleIcon}/>
+                <MediaGroup mediaType={"Books"} numRecs={numRecsForMedia('Book')} numPeople={2} image={bookIcon} />
+                <MediaGroup mediaType={"Movies"} numRecs={numRecsForMedia('Movie')} numPeople={2} image={movieIcon} />
+                <MediaGroup mediaType={"Songs"} numRecs={numRecsForMedia('Song')} numPeople={2} image={songIcon} />
+                <MediaGroup mediaType={"TikToks"} numRecs={numRecsForMedia('TikTok')} numPeople={2} image={tiktokIcon} />
+                <MediaGroup mediaType={"Youtube"} numRecs={numRecsForMedia('Youtube')} numPeople={2} image={youtubeIcon} />
                 {/* is having the number of people neccessary for showing by media? */}
             </ScrollView>
         </View>
     )
+
 }
 
 const styles = StyleSheet.create({

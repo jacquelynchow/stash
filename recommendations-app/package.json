@@ -33,7 +33,8 @@
     "react-native-swiper": "^1.6.0",
     "react-native-tab-view": "^2.16.0",
     "react-native-web": "~0.13.12",
-    "react-native-webview": "11.0.0"
+    "react-native-webview": "11.0.0",
+    "expo-image-manipulator": "~8.4.0"
   },
   "devDependencies": {
     "@babel/core": "~7.9.0"

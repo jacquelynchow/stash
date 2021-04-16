@@ -25,7 +25,7 @@ const Logout = () => {
         <SafeAreaView style={{flex: 1}}>
             <View style={{flex: 1, paddingTop: 5, paddingRight: 10}}>
                 <TouchableOpacity activeOpacity={0.25} onPress={toggleModal}>
-                    <Image source={logoutButton} style={{width: 30, height: 30}}/>
+                    <Image source={logoutButton} style={{width: 25, height: 25, marginRight: 10}}/>
                 </TouchableOpacity>
             </View>
 

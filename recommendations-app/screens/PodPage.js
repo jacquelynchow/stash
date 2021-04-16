@@ -14,6 +14,7 @@ import BookType from '../components/media-types/BookType';
 import VideoType from '../components/media-types/VideoType';
 import SongType from '../components/media-types/SongType';
 import JustTitleType from '../components/media-types/JustTitleType';
+import PersonIcon from '../assets/person-icon.png';
 // Server Related
 import * as firebase from 'firebase';
 import { addRecToDB, getRecs, getPodRecs } from '../API/firebaseMethods';
@@ -203,7 +204,10 @@ const resetFields = () => {
                 <Text style={styles.membersModalTitle}>Pod Members</Text>
                 <Text style={styles.membersModalText}>{numMembers} Members</Text>
                 { members ? members.map(memberName => 
-                  <Text style={styles.memberNamesText}>{memberName}</Text>): 
+                  <View style={{ flexDirection: 'row'}}>
+                    <Image source={PersonIcon} style={{width: 20, height: 20, marginRight: 5}}></Image>
+                    <Text style={styles.memberNamesText}>{memberName}</Text> 
+                  </View>) :
                   <Text style={styles.memberNamesText}>No members in this pod.</Text> 
                 }
             </View>
@@ -304,7 +308,7 @@ const styles = StyleSheet.create({
     marginRight: 17,
     // ios
     shadowOffset: {width: 5, height: 5},
-    shadowOpacity: .5,
+    shadowOpacity: .3,
     shadowRadius: 10,
     // android
     elevation: 3,
@@ -312,7 +316,6 @@ const styles = StyleSheet.create({
   container: {
     marginVertical: 20,
     marginHorizontal: 10,
-    paddingTop: 30,
     paddingBottom: 30,
     flexGrow:1,
     flexDirection: 'row',

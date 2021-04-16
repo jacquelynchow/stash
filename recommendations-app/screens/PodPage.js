@@ -18,7 +18,10 @@ import JustTitleType from '../components/media-types/JustTitleType';
 import * as firebase from 'firebase';
 import { addRecToDB, getRecs, getPodRecs } from '../API/firebaseMethods';
 
-//LMTODO - update between getRecs and getPodRecs
+//LMTODOs:
+//- fix the recYear for Movie Type
+//- update between getRecs and getPodRecs
+//- fix error handling for all send recs
 
 const windowHeight = Dimensions.get('window').height;
 
@@ -40,7 +43,7 @@ const PodPage = ({ navigation, route}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const toggleModal = () => {
       setModalVisible(!isModalVisible);
-      //resetFields();
+      resetFields();
   };
   // display pop up when pod members modal view is on
   const [isMembersModalVisible, setMembersModalVisible] = useState(false);
@@ -54,8 +57,9 @@ const PodPage = ({ navigation, route}) => {
   const [recName, setrecName] = useState("");
   const [recAuthor, setrecAuthor] = useState("");
   const [recLink, setrecLink] = useState("");
+  const [recGenre, setrecGenre] = useState("");
+  //const [recYear, setrecYear] = useState(0); //TODO - fix recYear for movies
   const [recComment, setrecComment] = useState("");
-  //TODO include the others here - genre and year for movie - and call them below
 
   // init error state for various form fields
   const [errors, setErrors] = useState({
@@ -69,12 +73,14 @@ const PodPage = ({ navigation, route}) => {
         recLength = recs.length;
       }
       // add group name of new pod to existing list
+      //TODO add recyear back here when working
       let newRec = { key: recs.length + 1, rec_sender: username, rec_pod: podName,
               rec_type: mediaType, rec_title: recName, rec_author: recAuthor,
-              rec_link: recLink, rec_comment: recComment}
+              rec_link: recLink, rec_genre: recGenre,
+              rec_comment: recComment}
       setRecs([...recs, newRec]);
       // add rec object to database using firebase API function
-      console.log("adding rec to firebase...")
+      console.log("adding to database...")
       addRecToDB(newRec);
       //close modal pop up
       toggleModal();
@@ -88,45 +94,45 @@ const PodPage = ({ navigation, route}) => {
   };
 
   // resets all form fields on Send a Rec modal
-const resetFields = () => {
+  const resetFields = () => {
       setmediaType("");
       setrecName("");
       setrecAuthor("");
       setrecLink("");
+      setrecGenre("");
+      //setrecYear(0);
       setrecComment("");
       setErrors({mediaTypeError: '', nameError: '', linkError: ''});
   }
 
-//LMTODO - can all error checking be done here? or does it have to be in each type subfile?
-// because currently these things aren't reading properly here
+//LMTODO - test and fix all error checking
 
   // check on Send Rec submit that all fields are filled in correctly
   const checkAllFieldsOnSubmit = () => {
       let validSymbols = /^[\w\-\s]+$/;
       let allValid = true;
       let isValid = validSymbols.test(recName);
-      // check if media type is selected
-      {/*if (mediaType === "") {
-          setErrors({mediaTypeError: "Recommendation media type is required to continue"});
+      {/*// check if media type is selected
+      if (mediaType === "") {
+          setErrors({mediaTypeError: "*Recommendation media type is required to continue"});
           allValid = false;
       }
       // check if rec name empty or only has whitespace
       if (recName === "" || !recName.replace(/\s/g, '').length) {
-          setErrors({nameError: "Title of this recommendation is required"});
+          setErrors({nameError: "*Title of this recommendation is required"});
           allValid = false;
       // check if rec name is not valid (not just alphanumeric)
       } else if (!isValid) {
-          setErrors({nameError: "Recommendation title must be alphabetic"});
+          setErrors({nameError: "*Recommendation title must be alphabetic"});
           allValid = false;
       }
       // check if they uploaded link, and if so that it is valid
       if (recLink !== "" && !validURL(recLink)) {
-          setErrors({linkError: "Please enter a valid link"});
+          setErrors({linkError: "*Please enter a valid link"});
           allValid = false;
       }*/}
       // if everything checks out, add to recs list
       if (allValid) {
-          //console.log("test")
           addNewRec(recs);
       }
   };
@@ -153,8 +159,8 @@ const resetFields = () => {
 
   // determines which fields show in Add a Rec pop up based on selected media type
   function selectMediaType() {
-    if (mediaType == "Movie") { //TODO add others for movies as well
-      return (<MovieType setrecName={setrecName} ></MovieType>)
+    if (mediaType == "Movie") {
+      return (<MovieType setrecName={setrecName} setrecGenre={setrecGenre}></MovieType>)
     } else if (mediaType == "Book" || mediaType == "Article") {
       return (<BookType setrecName={setrecName} setrecAuthor={setrecAuthor}> </BookType>)
     } else if (mediaType == "TikTok" || mediaType == "YouTube") {
@@ -179,11 +185,19 @@ const resetFields = () => {
               />
             }>
 
-          {/* make a rec for each rec stored in the recs list */}
+          {/* make a rec for each rec stored in the recs list
+            TODO add recYear back here when working */}
           {recs && recs.length > 0 ?
-              recs.map(rec => <RecTile key={rec.key} recName={rec.rec_title}
-                  mediaType={rec.rec_type} recSender={rec.rec_sender} groupName={rec.rec_pod}
-                  recAuthor={rec.rec_author} recLink={rec.rec_link} recComment={rec.rec_comment}/>) :
+              recs.map(rec =>
+                <RecTile key={rec.key}
+                  recName={rec.rec_title}
+                  mediaType={rec.rec_type}
+                  recSender={rec.rec_sender}
+                  groupName={rec.rec_pod}
+                  recAuthor={rec.rec_author}
+                  recLink={rec.rec_link}
+                  recGenre={rec.rec_genre}
+                  recComment={rec.rec_comment}/>) :
               <View style={styles.centeredView}>
                   <Text style={styles.noRecsYetTitle}>Click the > button to send a recommendation</Text>
                   <Text style={styles.noRecsYetText}>Recommendations will be shared with all members of this pod</Text>
@@ -251,15 +265,12 @@ const resetFields = () => {
                     onChangeItem={items => setmediaType(items.value)}
                   />
 
-                  {/* display error message if not selected */}
-                  <View style={{ display: 'flex', justifyContent: 'flex-start'}}>
-                      <Text style={styles.errorMessage}>{errors.mediaTypeError}</Text>
-                  </View>
+                  {/* display error message if media type is not selected
+                    TODO - fix this and add call to other errors */}
+                  <Text style={styles.errorMessage}>{errors.mediaTypeError}</Text>
 
                   {/* display other relevant fields based on selected media type */}
                   { selectMediaType() }
-
-                  {/* testFunction() */}
 
                   {/* prompt users to add a comment for any media type */}
                   <Text style={styles.recCategoriesText}>

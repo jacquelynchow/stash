@@ -25,7 +25,7 @@ const ByPod = (props) => {
         getPods(onPodsReceived);
     }, []);
 
-    // display pop up when modal view is on
+    // display pop up when add pod modal view is on
     const [isModalVisible, setModalVisible] = useState(false);
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
@@ -69,10 +69,12 @@ const ByPod = (props) => {
         setFilteredDataSource([]);
         setErrors({nameError: '', membersError: ''});
     }
-    // init error state for various form fields
+
+    // init error state for various add pod form fields
     const [errors, setErrors] = useState({
         nameError: '', membersError: ''
     });
+
     // check on create pod submit that all fields are filled in & filled in correctly
     const checkAllFieldsOnSubmit = () => {
         let validSymbols = /^[\w\-\s]+$/;
@@ -144,8 +146,8 @@ const ByPod = (props) => {
         );
     };
 
-    // on-click item in flat list, add new member to pod, if user re-clicks that same username,
-    // user will be removed from pod list
+    // on-click item in flat list, add new member to pod, if user re-clicks that
+    // same username, user will be removed from pod list
     const getItem = (item) => {
         if (members.indexOf(item.username) == -1) {
             let newMember = { key: item.id, name: item.username}
@@ -292,7 +294,7 @@ const ByPod = (props) => {
                             </Text>
                         </View>
 
-                        {/* display members added to pod so far */}
+                        {/* Display members added to pod so far */}
                         <View style={{ height: windowHeight/7 }}>
                             <ScrollView contentContainerStyle={styles.membersList}>
                                 {/* check if any members added yet: if not, display message;
@@ -346,6 +348,7 @@ const ByPod = (props) => {
                             </View>
                         </SafeAreaView>
 
+                        {/* Add A Pod Button */}
                         <View>
                             <Pressable style={styles.createPodButton} onPress={checkAllFieldsOnSubmit}>
                                 <Text style={styles.createPodText}>Create Pod</Text>

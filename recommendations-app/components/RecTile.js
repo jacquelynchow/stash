@@ -12,10 +12,13 @@ import youtubeIcon from '../assets/type-icons/youtube.png';
 const windowWidth = Dimensions.get('window').width;
 
 const RecTile = (props) => {
+
+  // For pop up display
   const [isModalVisible, setModalVisible] = useState(false);
   const toggleModal = () => {
       setModalVisible(!isModalVisible);
   };
+
 //To display different icon based on media type
 function selectImage() {
     if (props.mediaType == "Article") {
@@ -77,8 +80,41 @@ function selectBackgroundColor() {
     else if (props.mediaType == "TikTok") {
         return styles.tiktokBackgroundColor
     }
-    else if (props.mediaType == "Video") {
+    else if (props.mediaType == "YouTube") {
         return styles.videoBackgroundColor
+    }
+}
+
+// determines what to display in addition to title and comment based on media type
+function displayRecDetails(){
+  if (props.mediaType == "Article" || props.mediaType == "Book" || props.mediaType == "Song"){
+    //only display author/artist
+    return(
+      <Text style={styles.modalText}>
+        <Text style={styles.modalHeading}>By: </Text>
+        {props.recAuthor}
+      </Text>)
+  } else if (props.mediaType == "TikTok" || props.mediaType == "YouTube") {
+      //only display link
+      return(
+        <Text style={styles.modalText}>
+          <Text style={styles.modalHeading}>View at: </Text>
+          {props.recLink}
+        </Text>)
+  } else if (props.mediaType == "Movie") {
+      //display genre & year
+      return(
+        <View>
+          <Text style={styles.modalText}>
+            <Text style={styles.modalHeading}>Genre: </Text>
+            {props.recGenre}
+          </Text>
+
+          <Text style={styles.modalText}>
+            <Text style={styles.modalHeading}>Year: </Text>
+            {props.recYear}
+          </Text>
+        </View>)
     }
 }
 
@@ -98,32 +134,25 @@ function selectBackgroundColor() {
                           onPress={toggleModal} >
                           <Image source={closePopUpButton} style={{width: 30, height: 30}}/>
                       </Pressable>
-                      {/* icon based on media type */}
+
+                      {/* display icon based on media type */}
                       <Image source={selectImage()} style={styles.recImagePopUp}></Image>
-                      {/* display all recommendation information: */}
+
+                      {/* display recName and mediaType for all recs */}
                       <Text style={styles.modalTitle}> {props.recName} </Text>
                       <Text style={styles.modalText}> {props.mediaType} </Text>
-                      {/* TODO: update this in the instance that some fields aren't filled for media type
-                      example - don't want "view at" for link if it's a book*/}
-                      {/* Author */}
-                      <Text style={styles.modalText}>
-                        <Text style={styles.modalHeading}>By: </Text>
-                        {props.recAuthor}
-                      </Text>
-                      {/* Link */}
-                      <Text style={styles.modalText}>
-                        <Text style={styles.modalHeading}>View at: </Text>
-                        {props.recLink}
-                      </Text>
-                      {/* Comments */}
+
+                      {/* display other fields based on media type*/}
+                      { displayRecDetails() }
+
+                      {/* display comments */}
                       <Text style={styles.modalText}>
                         <Text style={styles.modalHeading}>Comments: </Text>
                         {props.recComment}
                       </Text>
-                      {/* Sender */}
+
+                      {/* display sender and pod */}
                       <Text style={styles.modalSubtitle}>Sent by {props.recSender} in {props.groupName} pod</Text>
-
-
                   </View>
               </View>
           </Modal>

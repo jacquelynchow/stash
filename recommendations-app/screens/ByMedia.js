@@ -1,5 +1,5 @@
-import React from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
+import React, { useEffect, useState,useCallback } from 'react';
+import { StyleSheet, View, ScrollView, RefreshControl } from 'react-native';
 import MediaGroup from '../components/MediaGroup';
 import bookIcon from '../assets/type-icons/book.png';
 import movieIcon from '../assets/type-icons/movie.png';
@@ -10,17 +10,34 @@ import youtubeIcon from '../assets/type-icons/youtube.png';
 
 
 const ByMedia = () => {
-    // TODO: If No Recs, show message screen, else show recs by type
-        //if recList for all recs for the user is empty then show message screen
         //else show mediaType tiles with num of recommendations in each
     // TODO: For loop and showing Tiles with real data
         // search for recs with certain media_type for USERID & get # of recs for that media
         // able to show the # of ppl?
-    //TODO: need an "other" category since that is one of the options when sending a rec?
-    //      and maybe an "images" category too? or group these together and make 7 options on screen?
+
+    // TODO - implement refresh on this page too:
+    // refresh page function to see new recs
+    // const [refreshing, setRefreshing] = useState(false);
+    // const onRefresh = useCallback(async () => {
+    //         setRefreshing(true);
+    //         await getMediaRecs(onRecsReceived,media_Type) // use await to refresh until function finished
+    //         .then(() => setRefreshing(false));
+    //     }, []);
 
     return (
         <View style={{flex: 1}}>
+
+          {/* TODO - Pull screen down for recommendations refresh */}
+          {/*<ScrollView
+              contentContainerStyle={styles.container}
+              refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                  />
+                }> */}
+
+            {/* Show various rec types */}
             <ScrollView contentContainerStyle={styles.container}>
                 <MediaGroup mediaType={"Articles"} numRecs={10} numPeople={2} image={articleIcon}/>
                 <MediaGroup mediaType={"Books"} numRecs={10} numPeople={2} image={bookIcon} />

@@ -260,9 +260,9 @@ const ByPod = (props) => {
             {/* Create A Pod PopUp */}
             <Modal isVisible={isModalVisible}>
                 <View style={styles.centeredViewModal}>
-                    {isLoading && <View style={styles.loadingIndicator} pointerEvents={"none"}>
+                    {/* {isLoading && <View style={styles.loadingIndicator} pointerEvents={"none"}>
                             <ActivityIndicator size="large" color='#ffc9b9'/>
-                        </View>}
+                        </View>} */}
                     <View style={styles.modalView}>
                         {/* Modal -- x button to close modal */}
                         <Pressable style={[styles.button, styles.buttonClose]}

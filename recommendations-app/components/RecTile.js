@@ -86,36 +86,87 @@ function selectBackgroundColor() {
 }
 
 // determines what to display in addition to title and comment based on media type
+// and what the sender actually inputted when sending the rec
 function displayRecDetails(){
+  // for Articles and Books, only display author/artist
   if (props.mediaType == "Article" || props.mediaType == "Book" || props.mediaType == "Song"){
-    //only display author/artist
-    return(
-      <Text style={styles.modalText}>
-        <Text style={styles.modalHeading}>By: </Text>
-        {props.recAuthor}
-      </Text>)
+    // if they didn't include an author, display "not provided"
+    if (props.recAuthor == ""){
+      return(
+        <Text style={styles.modalText}>
+          <Text style={styles.modalHeading}>By: </Text>
+          <Text style={styles.modalSubtitle}>Not provided </Text>
+        </Text>)}
+    // if they did, display the author name
+    else {
+      return(
+        <Text style={styles.modalText}>
+          <Text style={styles.modalHeading}>By: </Text>
+          {props.recAuthor}
+        </Text>)}
+
+  // for videos (TikTok and YouTube) only display link
+  // recLink is required, so no else case
   } else if (props.mediaType == "TikTok" || props.mediaType == "YouTube") {
-      //only display link
       return(
         <Text style={styles.modalText}>
           <Text style={styles.modalHeading}>View at: </Text>
           {props.recLink}
         </Text>)
+
+  // for movies, display genre and year
   } else if (props.mediaType == "Movie") {
-      //display genre & year
-      return(
-        <View>
+      //GENRE
+      // if they didn't include a genre, display "not provided"
+      if (props.recGenre == ""){
+        return(
+          <Text style={styles.modalText}>
+            <Text style={styles.modalHeading}>Genre: </Text>
+            <Text style={styles.modalSubtitle}>Not provided </Text>
+          </Text>)}
+      // if they did, display the genre
+      else {
+        return(
           <Text style={styles.modalText}>
             <Text style={styles.modalHeading}>Genre: </Text>
             {props.recGenre}
-          </Text>
+          </Text>)}
 
+      //YEAR
+      // if they didn't include the year, display "not provided"
+      if (props.recYear == ""){
+        return(
+          <Text style={styles.modalText}>
+            <Text style={styles.modalHeading}>Year: </Text>
+            <Text style={styles.modalSubtitle}>Not provided </Text>
+          </Text>)}
+      // if they did, display the year
+      else {
+        return(
           <Text style={styles.modalText}>
             <Text style={styles.modalHeading}>Year: </Text>
             {props.recYear}
-          </Text>
-        </View>)
+          </Text>)}
     }
+}
+
+// displays the comment added by the sender, or "not provided" if they didn't
+// include a comment
+function displayComments(){
+  // if they didn't include a comment
+  if (props.recComment == ""){
+    return(
+      <Text style={styles.modalText}>
+        <Text style={styles.modalHeading}>Comments: </Text>
+        <Text style={styles.modalSubtitle}>Not provided </Text>
+      </Text>)}
+  // if they did, display the author name
+  else {
+    return(
+      <Text style={styles.modalText}>
+        <Text style={styles.modalHeading}>Comments: </Text>
+        {props.recComment}
+      </Text>)}
 }
 
   return (
@@ -138,21 +189,23 @@ function displayRecDetails(){
                       {/* display icon based on media type */}
                       <Image source={selectImage()} style={styles.recImagePopUp}></Image>
 
-                      {/* display recName and mediaType for all recs */}
+                      {/* display recName and mediaType for all recs
+                      both are required when creating a rec - will display for all*/}
                       <Text style={styles.modalTitle}> {props.recName} </Text>
                       <Text style={styles.modalText}> {props.mediaType} </Text>
 
                       {/* display other fields based on media type*/}
                       { displayRecDetails() }
 
-                      {/* display comments */}
-                      <Text style={styles.modalText}>
-                        <Text style={styles.modalHeading}>Comments: </Text>
-                        {props.recComment}
-                      </Text>
+                      {/* display comments - not required when sending rec*/}
+                      { displayComments() }
 
                       {/* display sender and pod */}
-                      <Text style={styles.modalSubtitle}>Sent by {props.recSender} in {props.groupName} pod</Text>
+                      <Text style={styles.modalSubtitle}>Sent by
+                        <Text style={{fontWeight: "700"}}> {props.recSender} </Text>
+                        in
+                        <Text style={{fontWeight: "700"}}> {props.groupName} </Text>
+                        pod</Text>
                   </View>
               </View>
           </Modal>
@@ -186,7 +239,7 @@ const styles = StyleSheet.create({
     modalView: {
         margin: 15,
         borderRadius: 20,
-        padding: 80,
+        padding: 60,
         alignItems: "center",
         // ios
         shadowOffset: {width: 10, height: 10},

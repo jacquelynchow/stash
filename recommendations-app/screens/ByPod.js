@@ -241,13 +241,13 @@ const ByPod = (props) => {
 
                 {/* Show pods stored in the list as PodTiles; if no pods yet, show onboard screen message */}
                 {pods && pods.length > 0 ?
-                    pods.map(pod => 
-                        <PodTile key={pod.key} 
-                            groupName={pod.pod_name} 
-                            numMembers={pod.num_members} 
+                    pods.map(pod =>
+                        <PodTile key={pod.key}
+                            groupName={pod.pod_name}
+                            numMembers={pod.num_members}
                             members={pod.members}
-                            uri={pod.pod_picture_url} 
-                            userId={currentUserUID} 
+                            uri={pod.pod_picture_url}
+                            userId={currentUserUID}
                             username={username} />) :
                     <View style={styles.centeredView}>
                         <Text style={styles.noPodsYetText}>Welcome, {username}!</Text>

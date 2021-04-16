@@ -1,63 +1,33 @@
 import React, { useEffect, useState,useCallback } from 'react';
 import { StyleSheet, View, ScrollView, TouchableOpacity, Image, Pressable, Text, Button, Alert, Dimensions, RefreshControl} from 'react-native';
 import RecTile from '../components/RecTile';
-import {getMediaRecs, getNumRecsForMedia, getRecs} from '../API/firebaseMethods';
-//will create function that shows the recs from only 1 media type
-//TODO: figure out how to get the mediaType that should be displaying
-{/*
-function showMediaType() {
-  if (props.mediaType == "Article") {
-    return //list of recs with rec_type == "Article"
-  }
-  else if (props.mediaType == "Book") {
-    return //list of recs with rec_type == "Book"
-  }
-  else if (props.mediaType == "Movie") {
-    return //list of recs with rec_type == "Movi"
-  }
-  else if (props.mediaType == "Song") {
-    return //list of recs with rec_type == "Song"
-  }
-  else if (props.mediaType == "TikTok") {
-    return //list of recs with rec_type == "TikTok"
-  }
-  else if (props.mediaType == "Video") {
-    return //list of recs with rec_type == "Video"
-  }
-}
-*/}
+import {getMediaRecs} from '../API/firebaseMethods';
+
 const windowHeight = Dimensions.get('window').height;
 
-export default function MediaTypePage() {
+export default function MediaTypePage({navigation, route }) {
+  const recData = JSON.parse(JSON.stringify(route.params));
+  const media_Type = recData.media_Type;
   const [recs, setRecs] = useState([]);
   useEffect(() => {
-    getMediaRecs(onRecsReceived);
-  }, []); 
+    getMediaRecs(onRecsReceived,media_Type);
+  }, []);
 
   const onRecsReceived = (recList) => {
     setRecs(recList);
-  };  
+  };
 
+  // refresh page function to see new recs
   const [refreshing, setRefreshing] = useState(false);
   const onRefresh = useCallback(async () => {
           setRefreshing(true);
-          await getMediaRecs(onRecsReceived) // use await to refresh until function finished
+          await getMediaRecs(onRecsReceived,media_Type) // use await to refresh until function finished
           .then(() => setRefreshing(false));
       }, []);
 
-   {/*const [recs] = useState([]);
-  useEffect(() => {
-    getMediaRecs(onRecsReceived);
-  }, []);
-
-  const onRefresh = useCallback(async () => {
-    setRefreshing(true);
-    await getMediaRecs(onRecsReceived) // use await to refresh until function finished
-    .then(() => setRefreshing(false));
-  }, []);
-  */}
   return (
     <View style={{flex: 1}}>
+      {/* Pull screen down for recommendations refresh */}
       <ScrollView
           contentContainerStyle={styles.container}
           refreshControl={
@@ -69,17 +39,24 @@ export default function MediaTypePage() {
 
           {/* make a rec for each rec stored in the recs list */}
           {recs && recs.length > 0 ?
-              recs.map(rec => <RecTile key={rec.key} recName={rec.rec_title}
-                  mediaType={rec.rec_type} recSender={rec.rec_sender} groupName={rec.rec_pod}
-                  recAuthor={rec.rec_author} recLink={rec.rec_link} recComment={rec.rec_comment}/>) :
+              recs.map(rec =>
+                <RecTile key={rec.key}
+                  recName={rec.rec_title}
+                  mediaType={rec.rec_type}
+                  recSender={rec.rec_sender}
+                  groupName={rec.rec_pod}
+                  recAuthor={rec.rec_author}
+                  recLink={rec.rec_link}
+                  recComment={rec.rec_comment}/>) :
               <View style={styles.centeredView}>
-                  <Text>No recommendations yet</Text>
+                  <Text style={styles.noRecsYetTitle}>No recommendations of this type yet</Text>
+                  <Text style={styles.noRecsYetText}>Send/receive recommendations in a pod and they will appear here</Text>
               </View>
           }
 
         </ScrollView>
     </View>
-  )
+  );
 }
 
 
@@ -99,5 +76,23 @@ const styles = StyleSheet.create({
   },
   text: {
       color: "#fcfbfb"
+  },
+  noRecsYetTitle: {
+      marginTop: windowHeight/4,
+      textAlign: "center",
+      color: "#6F1D1B",
+      fontWeight: "700",
+      marginLeft:25,
+      marginRight:25,
+      fontSize: 22,
+  },
+  noRecsYetText: {
+      textAlign: "center",
+      color: "#6F1D1B",
+      fontStyle: 'italic',
+      marginLeft:25,
+      marginRight:25,
+      marginTop: 10,
+      fontSize: 14
   }
 });

@@ -28,10 +28,12 @@ function showMediaType() {
 */}
 const windowHeight = Dimensions.get('window').height;
 
-export default function MediaTypePage() {
+export default function MediaTypePage({navigation, route }) {
+  const recData = JSON.parse(JSON.stringify(route.params));
+  const media_Type = recData.media_Type;
   const [recs, setRecs] = useState([]);
   useEffect(() => {
-    getMediaRecs(onRecsReceived);
+    getMediaRecs(onRecsReceived,media_Type);
   }, []); 
 
   const onRecsReceived = (recList) => {
@@ -41,21 +43,10 @@ export default function MediaTypePage() {
   const [refreshing, setRefreshing] = useState(false);
   const onRefresh = useCallback(async () => {
           setRefreshing(true);
-          await getMediaRecs(onRecsReceived) // use await to refresh until function finished
+          await getMediaRecs(onRecsReceived,media_Type) // use await to refresh until function finished
           .then(() => setRefreshing(false));
       }, []);
 
-   {/*const [recs] = useState([]);
-  useEffect(() => {
-    getMediaRecs(onRecsReceived);
-  }, []);
-
-  const onRefresh = useCallback(async () => {
-    setRefreshing(true);
-    await getMediaRecs(onRecsReceived) // use await to refresh until function finished
-    .then(() => setRefreshing(false));
-  }, []);
-  */}
   return (
     <View style={{flex: 1}}>
       <ScrollView

@@ -291,21 +291,35 @@ export async function getPodRecs(pod){
 }
 
 //makes list of recs for media
-export async function getMediaRecs(recsRecieved){
+export async function getMediaRecs(recsRecieved,media_type){
   let recsInMedia = [];
-  let snapshot = await firebase.firestore()
-  .collection("recs")
-  //neeed to look at recs for the 1 user
-  .orderBy("createdAt") // get recs in order of creation
-  //.where("rec_type","==",media_type)
-  .get()
+  // grab current user's uid
+  const currentUserUid = firebase.auth().currentUser.uid;
+  // get all current user's pods and add to list
+  // await firebase.firestore().collection("users")
+  //   .doc(currentUserUid)
+  //   .get()
+  //   .then((doc) => {
+  //     pods = Object.keys(doc.data().pods) // save the pods keys (aka pod names) to pods list
+  //   })
+  //   .catch((e) => console.log("error in adding getting pods for current user: " + e));
+  
+  //   .where('rec_pod','in',podList)
 
-  // push each rec in db to recList
-  snapshot.forEach((doc) => {
-    recsInMedia.push(doc.data());
-  });
 
-  recsRecieved(recsInMedia);
+    let snapshot = await firebase.firestore()
+    .collection("recs")
+    //need to look at recs for the 1 user
+    .where('rec_type', '==', media_type)
+    .get()
+    .then((obj) => {
+      obj.forEach((doc) => {
+          recsInMedia.push(doc.data());
+      });
+    })
+    .catch((e) => console.log("error in adding pods to recsInMedia: " + e));
+
+    recsRecieved(recsInMedia);
 }
 
 //get number of all recs for user

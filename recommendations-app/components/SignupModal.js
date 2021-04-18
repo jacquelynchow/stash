@@ -100,7 +100,7 @@ const SignupModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
         registration(username, phoneNum);
         toggleModal();
       } catch (err) {
-        Alert.alert("Authentication failed!", err.message)
+        Alert.alert("Authentication failed!", "Please double check the code you entered and try again.")
       }
     }
 
@@ -117,7 +117,7 @@ const SignupModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
     // init variables for firebase phone authentication-------------------------------
     const recaptchaVerifier = React.useRef(null);
     const [verificationId, setVerificationId] = React.useState();
-    const [verificationCode, setVerificationCode] = React.useState();
+    const [verificationCode, setVerificationCode] = useState("");
     const firebaseConfig = firebase.apps.length ? firebase.app().options : undefined;
     const attemptInvisibleVerification = false;
 

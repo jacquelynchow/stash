@@ -39,13 +39,13 @@ const PodTile = (props) => {
         <View style={styles.item}>
             <TouchableOpacity activeOpacity={.7} onPress={() => navigation.navigate('Pod',
                     { name: props.groupName, numMembers: props.numMembers, members: props.members,
-                        uri: props.uri, userId: props.userId, username: props.username })}>
+                        uri: props.uri, userId: props.userId, username: props.username, numRecs: props.numRecs })}>
                 <View style={{ flexDirection: 'row' }}>
                     <Image source={{uri: props.uri}} style={styles.groupImage}></Image>
                     <Menu>
                         {/* 3 dots icon triggers menu to open*/}
                         <MenuTrigger customStyles={triggerStyles}>
-                            <FontAwesome name="ellipsis-v" size={26} color="#d68c45" style={{ marginTop: 20, marginRight: windowWidth/36, opacity: 0.5 }} />
+                            <FontAwesome name="ellipsis-v" size={26} color="#d68c45" style={{ marginTop: 20, marginRight: windowWidth/100, opacity: 0.5 }} />
                         </MenuTrigger>
                         <MenuOptions customStyles={optionsStyles} >
                             <MenuOption onSelect={confirmDeletePod} >
@@ -56,6 +56,7 @@ const PodTile = (props) => {
                 </View>
                 <Text style={styles.name}>{props.groupName}</Text>
                 <Text style={styles.members}>{props.numMembers} Members</Text>
+                <Text style={styles.recommendations}>{props.numRecs} Recs</Text>
             </TouchableOpacity>
         </View>
     )
@@ -86,11 +87,17 @@ const styles = StyleSheet.create({
     members: {
         padding: 15,
         paddingTop: 5,
+        fontSize: 13
+    },
+    recommendations: {
+        padding: 15,
+        marginTop: -30,
+        fontSize: 13
     },
     groupImage: {
         marginLeft: 15,
-        width: 130,
-        height: 130,
+        width: 100,
+        height: 100,
         marginTop: 20,
         borderRadius: 10,
     },
@@ -99,9 +106,8 @@ const styles = StyleSheet.create({
 const triggerStyles = {
     triggerWrapper: {
       borderRadius: 10,
-      alignItems: 'center',
+      alignItems: 'flex-end',
       justifyContent: 'start',
-      paddingRight: 8,
       paddingBottom: 10,
       width: 32,
     },

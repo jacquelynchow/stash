@@ -118,6 +118,9 @@ function displayRecDetails(){
     }
 }
 
+// function recSeen(recKey) {
+  
+// }
   return (
       <View style={styles.item}>
           <TouchableOpacity activeOpacity={0.25} onPress={toggleModal}>
@@ -125,6 +128,9 @@ function displayRecDetails(){
               <Text style={[styles.name, selectColor()]}>{props.recName}</Text>
               <Text style={styles.media}>{props.mediaType}</Text>
           </TouchableOpacity>
+          {/* <TouchableOpacity activeOpacity={0.6} >
+            <View style={styles.checkmark} onClick = {() => recSeen(props.key)}></View>
+          </TouchableOpacity> */}
 
           {/* Rec Details PopUp */}
           <Modal isVisible={isModalVisible}>
@@ -163,6 +169,7 @@ function displayRecDetails(){
 
 const styles = StyleSheet.create({
     item: {
+      flexDirection: 'row', justifyContent: 'space-between',
       width: '45%', // almost half of container width
       borderColor: "black",
       borderRadius: 10,
@@ -289,6 +296,18 @@ const styles = StyleSheet.create({
     },
     videoBackgroundColor: {
       backgroundColor: "#2F4858",
+    }, 
+    checkmark: {
+      alignContent: 'flex-end',
+      padding: 15, 
+      marginTop: 20, 
+      marginRight: 10,
+      width: 1,
+      height: 1,
+      borderRadius: 30,
+      backgroundColor: "#f2f2f2",
+      borderColor: "rgba(227, 227, 227, 0.8)",
+      borderWidth: 1,
     }
 })
 

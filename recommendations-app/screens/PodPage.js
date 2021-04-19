@@ -327,7 +327,7 @@ const styles = StyleSheet.create({
   container: {
     marginVertical: 20,
     marginHorizontal: 10,
-    paddingBottom: 30,
+    paddingBottom: 130,
     flexGrow:1,
     flexDirection: 'row',
     flexWrap: 'wrap',

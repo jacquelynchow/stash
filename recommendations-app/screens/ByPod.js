@@ -115,6 +115,9 @@ const ByPod = (props) => {
         } else if (groupName in podNames) {
             setErrors({nameError: "*This is an existing group name"});
             allValid = false;
+        } else if (groupName.length > 20) {
+            setErrors({nameError: "*Maximum 20 characters"});
+            allValid = false;
         }
         // check if members includes user + other members
         if (members.length == 1) {
@@ -248,7 +251,8 @@ const ByPod = (props) => {
                             members={pod.members}
                             uri={pod.pod_picture_url}
                             userId={currentUserUID}
-                            username={username} />) :
+                            username={username}
+                            numRecs={pod.num_recs} />) :
                     <View style={styles.centeredView}>
                         <Text style={styles.noPodsYetText}>Welcome, {username}!</Text>
                         <Text style={styles.noPodsYetTitle}>Click the + button to start a pod</Text>
@@ -291,7 +295,7 @@ const ByPod = (props) => {
                             </SafeAreaView>
                         </View>
                         {/* Show error if a pod name was not entered or contains non-alphanumeric symbols */}
-                        <View style={{ display: 'flex'}}>
+                        <View style={{ display: 'flex', marginTop: 10}}>
                             <Text style={styles.errorMessage}>{errors.nameError}</Text>
                         </View>
 

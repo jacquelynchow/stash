@@ -196,6 +196,7 @@ export async function getUsers(searchUsername, currentUsername) {
 // delete existing pod object from the db
 export async function deletePodFromDB(pod) {
   const db = firebase.firestore();
+  const imageName = pod.image;
 
   // get pod from db and delete it
   db.collection('pods').where('pod_name', '==', pod.groupName)
@@ -216,13 +217,15 @@ export async function deletePodFromDB(pod) {
   const podName = pod.groupName;
   userIds.forEach((uid) => {
     usersDb.doc(uid).update({
-      [`pods.${podName}`]: false,
+      // remove pod from user's list of pods
+      [`pods.${podName}`]: firebase.firestore.FieldValue.delete()
     })
   })
 
-  // todo: delete all recs that were in the pod? delete pod image from firebase?
+  // delete pod image from firebase
+  deleteImage(imageName);
 
-  console.log("deleting in parent", pod.groupName, pod.members);
+  // todo: delete all recs that were in the pod? 
 }
 
 // --------- CREATING & VIEWING RECS RELATED --------------------------

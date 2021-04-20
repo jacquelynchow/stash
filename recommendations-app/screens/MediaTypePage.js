@@ -39,8 +39,8 @@ export default function MediaTypePage({navigation, route }) {
 
           {/* make a rec for each rec stored in the recs list */}
           {recs && recs.length > 0 ?
-              recs.map(rec =>
-                <RecTile key={rec.key}
+              recs.map((rec, index) =>
+                <RecTile key={index}
                   recName={rec.rec_title}
                   mediaType={rec.rec_type}
                   recSender={rec.rec_sender}

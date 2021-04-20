@@ -3,7 +3,7 @@ import { Dimensions, StyleSheet, Text, View, StatusBar, Image, TouchableOpacity,
 import logo from '../assets/stash-transparent.png';
 import closePopUpButton from '../assets/closePopUpButton.png';
 import Modal from 'react-native-modal';
-import Swiper from 'react-native-swiper';
+import Swiper from 'react-native-swiper/src';
 import PodIcon from '../assets/onboard-icons/pod.png';
 import InteractIcon from '../assets/onboard-icons/interact.png';
 import SortIcon from '../assets/onboard-icons/sort.png';
@@ -63,10 +63,10 @@ export default function LoginScreen({ navigation }) {
         </Swiper>
 
         {/* Signup PopUp */}
-        <SignupModal isModalVisible={modalSelected === 'Signup'} setModalVisible={setModalVisible} setModalSelected={setModalSelected} />
+        <SignupModal key={"signup"} isModalVisible={modalSelected === 'Signup'} setModalVisible={setModalVisible} setModalSelected={setModalSelected} />
 
         {/* Login PopUp */}
-        <LoginModal isModalVisible={modalSelected === 'Login'} setModalVisible={setModalVisible} setModalSelected={setModalSelected} />
+        <LoginModal  key={"login"} isModalVisible={modalSelected === 'Login'} setModalVisible={setModalVisible} setModalSelected={setModalSelected} />
 
         {/* Signup Button */}
         <TouchableOpacity style={ styles.signupBtn } activeOpacity={.7} onPress={() => toggleModal('Signup')} >

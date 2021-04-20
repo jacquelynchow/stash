@@ -38,7 +38,7 @@ const PodTile = (props) => {
     return (
         <View style={styles.item}>
             <TouchableOpacity activeOpacity={.7} onPress={() => navigation.navigate('Pod',
-                    { name: props.groupName, numMembers: props.numMembers, members: props.members,
+                    { podId: props.podId, name: props.groupName, numMembers: props.numMembers, members: props.members,
                         uri: props.uri, userId: props.userId, username: props.username, numRecs: props.numRecs })}>
                 <View style={{ flexDirection: 'row' }}>
                     <Image source={{uri: props.uri}} style={styles.groupImage}></Image>

@@ -55,26 +55,24 @@ const PodTile = (props) => {
     return (
         <View style={styles.item}>
             <TouchableOpacity activeOpacity={.7} onPress={() => navigation.navigate('Pod',
-                    { name: props.groupName, numMembers: props.numMembers, members: props.members,
-                        uri: props.uri, userId: props.userId, username: props.username })}>
+                    { podId: props.podId, name: props.groupName, numMembers: props.numMembers, members: props.members,
+                        uri: props.uri, userId: props.userId, username: props.username, numRecs: props.numRecs })}>
+                
                 <Menu>
                     {/* 3 dots icon triggers menu to open*/}
                     <MenuTrigger customStyles={triggerStyles}>
-                        <MaterialCommunityIcons name="dots-horizontal" size={36} color="#ccc" />
+                        <FontAwesome name="ellipsis-v" size={26} color="#d68c45" style={{ marginTop: 20, marginRight: windowWidth/100, opacity: 0.5 }} />
                     </MenuTrigger>
                     <MenuOptions customStyles={optionsStyles} >
-                    <MenuOption onSelect={confirmDeletePod} >
-                        {/* conditionally render delete pod or leave pod option */}
-                        { props.numMembers == 1 ?
-                        <Text style={styles.deletePod}>Delete Pod</Text>
-                        : <Text style={styles.deletePod}>Leave Pod</Text> }
-                    </MenuOption>
+                        <MenuOption onSelect={confirmDeletePod} >
+                            <Text style={{ color: '#6f1d1b', fontWeight: 'bold', padding: 6 }}>Delete Pod</Text>
+                        </MenuOption>
                     </MenuOptions>
-                </Menu> 
-                
+                </Menu>
                 <Image source={{uri: props.uri}} style={styles.groupImage}></Image>
                 <Text style={styles.name}>{props.groupName}</Text>
                 <Text style={styles.members}>{props.numMembers} Members</Text>
+                <Text style={styles.recommendations}>{props.numRecs} Recs</Text>
             </TouchableOpacity>
         </View>
     )
@@ -105,11 +103,17 @@ const styles = StyleSheet.create({
     members: {
         padding: 15,
         paddingTop: 5,
+        fontSize: 13
+    },
+    recommendations: {
+        padding: 15,
+        marginTop: -30,
+        fontSize: 13
     },
     groupImage: {
         marginLeft: 15,
-        width: 130,
-        height: 130,
+        width: 100,
+        height: 100,
         marginTop: 20,
         borderRadius: 10,
     },

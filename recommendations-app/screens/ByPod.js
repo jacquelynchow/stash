@@ -34,6 +34,7 @@ const ByPod = (props) => {
 
     // add new pod dynamically when 'Create a Pod' submitted
     const [pods, setPods] = useState([]);
+    const [podNames, setPodNames] = useState([]);
     const [groupName, setGroupName] = useState("");
     const addNewPod = async (pods) => {
         let podLength = 0;
@@ -43,7 +44,7 @@ const ByPod = (props) => {
         // create dictionary of key value pairs, (memberName: true)
         let membersDictionary = members.reduce((m, member) => ({...m, [member]: true}), {})
         // add new pod to current pods list
-        let newPod = { key: podLength + 1, pod_name: groupName.trim(), num_members: members.length,
+        let newPod = { pod_name: groupName.trim(), num_members: members.length,
             pod_picture: selectedImageName, pod_picture_url: selectedImageUrl, num_recs: 0, members: membersDictionary };
         setPods([...pods, newPod]);
         // add pod object to database using firebase api function
@@ -56,7 +57,10 @@ const ByPod = (props) => {
     };
     // once pods are received, set pods to these received pods
     const onPodsReceived = (podList) => {
+        // set list of pods and their data
         setPods(podList);
+        // set list of just pod names
+        setPodNames(podList.map((pod) => pod.pod_name))
     };
 
     // resets all form fields on Create a Pod modal
@@ -87,6 +91,13 @@ const ByPod = (props) => {
         // check if group name is not valid (not just alphanumeric)
         } else if (!isValid) {
             setErrors({nameError: "*Group name must be alphabetic"});
+            allValid = false;
+        // check if user isn't already in a pod with this same pod name
+        } else if (groupName in podNames) {
+            setErrors({nameError: "*This is an existing group name"});
+            allValid = false;
+        } else if (groupName.length > 20) {
+            setErrors({nameError: "*Maximum 20 characters"});
             allValid = false;
         }
         // check if members includes user + other members
@@ -224,8 +235,10 @@ const ByPod = (props) => {
                 {/* make a pod for each group name stored in the pods list */}
                 {pods && pods.length > 0 ?
                     pods.map(pod =>
-                        <PodTile key={pod.key}
+                        <PodTile key={pod.pod_name}
+                            podId={pod.pod_id}
                             groupName={pod.pod_name}
+                            numRecs={pod.num_recs}
                             numMembers={pod.num_members}
                             members={pod.members}
                             uri={pod.pod_picture_url}
@@ -268,8 +281,8 @@ const ByPod = (props) => {
                                 />
                             </SafeAreaView>
                         </View>
-
-                        <View style={{ display: 'flex'}}>
+                        {/* Show error if a pod name was not entered or contains non-alphanumeric symbols */}
+                        <View style={{ display: 'flex', marginTop: 10}}>
                             <Text style={styles.errorMessage}>{errors.nameError}</Text>
                         </View>
 

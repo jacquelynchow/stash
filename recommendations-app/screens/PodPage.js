@@ -8,6 +8,7 @@ import RecTile from '../components/RecTile';
 import closePopUpButton from '../assets/closePopUpButton.png';
 import addRecButton from '../assets/addRecButton.png';
 import showMembersButton from '../assets/showMembersButton.png';
+import PersonIcon from '../assets/person-icon.png';
 // Media Types Components
 import MovieType from '../components/media-types/MovieType';
 import BookType from '../components/media-types/BookType';
@@ -35,10 +36,11 @@ const PodPage = ({ navigation, route}) => {
   const username = podData.username;
   const podName = podData.name;
   const podImageUri = podData.uri;
-
+  const podId = podData.podId;
   // call firebase api function getRecs on onRecsReceived function to render recs from db
   useEffect(() => {
-      getRecs(onRecsReceived);
+    console.log("pod page podId useeffect: " , podId)
+    getRecs(podId, onRecsReceived);
   }, []);
 
   // display pop up when send rec modal view is on
@@ -77,13 +79,13 @@ const PodPage = ({ navigation, route}) => {
       }
       // add group name of new pod to existing list
       //TODO add recyear back here when working
-      let newRec = { key: recs.length + 1, rec_sender: username, rec_pod: podName,
+      let newRec = { pod_id: podId, rec_sender: username, rec_pod: podName,
               rec_type: mediaType, rec_title: recName, rec_author: recAuthor,
               rec_link: recLink, rec_genre: recGenre,
-              rec_comment: recComment}
+              rec_comment: recComment }
       setRecs([...recs, newRec]);
       // add rec object to database using firebase API function
-      addRecToDB(newRec);
+      await addRecToDB(newRec);
       //close modal pop up
       toggleModal();
       //reset input fields to blank
@@ -155,7 +157,8 @@ const PodPage = ({ navigation, route}) => {
   const [refreshing, setRefreshing] = useState(false);
   const onRefresh = useCallback(async () => {
           setRefreshing(true);
-          await getRecs(onRecsReceived) // use await to refresh until function finished
+          console.log("pod page podId: " , podId)
+          await getRecs(podId, onRecsReceived) // use await to refresh until function finished
           .then(() => setRefreshing(false));
       }, []);
 
@@ -190,8 +193,9 @@ const PodPage = ({ navigation, route}) => {
           {/* Make a rec for each rec stored in the recs list
             TODO add recYear back here when working */}
           {recs && recs.length > 0 ?
-              recs.map(rec =>
-                <RecTile key={rec.key}
+              recs.map((rec, index) =>
+                <RecTile key={index}
+                  podId={podId}
                   recName={rec.rec_title}
                   mediaType={rec.rec_type}
                   recSender={rec.rec_sender}
@@ -199,7 +203,8 @@ const PodPage = ({ navigation, route}) => {
                   recAuthor={rec.rec_author}
                   recLink={rec.rec_link}
                   recGenre={rec.rec_genre}
-                  recComment={rec.rec_comment}/>) :
+                  recComment={rec.rec_comment}
+                  podName={podName} />) :
               <View style={styles.centeredView}>
                   <Text style={styles.noRecsYetTitle}>Click the > button to send a recommendation</Text>
                   <Text style={styles.noRecsYetText}>Recommendations will be shared with all members of this pod</Text>
@@ -218,8 +223,11 @@ const PodPage = ({ navigation, route}) => {
                 </Pressable>
                 <Text style={styles.membersModalTitle}>Pod Members</Text>
                 <Text style={styles.membersModalText}>{numMembers} Members</Text>
-                { members ? members.map(memberName =>
-                  <Text style={styles.memberNamesText}>{memberName}</Text>):
+                { members ? members.map((memberName, index) =>
+                  <View style={{ flexDirection: 'row'}}>
+                    <Image source={PersonIcon} style={{width: 20, height: 20, marginRight: 5}}></Image>
+                    <Text key={index} style={styles.memberNamesText}>{memberName}</Text> 
+                  </View>) :
                   <Text style={styles.memberNamesText}>No members in this pod.</Text>
                 }
             </View>
@@ -329,8 +337,7 @@ const styles = StyleSheet.create({
   container: {
     marginVertical: 20,
     marginHorizontal: 10,
-    paddingTop: 30,
-    paddingBottom: 30,
+    paddingBottom: 130,
     flexGrow:1,
     flexDirection: 'row',
     flexWrap: 'wrap',

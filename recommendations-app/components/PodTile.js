@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, Dimensions, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { FontAwesome } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
     Menu,
     MenuOptions,
@@ -14,24 +14,41 @@ const windowWidth = Dimensions.get('window').width;
 const PodTile = (props) => {
     const navigation = useNavigation();
 
-    // ask user to confirm if they want to delete a pod
-    const confirmDeletePod = () =>
-    Alert.alert(
-      "Delete Pod",
-      "Are you sure you want to delete " + props.groupName + "?",
-      [
-        {
-          text: "Cancel",
-          onPress: () => console.log("Cancel Pressed"),
-          style: "cancel"
-        },
-        { text: "OK", onPress: () => deletePod() } // call function passed in from parent
-      ],
-      { cancelable: false }
-    );
+    // ask user to confirm if they want to delete/leave a pod
+    const confirmDeletePod = () => {
+        // if 1 member remaining, show delete pod option
+        if (props.numMembers == 1) {
+            Alert.alert("Delete Pod", "Are you sure you want to delete " + props.groupName + "?",
+            [   {
+                    text: "Cancel",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                },
+                { text: "OK", onPress: () => deletePod() } 
+            ],
+            { cancelable: false }
+            );
+        } else {
+            Alert.alert("Leave Pod", "Are you sure you want to leave " + props.groupName + "?",
+            [   {
+                    text: "Cancel",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                },
+                { text: "OK", onPress: () => deletePod() } 
+            ],
+            { cancelable: false }
+            );
+        }
+    }
 
     const deletePod = () => {
-        props.deletePod(props); // delete from db
+        if (props.numMembers == 1) {
+            props.deletePod(props); // delete from db, calling function passed in from parent
+        } else {
+            props.leavePod(props); 
+        }
+        
         props.refresh(); // refresh pods displayed in ByPod
     }
 
@@ -40,20 +57,22 @@ const PodTile = (props) => {
             <TouchableOpacity activeOpacity={.7} onPress={() => navigation.navigate('Pod',
                     { name: props.groupName, numMembers: props.numMembers, members: props.members,
                         uri: props.uri, userId: props.userId, username: props.username })}>
-                <View style={{ flexDirection: 'row' }}>
-                    <Image source={{uri: props.uri}} style={styles.groupImage}></Image>
-                    <Menu>
-                        {/* 3 dots icon triggers menu to open*/}
-                        <MenuTrigger customStyles={triggerStyles}>
-                            <FontAwesome name="ellipsis-v" size={26} color="#d68c45" style={{ marginTop: 20, marginRight: windowWidth/36, opacity: 0.5 }} />
-                        </MenuTrigger>
-                        <MenuOptions customStyles={optionsStyles} >
-                            <MenuOption onSelect={confirmDeletePod} >
-                                <Text style={{ color: '#6f1d1b', fontWeight: 'bold', padding: 6 }}>Delete Pod</Text>
-                            </MenuOption>
-                        </MenuOptions>
-                    </Menu>
-                </View>
+                <Menu>
+                    {/* 3 dots icon triggers menu to open*/}
+                    <MenuTrigger customStyles={triggerStyles}>
+                        <MaterialCommunityIcons name="dots-horizontal" size={36} color="#ccc" />
+                    </MenuTrigger>
+                    <MenuOptions customStyles={optionsStyles} >
+                    <MenuOption onSelect={confirmDeletePod} >
+                        {/* conditionally render delete pod or leave pod option */}
+                        { props.numMembers == 1 ?
+                        <Text style={styles.deletePod}>Delete Pod</Text>
+                        : <Text style={styles.deletePod}>Leave Pod</Text> }
+                    </MenuOption>
+                    </MenuOptions>
+                </Menu> 
+                
+                <Image source={{uri: props.uri}} style={styles.groupImage}></Image>
                 <Text style={styles.name}>{props.groupName}</Text>
                 <Text style={styles.members}>{props.numMembers} Members</Text>
             </TouchableOpacity>
@@ -94,30 +113,33 @@ const styles = StyleSheet.create({
         marginTop: 20,
         borderRadius: 10,
     },
+    deletePod: { 
+        color: '#6f1d1b', 
+        fontWeight: 'bold', 
+        padding: 6 
+    }
 })
 
 const triggerStyles = {
-    triggerWrapper: {
-      borderRadius: 10,
-      alignItems: 'center',
-      justifyContent: 'start',
-      paddingRight: 8,
-      paddingBottom: 10,
-      width: 32,
-    },
     triggerTouchable: {
-        underlayColor: 'white',
+        underlayColor: '#e3e3e3',
         style : {
-          flex: 1,
+            width: 36,
+            borderRadius: 15,
+            marginLeft: 'auto',
+            alignItems: 'center',
+            marginRight: 15,
+            marginBottom: -20,
         },
-    },
+    }
 };
 
 const optionsStyles = {
     optionsContainer: {
         borderRadius: 10,
         width: 100,
-        marginTop: 20,
+        marginTop: 30,
+        marginLeft: windowWidth/6
     },
     optionTouchable: {
         underlayColor: '#ccc',

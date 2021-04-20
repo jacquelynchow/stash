@@ -193,7 +193,7 @@ export async function getUsers(searchUsername, currentUsername) {
   return null;
 }
 
-// delete existing pod object from the db
+// delete existing pod object from the db*****************************
 export async function deletePodFromDB(pod) {
   const db = firebase.firestore();
   const imageName = pod.image;
@@ -226,6 +226,57 @@ export async function deletePodFromDB(pod) {
   deleteImage(imageName);
 
   // todo: delete all recs that were in the pod? 
+}
+
+// let user leave pod***********************************
+export async function removeMemberFromPod(pod) {
+  const currentUserUid = firebase.auth().currentUser.uid;
+  const userDb = firebase.firestore().collection("users").doc(currentUserUid);
+  const podName = pod.groupName;
+  let username = "";
+
+  // delete this pod from the user's list------------------  
+  await userDb
+    .update({
+      [`pods.${podName}`]: firebase.firestore.FieldValue.delete()
+  })
+
+  // get current user's username --------------------------
+  await userDb.get().then((doc) => {
+      if (doc.exists) {
+          username = doc.data().username;
+      } else {
+          // doc.data() will be undefined in this case
+          console.log("No such document!");
+      }
+  }).catch((error) => {
+      console.log("Error getting document:", error);
+  });    
+
+  // delete user from pod's members list--------------------
+  const db = firebase.firestore();
+  const decrement = firebase.firestore.FieldValue.increment(-1);
+
+  db.collection('pods').where('pod_name', '==', podName)
+  .get().then(function(querySnapshot) {
+    querySnapshot.forEach(function(doc) {
+      doc.ref.update({
+        [`members.${username}`]: firebase.firestore.FieldValue.delete()
+      })
+      .catch((error) => console.log(error));
+    });
+  });
+
+  // decrement from number of members in the pod
+  db.collection("pods").where('pod_name', '==', podName)
+  .get().then(function(querySnapshot) {
+    querySnapshot.forEach(function(doc) {
+      doc.ref.update({
+        num_members: decrement
+      })
+      .catch((error) => console.log(error));
+    });
+  });
 }
 
 // --------- CREATING & VIEWING RECS RELATED --------------------------

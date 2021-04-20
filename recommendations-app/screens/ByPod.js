@@ -9,7 +9,7 @@ import { SearchBar } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
 import * as firebase from 'firebase';
 import { addPodToDB, getPods, uploadImageToStorage,
-    retrieveImageFromStorage, deleteImage, getUsers, deletePodFromDB } from '../API/firebaseMethods';
+    retrieveImageFromStorage, deleteImage, getUsers, deletePodFromDB, removeMemberFromPod } from '../API/firebaseMethods';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -232,6 +232,7 @@ const ByPod = (props) => {
                             userId={currentUserUID}
                             username={username}
                             deletePod={deletePodFromDB} 
+                            leavePod={removeMemberFromPod}
                             refresh={onRefresh}
                             image={pod.pod_picture} />) :
                     <View style={styles.centeredView}>

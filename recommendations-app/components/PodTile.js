@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback } from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, Dimensions, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -42,15 +42,15 @@ const PodTile = (props) => {
         }
     }
 
-    const deletePod = () => {
+    const deletePod = useCallback(async () => {
         if (props.numMembers == 1) {
-            props.deletePod(props); // delete from db, calling function passed in from parent
+            await props.deletePod(props) // delete from db, calling function passed in from parent
+            .then(() => props.refresh()); // refresh pods displayed in ByPod
         } else {
-            props.leavePod(props); 
+            await props.leavePod(props)
+            .then(() => props.refresh());
         }
-        
-        props.refresh(); // refresh pods displayed in ByPod
-    }
+    }, []);
 
     return (
         <View style={styles.item}>
@@ -61,11 +61,13 @@ const PodTile = (props) => {
                 <Menu>
                     {/* 3 dots icon triggers menu to open*/}
                     <MenuTrigger customStyles={triggerStyles}>
-                        <FontAwesome name="ellipsis-v" size={26} color="#d68c45" style={{ marginTop: 20, marginRight: windowWidth/100, opacity: 0.5 }} />
+                        <MaterialCommunityIcons name="dots-horizontal" size={32} color="#ccc" />
                     </MenuTrigger>
                     <MenuOptions customStyles={optionsStyles} >
                         <MenuOption onSelect={confirmDeletePod} >
-                            <Text style={{ color: '#6f1d1b', fontWeight: 'bold', padding: 6 }}>Delete Pod</Text>
+                            {props.numMembers == 1 ? 
+                            <Text style={{ color: '#6f1d1b', fontWeight: 'bold', padding: 6 }}>Delete Pod</Text> :
+                            <Text style={{ color: '#6f1d1b', fontWeight: 'bold', padding: 6 }}>Leave Pod</Text>}
                         </MenuOption>
                     </MenuOptions>
                 </Menu>

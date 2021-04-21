@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, SafeAreaView } from 'react-native';
+import { StyleSheet, View, Text, TextInput, SafeAreaView, Clipboard } from 'react-native';
 
 export default function VideoType(props) {
   const [recName, setrecName] = useState("");
@@ -32,6 +32,7 @@ export default function VideoType(props) {
               style={styles.input}
               defaultValue={recLink}
               placeholder={"Link to video"}
+              selectTextOnFocus={true}
           />
         </SafeAreaView>
       </View>

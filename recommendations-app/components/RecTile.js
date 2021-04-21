@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Dimensions, StyleSheet, Text, View, Image, TouchableOpacity, Pressable } from 'react-native';
+import { Dimensions, StyleSheet, Text, View, Image, TouchableOpacity, Pressable, Linking } from 'react-native';
 import closePopUpButton from '../assets/closePopUpButton.png';
 import Modal from 'react-native-modal';
 import bookIcon from '../assets/type-icons/book.png';
@@ -109,9 +109,12 @@ function displayRecDetails(){
   // recLink is required, so no else case
   } else if (props.mediaType == "TikTok" || props.mediaType == "YouTube") {
       return(
-        <Text style={styles.modalText}>
+        <Text>
           <Text style={styles.modalHeading}>View at: </Text>
-          {props.recLink}
+          <Text style={styles.modalText} 
+              onPress={() => Linking.openURL(props.recLink)}>
+            {props.recLink}
+          </Text>
         </Text>)
 
   // for movies, display genre and year
@@ -155,7 +158,7 @@ function displayRecDetails(){
 }
 
 // function recSeen(recKey) {
-  
+
 // }
 
 // displays the comment added by the sender, or "not provided" if they didn't
@@ -206,7 +209,7 @@ function displayComments(){
                       {/* display recName and mediaType for all recs
                       both are required when creating a rec - will display for all*/}
                       <Text style={styles.modalTitle}> {props.recName} </Text>
-                      <Text style={styles.modalType}> "{props.mediaType}" </Text>
+                      <Text style={styles.modalType}> {props.mediaType} </Text>
 
                       {/* display other fields based on media type*/}
                       { displayRecDetails() }
@@ -361,11 +364,11 @@ const styles = StyleSheet.create({
     },
     videoBackgroundColor: {
       backgroundColor: "#2F4858",
-    }, 
+    },
     checkmark: {
       alignContent: 'flex-end',
-      padding: 15, 
-      marginTop: 20, 
+      padding: 15,
+      marginTop: 20,
       marginRight: 10,
       width: 1,
       height: 1,

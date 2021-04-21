@@ -325,7 +325,7 @@ export async function getRecs(podId, recsRecieved) {
   console.log(podId)
   let snapshot = await firebase.firestore() // return a query snapshot of current db
     .collection("recs")
-    .where("pod_id", "==", podId)
+    .where('pod_id', '==', podId)
     .get()
 
     // push each rec in db to recList
@@ -351,13 +351,11 @@ export async function getMediaRecs(recsRecieved,media_type){
   //   })
   //   .catch((e) => console.log("error in adding getting pods for current user: " + e));
 
-  //   .where('rec_pod','in',podList)
-
-
     let snapshot = await firebase.firestore()
     .collection("recs")
-    //need to look at recs for the 1 user
     .where('rec_type', '==', media_type)
+    //   .where('rec_pod','in',podList)
+    //TODO: need to look at recs for the 1 user
     .get()
     .then((obj) => {
       obj.forEach((doc) => {
@@ -369,38 +367,6 @@ export async function getMediaRecs(recsRecieved,media_type){
     recsRecieved(recsInMedia);
 }
 
-//get number of all recs for user
-export async function getNumRecsForUser(){
-  const currentUserUid = firebase.auth().currentUser.uid;
-  await firebase.firestore().collection("users")
-    .doc(currentUserUid)
-    .get()
-    .then((doc) => {
-      pods = Object.keys(doc.data().pods) // save the pods keys (aka pod names) to pods list
-    })
-  db.collection("recs")
-  .where('rec_pod','==', pods) //need to get it for only the user
-  .get()
-  .then(function(querySnapshot) {
-    (querySnapshot.numChildren());
-});
 
-}
 
-//gets number of recs for media type
-  export async function getNumRecsForMedia(media_type){
-    const currentUserUid = firebase.auth().currentUser.uid;
-    await firebase.firestore().collection("users")
-      .doc(currentUserUid)
-      .get()
-      .then((doc) => {
-        pods = Object.keys(doc.data().pods) // save the pods keys (aka pod names) to pods list
-      })
-    db.collection("recs")
-    .where('rec_pod','==', pods)
-    .where('rec_type', '==', media_type)
-    .get()
-    .then(function(querySnapshot) {
-      console.log(querySnapshot.numChildren());
-  });
-  }
+

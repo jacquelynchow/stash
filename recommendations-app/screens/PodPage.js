@@ -19,13 +19,6 @@ import JustTitleType from '../components/media-types/JustTitleType';
 import * as firebase from 'firebase';
 import { addRecToDB, getRecs, getPodRecs } from '../API/firebaseMethods';
 
-//LMTODOs:
-//- fix the recYear for Movie Type
-//- update between getRecs and getPodRecs -- display recs in that pod
-//- error handling - how to reset it once they HAVE selected the thing?
-//    instead of having to close the window and reopen to reset
-//- provide option to copy and paste into input window for links
-
 const windowHeight = Dimensions.get('window').height;
 
 const PodPage = ({ navigation, route}) => {

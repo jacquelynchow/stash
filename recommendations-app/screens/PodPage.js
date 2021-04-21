@@ -224,9 +224,9 @@ const PodPage = ({ navigation, route}) => {
                 <Text style={styles.membersModalTitle}>Pod Members</Text>
                 <Text style={styles.membersModalText}>{numMembers} Members</Text>
                 { members ? members.map((memberName, index) =>
-                  <View style={{ flexDirection: 'row'}}>
+                  <View key={index} style={{ flexDirection: 'row'}}>
                     <Image source={PersonIcon} style={{width: 20, height: 20, marginRight: 5}}></Image>
-                    <Text key={index} style={styles.memberNamesText}>{memberName}</Text> 
+                    <Text style={styles.memberNamesText}>{memberName}</Text>
                   </View>) :
                   <Text style={styles.memberNamesText}>No members in this pod.</Text>
                 }

@@ -111,7 +111,7 @@ function displayRecDetails(){
       return(
         <Text>
           <Text style={styles.modalHeading}>View at: </Text>
-          <Text style={styles.modalText} 
+          <Text style={styles.modalText}
               onPress={() => Linking.openURL(props.recLink)}>
             {props.recLink}
           </Text>
@@ -119,47 +119,54 @@ function displayRecDetails(){
 
   // for movies, display genre and year
   } else if (props.mediaType == "Movie") {
-    //GENRE
-    // if they didn't include a genre, display "not provided"
-    if (props.recGenre == "") {
-      return(
-        <Text style={styles.modalText}>
-          <Text style={styles.modalHeading}>Genre: </Text>
-          <Text style={styles.modalSubtitle}>Not provided </Text>
-        </Text>)
-    }
-    // if they did, display the genre
-    else {
-      return(
-        <Text style={styles.modalText}>
-          <Text style={styles.modalHeading}>Genre: </Text>
-          {props.recGenre}
-        </Text>)
-    }
-
-    //YEAR
-    // if they didn't include the year, display "not provided"
-    if (props.recYear == "") {
-      return(
-        <Text style={styles.modalText}>
-          <Text style={styles.modalHeading}>Year: </Text>
-          <Text style={styles.modalSubtitle}>Not provided </Text>
-        </Text>)
-    }
-    // if they did, display the year
-    else {
-      return(
-        <Text style={styles.modalText}>
-          <Text style={styles.modalHeading}>Year: </Text>
-          {props.recYear}
-        </Text>)
-    }
+      //GENRE & YEAR COMBINATIONS - display "not provided" if not inputted
+      // (1) if they didn't include a genre or a year
+      if (props.recGenre == "" && props.recYear == 0) {
+        return(
+          <Text style={styles.modalText}>
+            <Text style={styles.modalHeading}>Genre: </Text>
+            <Text style={styles.modalSubtitle}>Not provided </Text>
+            {"\n"}
+            <Text style={styles.modalHeading}>Year: </Text>
+            <Text style={styles.modalSubtitle}>Not provided </Text>
+          </Text>)
+      }
+      // (2) if they included a genre but no year
+      else if (props.recGenre !== "" && props.recYear == 0){
+        return(
+          <Text style={styles.modalText}>
+            <Text style={styles.modalHeading}>Genre: </Text>
+            {props.recGenre}
+            {"\n"}
+            <Text style={styles.modalHeading}>Year: </Text>
+            <Text style={styles.modalSubtitle}>Not provided </Text>
+          </Text>)
+      }
+      // (3) if they included a year but no genre
+      else if (props.recGenre == "" && props.recYear !== 0) {
+        return(
+          <Text style={styles.modalText}>
+            <Text style={styles.modalHeading}>Genre: </Text>
+            <Text style={styles.modalSubtitle}>Not provided </Text>
+            {"\n"}
+            <Text style={styles.modalHeading}>Year: </Text>
+            {props.recYear}
+          </Text>
+           )
+      }
+      // (4) if they provided both
+      else {
+        return(
+          <Text style={styles.modalText}>
+            <Text style={styles.modalHeading}>Genre: </Text>
+            {props.recGenre}
+            {"\n"}
+            <Text style={styles.modalHeading}>Year: </Text>
+            {props.recYear}
+          </Text>)
+      }
   }
 }
-
-// function recSeen(recKey) {
-
-// }
 
 // displays the comment added by the sender, or "not provided" if they didn't
 // include a comment
@@ -179,6 +186,10 @@ function displayComments(){
         {props.recComment}
       </Text>)}
 }
+
+// function recSeen(recKey) {
+
+// }
 
   return (
       <View style={styles.item}>
@@ -280,25 +291,27 @@ const styles = StyleSheet.create({
         color: "white",
     },
     modalHeading: {
+        textAlign: 'center',
         marginTop: 5,
-        fontSize: 13,
+        marginBottom: 5,
+        fontSize: 14,
         fontWeight: "900",
         color: "white"
     },
     modalType: {
-        marginTop: -5,
         marginBottom: 10,
-        fontSize: 15,
+        fontSize: 14,
         color: "white",
     },
     modalText: {
-        marginTop: 5,
-        fontSize: 15,
+        textAlign: 'center',
+        marginTop: 10,
+        fontSize: 14,
         color: "white",
     },
     modalSubtitle: {
         marginTop: 20,
-        fontSize: 13,
+        fontSize: 12,
         fontStyle: "italic",
         color: "white",
         textAlign: 'center'

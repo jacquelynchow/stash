@@ -232,7 +232,7 @@ export async function deletePodFromDB(pod) {
   // delete pod image from firebase
   deleteImage(imageName);
 
-  // todo: delete all recs that were in the pod? 
+  // todo: delete all recs that were in the pod?
 }
 
 // let user leave pod***********************************
@@ -242,7 +242,7 @@ export async function removeMemberFromPod(pod) {
   const podName = pod.groupName;
   let username = "";
 
-  // delete this pod from the user's list------------------  
+  // delete this pod from the user's list------------------
   await userDb
     .update({
       [`pods.${podName}`]: firebase.firestore.FieldValue.delete()
@@ -258,7 +258,7 @@ export async function removeMemberFromPod(pod) {
       }
   }).catch((error) => {
       console.log("Error getting document:", error);
-  });    
+  });
 
   // delete user from pod's members list--------------------
   const db = firebase.firestore();
@@ -300,12 +300,12 @@ export async function addRecToDB(rec) {
     rec_pod: rec.rec_pod,
     rec_link: rec.rec_link,
     rec_genre: rec.rec_genre,
-    //rec_year: rec.rec_year,
+    rec_year: rec.rec_year,
     rec_comment: rec.rec_comment,
     seenBy: {},
     createdAt: firebase.firestore.FieldValue.serverTimestamp() // order recs to show up in order of creation
   })
-  
+
   // update pod it belongs to with rec id & increment number of recs count
   const podRef = firebase.firestore().collection("pods");
   const increment = firebase.firestore.FieldValue.increment(1);
@@ -318,7 +318,7 @@ export async function addRecToDB(rec) {
     .then(() => console.log(`new rec added to ${rec.pod_name}`))
 }
 
-// makes list of recs for a specific pod from the current state of the database and 
+// makes list of recs for a specific pod from the current state of the database and
 // calls callback function to run asyncronously
 export async function getRecs(podId, recsRecieved) {
   let recList = []; // init recList with all recs in the pod

@@ -5,7 +5,6 @@ export default function MovieType(props) {
   const [recName, setrecName] = useState("");
   const [recGenre, setrecGenre] = useState("");
   const [recYear, setrecYear] = useState(0);
-  //TODO - change recYear back to props below when working
 
   return (
     <View>
@@ -44,11 +43,11 @@ export default function MovieType(props) {
         <SafeAreaView>
           <TextInput
               autoFocus={true}
-              onEndEditing={recYear => setrecYear(recYear)}
+              onChangeText={recYear => props.setrecYear(recYear)}
               style={styles.titleInput}
               defaultValue={recYear}
-              placeholder={"Year Published"}
-              keyboardType='number-pad'
+              placeholder={"Year Released"}
+              keyboardType='numeric'
               maxLength={4}
           />
         </SafeAreaView>

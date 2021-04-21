@@ -63,7 +63,7 @@ const PodPage = ({ navigation, route}) => {
   const [recAuthor, setrecAuthor] = useState("");
   const [recLink, setrecLink] = useState("");
   const [recGenre, setrecGenre] = useState("");
-  //const [recYear, setrecYear] = useState(0); //TODO - fix recYear for movies
+  const [recYear, setrecYear] = useState(0); //TODO - fix recYear for movies
   const [recComment, setrecComment] = useState("");
 
   // init error state for various send rec form fields
@@ -81,7 +81,7 @@ const PodPage = ({ navigation, route}) => {
       //TODO add recyear back here when working
       let newRec = { pod_id: podId, rec_sender: username, rec_pod: podName,
               rec_type: mediaType, rec_title: recName, rec_author: recAuthor,
-              rec_link: recLink, rec_genre: recGenre,
+              rec_link: recLink, rec_genre: recGenre, rec_year:recYear,
               rec_comment: recComment }
       setRecs([...recs, newRec]);
       // add rec object to database using firebase API function
@@ -104,7 +104,7 @@ const PodPage = ({ navigation, route}) => {
       setrecAuthor("");
       setrecLink("");
       setrecGenre("");
-      //setrecYear(0);
+      setrecYear(0);
       setrecComment("");
       setErrors({mediaTypeError: '', nameError: '', linkError: ''});
   }
@@ -165,16 +165,14 @@ const PodPage = ({ navigation, route}) => {
   // determines which fields show in Add a Rec pop up based on selected media type
   function selectMediaType() {
     if (mediaType == "Movie") {
-      return (<MovieType setrecName={setrecName} setrecGenre={setrecGenre}></MovieType>)
+      return (<MovieType setrecName={setrecName} setrecGenre={setrecGenre} setrecYear={setrecYear}></MovieType>)
     } else if (mediaType == "Book" || mediaType == "Article") {
       return (<BookType setrecName={setrecName} setrecAuthor={setrecAuthor}> </BookType>)
     } else if (mediaType == "TikTok" || mediaType == "YouTube") {
       return (<VideoType setrecName={setrecName} setrecLink={setrecLink}></VideoType>)
     } else if (mediaType == "Song") {
       return (<SongType setrecName={setrecName} setrecAuthor={setrecAuthor}></SongType>)
-    } //else if (mediaType == "Other") {
-      //return (<JustTitleType setrecName={setrecName}></JustTitleType>)
-    //}
+    }
   };
 
     return (
@@ -203,6 +201,7 @@ const PodPage = ({ navigation, route}) => {
                   recAuthor={rec.rec_author}
                   recLink={rec.rec_link}
                   recGenre={rec.rec_genre}
+                  recYear={rec.rec_year}
                   recComment={rec.rec_comment}
                   podName={podName} />) :
               <View style={styles.centeredView}>

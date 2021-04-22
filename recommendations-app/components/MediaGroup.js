@@ -22,12 +22,21 @@ const MediaGroup = (props) => {
         }
     }
 
+    function recsFromPeople (numPeople) {
+        if (numPeople ==1){
+            return "person"
+        }
+        else {
+            return "people"
+        }
+    }
+
     return (
         <View style={styles.item}>
             <TouchableOpacity activeOpacity={.7} onPress={() => navigation.navigate('MediaType',{media_Type: getMediaType()})}>
                 <Image source={props.image} style={styles.mediaImage}></Image>
                 <Text style={styles.name}>{props.mediaType} ({props.numRecs})</Text>
-                <Text style={styles.numRecs}>Recommendations from {props.numPeople} people</Text>
+                <Text style={styles.numRecs}>Recommendations from {props.numPeople} {recsFromPeople(props.numPeople)}</Text>
             </TouchableOpacity>
         </View>
     )

@@ -339,23 +339,22 @@ export async function getRecs(podId, recsRecieved) {
 
 //makes list of recs for media
 export async function getMediaRecs(recsRecieved,media_type){
-  let recsInMedia = [];
-  // grab current user's uid
-  const currentUserUid = firebase.auth().currentUser.uid;
-  // get all current user's pods and add to list
-  // await firebase.firestore().collection("users")
-  //   .doc(currentUserUid)
-  //   .get()
-  //   .then((doc) => {
-  //     pods = Object.keys(doc.data().pods) // save the pods keys (aka pod names) to pods list
-  //   })
-  //   .catch((e) => console.log("error in adding getting pods for current user: " + e));
+  let recsInMedia = []; //init list of user's recs of specific media type
+  let pods = []; // init list of pods the user is a current member of
+  const currentUserUid = firebase.auth().currentUser.uid; // grab current user's uid
 
-    let snapshot = await firebase.firestore()
+  await firebase.firestore().collection("users")
+    .doc(currentUserUid)
+    .get()
+    .then((doc) => {
+      pods = Object.keys(doc.data().pods) // save the pods keys (aka pod names) to pods list
+    })
+    .catch((e) => console.log("error in adding getting pods for current user: " + e));
+
+    await firebase.firestore()
     .collection("recs")
-    .where('rec_type', '==', media_type)
-    //   .where('rec_pod','in',podList)
-    //TODO: need to look at recs for the 1 user
+    .where('rec_type', '==', media_type) //only have recs of specific media type
+    .where('rec_pod','in',pods) //only have recs that are part of current user's pods
     .get()
     .then((obj) => {
       obj.forEach((doc) => {
@@ -366,7 +365,6 @@ export async function getMediaRecs(recsRecieved,media_type){
 
     recsRecieved(recsInMedia);
 }
-
 
 
 

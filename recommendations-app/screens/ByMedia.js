@@ -13,7 +13,7 @@ import {getMediaRecs } from '../API/firebaseMethods';
 
 const ByMedia = () => {
    
-
+    //gets number of recs for specific media type
     function numRecsForMedia(media_Type) {
         const [recs, setRecs] = useState([]);
         useEffect(() => {
@@ -28,6 +28,7 @@ const ByMedia = () => {
         return numRecs;
     }
   
+    //gets number of people who sent recs of specific media type
     function numPeopleForMedia(media_Type) {
         const [recs, setRecs] = useState([]);
         useEffect(() => {
@@ -49,7 +50,7 @@ const ByMedia = () => {
 
     return (
         <View style={{flex: 1}}>
-
+             {/* TODO: refresh page */}
 
             {/* Show various rec types */}
             <ScrollView contentContainerStyle={styles.container}>

@@ -89,8 +89,8 @@ function selectBackgroundColor() {
 // determines what to display in addition to title and comment based on media type
 // and what the sender actually inputted when sending the rec
 function displayRecDetails(){
-  // for Articles and Books, only display author/artist
-  if (props.mediaType == "Article" || props.mediaType == "Book" || props.mediaType == "Song"){
+  // for Articles and Books, only display author/artist if provided
+  if (props.mediaType == "Article" || props.mediaType == "Book"){
     // if they didn't include an author, display "not provided"
     if (props.recAuthor == ""){
       return(
@@ -107,7 +107,7 @@ function displayRecDetails(){
         </Text>)}
 
   // for videos (TikTok and YouTube) only display link
-  // recLink is required, so no else case
+  // recLink is required for videos, so no else case
   } else if (props.mediaType == "TikTok" || props.mediaType == "YouTube") {
       return(
         <Text>
@@ -117,6 +117,61 @@ function displayRecDetails(){
             {props.recLink}
           </Text>
         </Text>)
+
+  // for songs, display artist and link if provided
+  } else if (props.mediaType == "Song"){
+    //ARTIST & LINK COMBINATIONS - display "not provided" if not inputted
+    // (1) if they didn't include an artist or a link
+    if (props.recAuthor == "" && props.recLink == "") {
+      return(
+        <Text style={styles.modalText}>
+          <Text style={styles.modalHeading}>Artist(s): </Text>
+          <Text style={styles.modalSubtitle}>Not provided </Text>
+          {"\n"}
+          <Text style={styles.modalHeading}>Link: </Text>
+          <Text style={styles.modalSubtitle}>Not provided </Text>
+        </Text>)
+    }
+    // (2) if they included a genre but no year
+    else if (props.recAuthor !== "" && props.recLink == ""){
+      return(
+        <Text style={styles.modalText}>
+          <Text style={styles.modalHeading}>Artist(s): </Text>
+          {props.recAuthor}
+          {"\n"}
+          <Text style={styles.modalHeading}>Link: </Text>
+          <Text style={styles.modalSubtitle}>Not provided </Text>
+        </Text>)
+    }
+    // (3) if they included a year but no genre
+    else if (props.recAuthor == "" && props.recLink !== "") {
+      return(
+        <Text style={styles.modalText}>
+          <Text style={styles.modalHeading}>Artist(s): </Text>
+          <Text style={styles.modalSubtitle}>Not provided </Text>
+          {"\n"}
+          <Text style={styles.modalHeading}>Link: </Text>
+          <Text style={styles.modalText}
+              onPress={() => Linking.openURL(props.recLink)}>
+            {props.recLink}
+          </Text>
+        </Text>
+         )
+    }
+    // (4) if they provided both
+    else {
+      return(
+        <Text style={styles.modalText}>
+          <Text style={styles.modalHeading}>Artist(s): </Text>
+          {props.recAuthor}
+          {"\n"}
+          <Text style={styles.modalHeading}>Link: </Text>
+          <Text style={styles.modalText}
+              onPress={() => Linking.openURL(props.recLink)}>
+            {props.recLink}
+          </Text>
+        </Text>)
+    }
 
   // for movies, display genre and year
   } else if (props.mediaType == "Movie") {

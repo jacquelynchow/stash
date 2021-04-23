@@ -289,6 +289,7 @@ const styles = StyleSheet.create({
         marginTop: 20,
         marginBottom: 5,
         color: "white",
+        textAlign: 'center',
     },
     modalHeading: {
         textAlign: 'center',

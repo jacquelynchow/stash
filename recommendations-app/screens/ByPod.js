@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, ScrollView, View, TouchableOpacity, Image, Pressable, Text, SafeAreaView, TextInput, Dimensions, FlatList, RefreshControl, Alert } from 'react-native';
+import { StyleSheet, ScrollView, View, TouchableOpacity, Image, Pressable, Text, SafeAreaView, TextInput, Dimensions, FlatList, RefreshControl, ActivityIndicator } from 'react-native';
 import PodTile from '../components/PodTile';
 import addPodButton from '../assets/addPodButton.png';
 import closePopUpButton from '../assets/closePopUpButton.png';
@@ -7,6 +7,7 @@ import uploadPodImage from '../assets/uploadPodImage.png';
 import Modal from 'react-native-modal';
 import { SearchBar } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
 import * as firebase from 'firebase';
 import { addPodToDB, getPods, uploadImageToStorage,
     retrieveImageFromStorage, deleteImage, getUsers, deletePodFromDB, removeMemberFromPod } from '../API/firebaseMethods';
@@ -46,9 +47,10 @@ const ByPod = (props) => {
         // add new pod to current pods list
         let newPod = { pod_name: groupName.trim(), num_members: members.length,
             pod_picture: selectedImageName, pod_picture_url: selectedImageUrl, num_recs: 0, members: membersDictionary };
-        setPods([...pods, newPod]);
+        //setPods([...pods, newPod]);
         // add pod object to database using firebase api function
-        addPodToDB(newPod);
+        await addPodToDB(newPod).then(() => getPods(onPodsReceived))
+        
         // close modal
         toggleModal();
         // reset input fields to blank
@@ -81,16 +83,10 @@ const ByPod = (props) => {
 
     // check on create pod submit that all fields are filled in & filled in correctly
     const checkAllFieldsOnSubmit = () => {
-        let validSymbols = /^[\w\-\s]+$/;
         let allValid = true;
-        let isValid = validSymbols.test(groupName);
         // check if group name empty or only has whitespace
         if (groupName === "" || !groupName.replace(/\s/g, '').length) {
             setErrors({nameError: "*Group name is required"});
-            allValid = false;
-        // check if group name is not valid (not just alphanumeric)
-        } else if (!isValid) {
-            setErrors({nameError: "*Group name must be alphabetic"});
             allValid = false;
         // check if user isn't already in a pod with this same pod name
         } else if (groupName in podNames) {
@@ -171,11 +167,14 @@ const ByPod = (props) => {
         }
     };
 
-    // init var for selected pod image
+    // init var for selected pod image 
     const [selectedImageName, setSelectedImageName] = useState("");
     const [selectedImageUrl, setSelectedImageUrl] = useState(defaultImageUrl);
+    // init loading bool when activity indicator is needed
+    const [isLoading, setLoading] = useState(false);
 
-    // function from expo docs tutorial
+    // allow user to choose image from photo library, uploads image to server, saves image URL; while image is 
+    // being sent to server and url is being saved, a loading indicator pops up blocking all user interaction 
     let openImagePickerAsync = async () => {
         let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (permissionResult.granted === false) {
@@ -187,11 +186,12 @@ const ByPod = (props) => {
         if (result.cancelled === true) {
           return;
         }
-
-        let uploadUri = Platform.OS === 'ios' ? result.uri.replace('file://', '') : result.uri;
-        // get extension of image and set filename as username and current timestamp
-        const extension = uploadUri.split('.').pop();
-        const imageName = currentUserUID + "_" + Date.now() + '.' + extension;
+        // set filename as username and current timestamp and resize image for more space in storage
+        const imageName = currentUserUID + "_" + Date.now() + '.' + 'png'; 
+        const resizedPhoto = await ImageManipulator.manipulateAsync(
+            result.uri, [{ resize: { width: 200 } }], // resize to width of 200 and preserve aspect ratio 
+            { compress: 0.7, format: 'png' }, // using png type of images
+        );
 
         // check if image was changed (the second and following times), delete the old image on db
         deleteImage(selectedImageName);
@@ -199,14 +199,20 @@ const ByPod = (props) => {
         // setstate sets things asyncronously (after re-render),
         // so use imageName instead of selectedImageName to use as variable
         setSelectedImageName(imageName);
+        // show activity indicator by setting true (makes user wait until image has been uploaded to server & image url is saved)
+        setLoading(true);
 
         // upload image to firebase storage
-        await uploadImageToStorage(uploadUri, imageName)
-            .then(() => {
-                // after uploading image to server, get image url from firebase
-                retrieveImageFromStorage(imageName, setSelectedImageUrl);
+        await uploadImageToStorage(resizedPhoto.uri, imageName)
+            .then(async () => {
+                // after uploading image to server, wait to get image url from firebase
+                await retrieveImageFromStorage(imageName, setSelectedImageUrl)
+                    // once image has been uploaded to server and image url is saved, we can stop showing the activity indicator 
+                    .then(() => setLoading(false))
+                    .catch(() => setLoading(false));
             })
             .catch((error) => {
+                setLoading(false);
                 console.log("Something went wrong with image upload! " + error.message + error.code);
         });
     }
@@ -258,10 +264,25 @@ const ByPod = (props) => {
 
             {/* Create A Pod PopUp */}
             <Modal isVisible={isModalVisible}>
+                {/* Show loading screen (blocking all user interaction) if image is being sent to server & its image URL being fetched */}
+                {isLoading ? 
+                <View style={{position: 'absolute',
+                        left: 0,
+                        right: 0,
+                        top: 0,
+                        bottom: 0,
+                        width:'100%',
+                        height:'100%',
+                        justifyContent: 'center',
+                        alignItems: 'center'}}>
+                    <ActivityIndicator size="large"/>
+                </View> :
+                // if image not being sent right now, show the 'create a pod' modal
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
                         <Pressable style={[styles.button, styles.buttonClose]}
-                            onPress={toggleModal} >
+                            // close modal popup and delete image if one was selected
+                            onPress={() => { toggleModal(); deleteImage(selectedImageName); }} >
                             <Image source={closePopUpButton} style={{width: 30, height: 30}}/>
                         </Pressable>
                         <Text style={styles.modalTitle}>Create a Pod</Text>
@@ -373,6 +394,7 @@ const ByPod = (props) => {
                         </View>
                     </View>
                 </View>
+                }   
             </Modal>
 
             {/* Add Pod Button */}

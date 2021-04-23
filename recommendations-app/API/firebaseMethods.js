@@ -150,7 +150,7 @@ export async function uploadImageToStorage(uploadUri, imageName) {
 }
 
 // retrieve url for image from firebase
-export function retrieveImageFromStorage(imageName, setSelectedImageUrl) {
+export async function retrieveImageFromStorage(imageName, setSelectedImageUrl) {
   let imageRef = firebase.storage().ref().child("pod_images/" + imageName);
   imageRef.getDownloadURL()
   .then((url) => { // on upload finish, set the selected image url to be the server hosted image url
@@ -321,14 +321,13 @@ export async function addRecToDB(rec) {
       recIds: firebase.firestore.FieldValue.arrayUnion(newRecRef.id),
       num_recs : increment
     })
-    .then(() => console.log(`new rec added to ${rec.pod_name}`))
+    .then(() => console.log(`new rec added to ${rec.rec_pod}`))
 }
 
 // makes list of recs for a specific pod from the current state of the database and
 // calls callback function to run asyncronously
 export async function getRecs(podId, recsRecieved) {
   let recList = []; // init recList with all recs in the pod
-  console.log(podId)
   let snapshot = await firebase.firestore() // return a query snapshot of current db
     .collection("recs")
     .where('pod_id', '==', podId)

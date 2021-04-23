@@ -32,7 +32,6 @@ const PodPage = ({ navigation, route}) => {
   const podId = podData.podId;
   // call firebase api function getRecs on onRecsReceived function to render recs from db
   useEffect(() => {
-    console.log("pod page podId useeffect: " , podId)
     getRecs(podId, onRecsReceived);
   }, []);
 
@@ -56,7 +55,7 @@ const PodPage = ({ navigation, route}) => {
   const [recAuthor, setrecAuthor] = useState("");
   const [recLink, setrecLink] = useState("");
   const [recGenre, setrecGenre] = useState("");
-  const [recYear, setrecYear] = useState(0); //TODO - fix recYear for movies
+  const [recYear, setrecYear] = useState(0); 
   const [recComment, setrecComment] = useState("");
 
   // init error state for various send rec form fields
@@ -71,7 +70,6 @@ const PodPage = ({ navigation, route}) => {
         recLength = recs.length;
       }
       // add group name of new pod to existing list
-      //TODO add recyear back here when working
       let newRec = { pod_id: podId, rec_sender: username, rec_pod: podName,
               rec_type: mediaType, rec_title: recName, rec_author: recAuthor,
               rec_link: recLink, rec_genre: recGenre, rec_year:recYear,
@@ -107,9 +105,7 @@ const PodPage = ({ navigation, route}) => {
   // all other fields are optional and will display as "not provided" if user
   // doesn't provide input for them
   const checkAllFieldsOnSubmit = () => {
-      let validSymbols = /^[\w\-\s]+$/;
       let allValid = true;
-      let isValid = validSymbols.test(recName);
       // check if media type is selected
       if (mediaType === "") {
           setErrors({mediaTypeError: "*Media type is required to continue"});
@@ -119,11 +115,7 @@ const PodPage = ({ navigation, route}) => {
       if (recName === "" || !recName.replace(/\s/g, '').length) {
           setErrors({nameError: "*Title of this recommendation is required"});
           allValid = false;
-      // check if rec name is not valid (not just alphanumeric)
-      } else if (!isValid) {
-          setErrors({nameError: "*Recommendation title must be alphabetic"});
-          allValid = false;
-      }
+      } 
       // check if they uploaded link, and if so that it is valid
       if (recLink !== "" && !validURL(recLink)) {
           setErrors({linkError: "*Please enter a valid link"});
@@ -150,7 +142,6 @@ const PodPage = ({ navigation, route}) => {
   const [refreshing, setRefreshing] = useState(false);
   const onRefresh = useCallback(async () => {
           setRefreshing(true);
-          console.log("pod page podId: " , podId)
           await getRecs(podId, onRecsReceived) // use await to refresh until function finished
           .then(() => setRefreshing(false));
       }, []);
@@ -181,8 +172,7 @@ const PodPage = ({ navigation, route}) => {
               />
             }>
 
-          {/* Make a rec for each rec stored in the recs list
-            TODO add recYear back here when working */}
+          {/* Make a rec for each rec stored in the recs list */}
           {recs && recs.length > 0 ?
               recs.map((rec, index) =>
                 <RecTile key={index}
@@ -194,7 +184,7 @@ const PodPage = ({ navigation, route}) => {
                   recAuthor={rec.rec_author}
                   recLink={rec.rec_link}
                   recGenre={rec.rec_genre}
-                  recYear={rec.rec_year}
+                  recYear={rec.rec_year.toString()}
                   recComment={rec.rec_comment}
                   podName={podName} />) :
               <View style={styles.centeredView}>

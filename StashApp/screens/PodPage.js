@@ -156,7 +156,7 @@ const PodPage = ({ navigation, route}) => {
     } else if (mediaType == "TikTok" || mediaType == "YouTube") {
       return (<VideoType setrecName={setrecName} setrecLink={setrecLink}></VideoType>)
     } else if (mediaType == "Song") {
-      return (<SongType setrecName={setrecName} setrecAuthor={setrecAuthor}></SongType>)
+      return (<SongType setrecName={setrecName} setrecAuthor={setrecAuthor} setrecLink={setrecLink}></SongType>)
     }
   };
 

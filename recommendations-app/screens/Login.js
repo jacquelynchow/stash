@@ -124,7 +124,8 @@ const styles = StyleSheet.create({
     slide: {
       flex: 1,
       alignItems: 'center',
-      justifyContent: 'center'
+      justifyContent: 'center',
+      marginTop: -20,
     },
     onboardBtn: {
       backgroundColor: 'rgba(255, 201, 185,.7)',

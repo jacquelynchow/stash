@@ -24,7 +24,7 @@ const PodTile = (props) => {
                     onPress: () => console.log("Cancel Pressed"),
                     style: "cancel"
                 },
-                { text: "OK", onPress: () => deletePod() } 
+                { text: "OK", onPress: () => deletePod() }
             ],
             { cancelable: false }
             );
@@ -35,7 +35,7 @@ const PodTile = (props) => {
                     onPress: () => console.log("Cancel Pressed"),
                     style: "cancel"
                 },
-                { text: "OK", onPress: () => deletePod() } 
+                { text: "OK", onPress: () => deletePod() }
             ],
             { cancelable: false }
             );
@@ -52,12 +52,34 @@ const PodTile = (props) => {
         }
     }, []);
 
+    //display 1 "Member" or multiple "Members"
+    function numMembers (numMembers) {
+        if (numMembers ==1){
+            return "Member"
+        }
+        else {
+            return "Members"
+        }
+    }
+
+    //display 1 "Rec" or multiple "Recs"
+    function numRecs (numRecs) {
+        if (numRecs ==1){
+            return "Rec"
+        }
+        else {
+            return "Recs"
+        }
+    }
+
+
+
     return (
         <View style={styles.item}>
             <TouchableOpacity activeOpacity={.7} onPress={() => navigation.navigate('Pod',
                     { podId: props.podId, name: props.groupName, numMembers: props.numMembers, members: props.members,
                         uri: props.uri, userId: props.userId, username: props.username, numRecs: props.numRecs })}>
-                
+
                 <Menu>
                     {/* 3 dots icon triggers menu to open*/}
                     <MenuTrigger customStyles={triggerStyles}>
@@ -65,7 +87,7 @@ const PodTile = (props) => {
                     </MenuTrigger>
                     <MenuOptions customStyles={optionsStyles} >
                         <MenuOption onSelect={confirmDeletePod} >
-                            {props.numMembers == 1 ? 
+                            {props.numMembers == 1 ?
                             <Text style={{ color: '#6f1d1b', fontWeight: 'bold', padding: 6 }}>Delete Pod</Text> :
                             <Text style={{ color: '#6f1d1b', fontWeight: 'bold', padding: 6 }}>Leave Pod</Text>}
                         </MenuOption>
@@ -73,8 +95,8 @@ const PodTile = (props) => {
                 </Menu>
                 <Image source={{uri: props.uri}} style={styles.groupImage}></Image>
                 <Text style={styles.name}>{props.groupName}</Text>
-                <Text style={styles.members}>{props.numMembers} Members</Text>
-                <Text style={styles.recommendations}>{props.numRecs} Recs</Text>
+                <Text style={styles.members}>{props.numMembers} {numMembers(props.numMembers)}</Text>
+                <Text style={styles.recommendations}>{props.numRecs} {numRecs(props.numRecs)}</Text>
             </TouchableOpacity>
         </View>
     )
@@ -119,10 +141,10 @@ const styles = StyleSheet.create({
         marginTop: 20,
         borderRadius: 10,
     },
-    deletePod: { 
-        color: '#6f1d1b', 
-        fontWeight: 'bold', 
-        padding: 6 
+    deletePod: {
+        color: '#6f1d1b',
+        fontWeight: 'bold',
+        padding: 6
     }
 })
 

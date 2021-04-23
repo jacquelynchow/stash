@@ -38,7 +38,7 @@ function StashIconHeader() {
 
 export default function App() {
   const headerTitleStyles = { color: "#6F1D1B", fontWeight: "600", fontSize: 18 }
-  
+
   // init firebase app with config keys
   if (!firebase.apps.length) {
     console.log('Connected with Firebase')
@@ -51,21 +51,21 @@ export default function App() {
         {/* set initial route upon app opening to loading - redirects to home page if logged in already*/}
         <Stack.Navigator initialRouteName="Loading">
           {/* set up routes for each screen */}
-          <Stack.Screen name="Login" component={LoginScreen} 
+          <Stack.Screen name="Login" component={LoginScreen}
             options={{ headerShown: false }}
           />
-          <Stack.Screen name="Home" component={HomeScreen} 
+          <Stack.Screen name="Home" component={HomeScreen}
             options= {{
               headerTitle: null,
-              headerRight: () => <Logout/>, 
+              headerRight: () => <Logout/>,
               headerTitleContainerStyle: { marginBottom: 10 },
               headerLeft: ()=> <StashIconHeader />,
               gestureEnabled: false // don't let user accidentally swipe back to login screen
             }}
           />
-          <Stack.Screen name="Pod" component={PodPage} 
-            options= { 
-              ({ route }) => ({ title: route.params.name, 
+          <Stack.Screen name="Pod" component={PodPage}
+            options= {
+              ({ route }) => ({ title: route.params.name,
                 headerLeft: () => <Back/>,
                 headerTitleContainerStyle: { marginBottom: 5 },
                 headerTitleStyle: headerTitleStyles,
@@ -74,14 +74,16 @@ export default function App() {
                 )
               })
             }/>
-          <Stack.Screen name="MediaType" component={MediaTypePage} 
-            options= {{
+          <Stack.Screen name="MediaType" component={MediaTypePage}
+            options= {
+              ({ route }) => ({ title: route.params.media_Type,
               headerLeft: () => <Back/>,
               headerTitleContainerStyle: { marginBottom: 5 },
               headerTitleStyle: headerTitleStyles
-            }}/>
-          <Stack.Screen name="Loading" component={LoadingScreen} 
-            options= {{ 
+            })
+          }/>
+          <Stack.Screen name="Loading" component={LoadingScreen}
+            options= {{
               headerLeft: ()=> null,
               headerTitleContainerStyle: { marginBottom: 5 },
               headerTitleStyle: headerTitleStyles

@@ -88,9 +88,10 @@ Stash is an effective solution because people typically make recommendations usi
 * Allowing the user to mark recommendations as watched/read/listened to, which would remove the recommendation from their screen. In this case, the user would be able to visit ‘Past Recommendations’ in order to see what they have already visited. 
 * Allowing the user to react to the recommendations they receive in the recommendations’ pop-up screen.
 * Allowing the user to search through the recommendations in each group or each media category.
-* Allowing the user to see their sent recommendations within a group.
+* Dividing recommendations in groups between those received and those sent.
 * Visually display the thumbnail of linked media types (ex. YouTube videos, TikTok videos) within the recommendation bubble.
-* Allowing users to personalize their profile with a profile picture and allow members to set and/or change group chat pictures
-* Allowing users to send invites to other contacts and send an SMS to that number
+* Allowing users to personalize their profile with a profile picture and allow members to change pod pictures after the pod is already created. 
+* Allowing users to accept / decline being added to a pod.
+* Allowing users to send invites to other contacts and send an SMS to that number.
 * Offering more media type categories like Recipes, Netflix shows, Restaurants, and more 
-* Potentially publishing our app to the App Store
+* Potentially publishing our app to the App Store.

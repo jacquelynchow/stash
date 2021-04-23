@@ -71,7 +71,6 @@ const PodPage = ({ navigation, route}) => {
         recLength = recs.length;
       }
       // add group name of new pod to existing list
-      //TODO add recyear back here when working
       let newRec = { pod_id: podId, rec_sender: username, rec_pod: podName,
               rec_type: mediaType, rec_title: recName, rec_author: recAuthor,
               rec_link: recLink, rec_genre: recGenre, rec_year:recYear,

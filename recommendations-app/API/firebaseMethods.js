@@ -321,7 +321,7 @@ export async function addRecToDB(rec) {
       recIds: firebase.firestore.FieldValue.arrayUnion(newRecRef.id),
       num_recs : increment
     })
-    .then(() => console.log(`new rec added to ${rec.pod_name}`))
+    .then(() => console.log(`new rec added to ${rec.rec_pod}`))
 }
 
 // makes list of recs for a specific pod from the current state of the database and
@@ -371,6 +371,3 @@ export async function getMediaRecs(recsRecieved,media_type){
 
     recsRecieved(recsInMedia);
 }
-
-
-

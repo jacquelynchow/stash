@@ -1,4 +1,4 @@
-<img src="./recommendations-app/assets/stash-transparent.png" alt="Stash App Logo" width="300"/>
+<img src="./StashApp/assets/stash-transparent.png" alt="Stash App Logo" width="300"/>
 
 ## Table of Contents
 [ABOUT](#stash-application)<br>
@@ -87,7 +87,7 @@ Stash is an effective solution because people typically make recommendations usi
 
 
 ## Future Improvements
-* Allowing the user to mark recommendations as watched/read/listened to, which would remove the recommendation from their screen. In this case, the user would be able to visit ‘Past Recommendations’ in order to see what they have already visited. 
+* Once the user marks a recommendations as watched/read/listened to, removing that recommendation from their main feeds. In this case, the user would be able to visit ‘Past Recommendations’ in order to see what they have already visited. 
 * Allowing the user to react to the recommendations they receive in the recommendations’ pop-up screen.
 * Allowing the user to search through the recommendations in each group or each media category.
 * Dividing recommendations in groups between those received and those sent.

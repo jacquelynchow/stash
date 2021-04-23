@@ -35,7 +35,6 @@ const ByPod = (props) => {
 
     // add new pod dynamically when 'Create a Pod' submitted
     const [pods, setPods] = useState([]);
-    const [podNames, setPodNames] = useState([]);
     const [groupName, setGroupName] = useState("");
     const addNewPod = async (pods) => {
         let podLength = 0;
@@ -60,8 +59,6 @@ const ByPod = (props) => {
     const onPodsReceived = (podList) => {
         // set list of pods and their data
         setPods(podList);
-        // set list of just pod names
-        setPodNames(podList.map((pod) => pod.pod_name))
     };
 
     // resets all form fields on Create a Pod modal
@@ -86,10 +83,6 @@ const ByPod = (props) => {
         // check if group name empty or only has whitespace
         if (groupName === "" || !groupName.replace(/\s/g, '').length) {
             setErrors({nameError: "*Group name is required"});
-            allValid = false;
-        // check if user isn't already in a pod with this same pod name
-        } else if (groupName in podNames) {
-            setErrors({nameError: "*This is an existing group name"});
             allValid = false;
         } else if (groupName.length > 20) {
             setErrors({nameError: "*Maximum 20 characters"});
@@ -239,8 +232,8 @@ const ByPod = (props) => {
 
                 {/* make a pod for each group name stored in the pods list */}
                 {pods && pods.length > 0 ?
-                    pods.map(pod =>
-                        <PodTile key={pod.pod_name}
+                    pods.map((pod, index) =>
+                        <PodTile key={index}
                             podId={pod.pod_id}
                             groupName={pod.pod_name}
                             numRecs={pod.num_recs}

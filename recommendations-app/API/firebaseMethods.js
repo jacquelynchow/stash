@@ -343,7 +343,7 @@ export async function getRecs(podId, recsRecieved) {
 }
 
 //makes list of recs for media
-export async function getMediaRecs(recsRecieved,media_type){
+export async function getMediaRecs(recsRecieved, media_type){
   let recsInMedia = []; //init list of user's recs of specific media type
   let pods = []; // init list of pods the user is a current member of
   const currentUserUid = firebase.auth().currentUser.uid; // grab current user's uid

@@ -252,7 +252,8 @@ const ByPod = (props) => {
                             deletePod={deletePodFromDB}
                             leavePod={removeMemberFromPod}
                             refresh={onRefresh}
-                            image={pod.pod_picture} />) :
+                            image={pod.pod_picture} 
+                            />) :
                     <View style={styles.centeredView}>
                         <Text style={styles.noPodsYetText}>Welcome, {username}!</Text>
                         <Text style={styles.noPodsYetTitle}>Click the + button to start a pod</Text>

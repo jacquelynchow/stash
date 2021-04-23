@@ -17,11 +17,11 @@ function PodsTab(props) {
     );
 }
   
-  function RecsTab() {
+  function RecsTab(props) {
     return (
       <View style={ styles.container }>
         {/* <Text>Tab 2: Your Recs</Text> */}
-        <ByMedia/>
+        <ByMedia userId={props.userId} />
       </View>
     );
 }
@@ -56,7 +56,7 @@ export default function HomeScreen({route}) {
         }}>
             {/* set up routes for toggling between tabs  */}
             <Tab.Screen name="Your Pods" children={()=><PodsTab userId={userId} username={username}/>}/>
-            <Tab.Screen name="All Recommendations" component={RecsTab} />
+            <Tab.Screen name="All Recommendations" children={()=><RecsTab userId={userId} />} />
         </Tab.Navigator>
     );
 }

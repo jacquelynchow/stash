@@ -191,7 +191,9 @@ const PodPage = ({ navigation, route}) => {
                   seenBy={rec.seenBy} 
                   currentUserUID={currentUserUID} 
                   recs={recs} 
-                  onRecsReceived={onRecsReceived}/>) :
+                  onRecsReceived={onRecsReceived}
+                  fromMediaTypePage={false}
+                  fromPodPage={true} />) :
               <View style={styles.centeredView}>
                   <Text style={styles.noRecsYetTitle}>Click the > button to send a recommendation</Text>
                   <Text style={styles.noRecsYetText}>Recommendations will be shared with all members of this pod</Text>

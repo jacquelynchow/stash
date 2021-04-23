@@ -8,9 +8,11 @@ const windowHeight = Dimensions.get('window').height;
 export default function MediaTypePage({navigation, route }) {
   const recData = JSON.parse(JSON.stringify(route.params));
   const media_Type = recData.media_Type;
+  const currentUserUID = recData.userId;
+
   const [recs, setRecs] = useState([]);
   useEffect(() => {
-    getMediaRecs(onRecsReceived,media_Type);
+    getMediaRecs(onRecsReceived, media_Type);
   }, []);
 
   const onRecsReceived = (recList) => {
@@ -41,6 +43,7 @@ export default function MediaTypePage({navigation, route }) {
           {recs && recs.length > 0 ?
               recs.map((rec, index) =>
                 <RecTile key={index}
+                  recId={rec.id}
                   recName={rec.rec_title}
                   mediaType={rec.rec_type}
                   recSender={rec.rec_sender}
@@ -49,7 +52,14 @@ export default function MediaTypePage({navigation, route }) {
                   recLink={rec.rec_link}
                   recGenre={rec.rec_genre}
                   recYear={rec.rec_year}
-                  recComment={rec.rec_comment}/>) :
+                  recComment={rec.rec_comment}
+                  seenBy={rec.seenBy}
+                  currentUserUID={currentUserUID} 
+                  recs={recs} 
+                  onRecsReceived={onRecsReceived}
+                  media_Type={media_Type}
+                  fromMediaTypePage={true}
+                  fromPodPage={false} />) :
               <View style={styles.centeredView}>
                   <Text style={styles.noRecsYetTitle}>No recommendations of this type yet</Text>
                   <Text style={styles.noRecsYetText}>Send/receive recommendations in a pod and they will appear here</Text>

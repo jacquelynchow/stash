@@ -36,7 +36,7 @@ const MediaGroup = (props) => {
 
     return (
         <View style={styles.item}>
-            <TouchableOpacity activeOpacity={.7} onPress={() => navigation.navigate('MediaType',{media_Type: getMediaType()})}>
+            <TouchableOpacity activeOpacity={.7} onPress={() => navigation.navigate('MediaType',{media_Type: getMediaType(), ...props})}>
                 <Image source={props.image} style={styles.mediaImage}></Image>
                 <Text style={styles.name}>{props.mediaType} ({props.numRecs})</Text>
                 <Text style={styles.numRecs}>Recommendations from {props.numPeople} {recsFromPeople(props.numPeople)}</Text>

@@ -8,7 +8,7 @@ import songIcon from '../assets/type-icons/song.png';
 import tiktokIcon from '../assets/type-icons/tiktok.png';
 import articleIcon from '../assets/type-icons/article.png';
 import youtubeIcon from '../assets/type-icons/youtube.png';
-import { getRecs, updateRecSeenBy } from '../API/firebaseMethods';
+import { getRecs, updateRecSeenBy, getMediaRecs } from '../API/firebaseMethods';
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -192,7 +192,16 @@ function displayComments(){
 async function recSeen() {
   // call firebase server function that handles changing userId: to true (if seen) or false (if unseen)
   // then when this function is done, call getRecs to show the newly changed rec wasSeen checkmark
-  await updateRecSeenBy(props.currentUserUID, props.recId).then(async () => await getRecs(props.podId, props.onRecsReceived) )
+  await updateRecSeenBy(props.currentUserUID, props.recId)
+    .then(async () => {
+      // check if click on a rec came from the pod page
+      if (props.fromPodPage) {
+        await getRecs(props.podId, props.onRecsReceived)
+      // or the click on rec came from media type page
+      } else if (props.fromMediaTypePage) {
+        await getMediaRecs(props.onRecsReceived, props.media_Type)
+      }
+    })  
 }
 
   return (
@@ -252,7 +261,8 @@ async function recSeen() {
 
 const styles = StyleSheet.create({
     item: {
-      flexDirection: 'row', justifyContent: 'space-evenly',
+      flexDirection: 'row', 
+      justifyContent: 'space-evenly',
       width: '45%', // almost half of container width
       borderColor: "black",
       borderRadius: 10,

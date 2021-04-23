@@ -11,7 +11,9 @@ import {getMediaRecs } from '../API/firebaseMethods';
 
 
 
-const ByMedia = () => {
+const ByMedia = (props) => {
+    const currentUserUID = props.userId;
+
     const wait = (timeout) => {
         return new Promise(resolve => setTimeout(resolve, timeout));
       }
@@ -67,12 +69,12 @@ const ByMedia = () => {
                       onRefresh={onRefresh}
                     />
                   }> 
-                <MediaGroup mediaType={"Articles"} numRecs={numRecsForMedia('Article')} numPeople={numPeopleForMedia('Article')} image={articleIcon}/>
-                <MediaGroup mediaType={"Books"} numRecs={numRecsForMedia('Book')} numPeople={numPeopleForMedia('Book')} image={bookIcon} />
-                <MediaGroup mediaType={"Movies"} numRecs={numRecsForMedia('Movie')} numPeople={numPeopleForMedia('Movie')} image={movieIcon} />
-                <MediaGroup mediaType={"Songs"} numRecs={numRecsForMedia('Song')} numPeople={numPeopleForMedia('Song')} image={songIcon} />
-                <MediaGroup mediaType={"TikToks"} numRecs={numRecsForMedia('TikTok')} numPeople={numPeopleForMedia('TikTok')} image={tiktokIcon} />
-                <MediaGroup mediaType={"Youtube"} numRecs={numRecsForMedia('Youtube')} numPeople={numPeopleForMedia('Youtube')} image={youtubeIcon} />
+                <MediaGroup mediaType={"Articles"} numRecs={numRecsForMedia('Article')} numPeople={numPeopleForMedia('Article')} image={articleIcon} userId={currentUserUID} />
+                <MediaGroup mediaType={"Books"} numRecs={numRecsForMedia('Book')} numPeople={numPeopleForMedia('Book')} image={bookIcon} userId={currentUserUID} />
+                <MediaGroup mediaType={"Movies"} numRecs={numRecsForMedia('Movie')} numPeople={numPeopleForMedia('Movie')} image={movieIcon} userId={currentUserUID} />
+                <MediaGroup mediaType={"Songs"} numRecs={numRecsForMedia('Song')} numPeople={numPeopleForMedia('Song')} image={songIcon} userId={currentUserUID} />
+                <MediaGroup mediaType={"TikToks"} numRecs={numRecsForMedia('TikTok')} numPeople={numPeopleForMedia('TikTok')} image={tiktokIcon} userId={currentUserUID} />
+                <MediaGroup mediaType={"Youtube"} numRecs={numRecsForMedia('Youtube')} numPeople={numPeopleForMedia('Youtube')} image={youtubeIcon} userId={currentUserUID} />
                 {/* is having the number of people neccessary for showing by media? */}
             </ScrollView>
         </View>

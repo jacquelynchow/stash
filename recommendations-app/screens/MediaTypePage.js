@@ -47,6 +47,8 @@ export default function MediaTypePage({navigation, route }) {
                   groupName={rec.rec_pod}
                   recAuthor={rec.rec_author}
                   recLink={rec.rec_link}
+                  recGenre={rec.rec_genre}
+                  recYear={rec.rec_year}
                   recComment={rec.rec_comment}/>) :
               <View style={styles.centeredView}>
                   <Text style={styles.noRecsYetTitle}>No recommendations of this type yet</Text>

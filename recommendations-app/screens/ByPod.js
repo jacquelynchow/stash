@@ -47,10 +47,9 @@ const ByPod = (props) => {
         // add new pod to current pods list
         let newPod = { pod_name: groupName.trim(), num_members: members.length,
             pod_picture: selectedImageName, pod_picture_url: selectedImageUrl, num_recs: 0, members: membersDictionary };
-        //setPods([...pods, newPod]);
         // add pod object to database using firebase api function
-        await addPodToDB(newPod).then(() => getPods(onPodsReceived))
-        
+        await addPodToDB(newPod)
+            .then(() => getPods(onPodsReceived));
         // close modal
         toggleModal();
         // reset input fields to blank
@@ -250,7 +249,7 @@ const ByPod = (props) => {
                             uri={pod.pod_picture_url}
                             userId={currentUserUID}
                             username={username}
-                            deletePod={deletePodFromDB} 
+                            deletePod={deletePodFromDB}
                             leavePod={removeMemberFromPod}
                             refresh={onRefresh}
                             image={pod.pod_picture} />) :
@@ -386,7 +385,7 @@ const ByPod = (props) => {
                             </View>
                         </SafeAreaView>
 
-                        {/* Add A Pod Button */}
+                        {/* Add A Pod Button for pop up */}
                         <View>
                             <Pressable style={styles.createPodButton} onPress={checkAllFieldsOnSubmit}>
                                 <Text style={styles.createPodText}>Create Pod</Text>
@@ -397,7 +396,7 @@ const ByPod = (props) => {
                 }   
             </Modal>
 
-            {/* Add Pod Button */}
+            {/* Add Pod Button on Screen */}
             <View style={styles.bottomButtonView}>
                 <Image source={addPodButton} style={styles.floatingAddButton}></Image>
             </View>

@@ -370,6 +370,3 @@ export async function getMediaRecs(recsRecieved,media_type){
 
     recsRecieved(recsInMedia);
 }
-
-
-

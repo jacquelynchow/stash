@@ -17,6 +17,8 @@ Created by **Alice Huang**, **Jacquelyn Chow**, **Leia Rich**, and **Lamia Makka
 #### [Click here to check out the app](sitelinkhere.com)
 #### [Click here to check out the preliminary Figma Design](https://www.figma.com/file/bF4SxsXaXwPBtepDlyMyfh/Stash-App?node-id=0%3A1)
 
+* Beta version is currently compatible with iPhone and Android phones. 
+
 ## Demo
 
 
@@ -93,5 +95,6 @@ Stash is an effective solution because people typically make recommendations usi
 * Allowing users to personalize their profile with a profile picture and allow members to change pod pictures after the pod is already created. 
 * Allowing users to accept / decline being added to a pod.
 * Allowing users to send invites to other contacts and send an SMS to that number.
-* Offering more media type categories like Recipes, Netflix shows, Restaurants, and more 
+* Offering more media type categories like Recipes, Netflix shows, Restaurants, and more.
+* Making the app compatible as a web-based app.
 * Potentially publishing our app to the App Store.

@@ -218,7 +218,7 @@ async function recSeen() {
             <View style={styles.circle} >
               {props.seenBy && props.currentUserUID in props.seenBy && props.seenBy[props.currentUserUID] ? 
               <Image source={{uri: "https://img.icons8.com/cotton/80/000000/successfully-completed-task--v1.png"}}
-                style={{width: 30, height: 30, alignSelf: 'center'}}></Image> : null}
+                style={styles.seenIcon}></Image> : null}
             </View>
           </TouchableOpacity>
 
@@ -358,6 +358,22 @@ const styles = StyleSheet.create({
       width: windowWidth/3,
       height: windowWidth/5,
       borderRadius: 10,
+    },    //circle for "seen" button
+    circle: {
+      marginTop: 20,
+      marginRight: 10,
+      width: 35,
+      height: 35,
+      borderRadius: 30,
+      backgroundColor: "#f2f2f2",
+      borderColor: "rgba(227, 227, 227, 0.8)",
+      borderWidth: 1,
+    },
+    //"seen" icon when circle is selected
+    seenIcon: {
+      width: 30,
+      height: 30,
+      alignSelf: 'center',
     },
     //different colour for recommendation title text based on media type
     articleColor:{
@@ -396,16 +412,6 @@ const styles = StyleSheet.create({
     },
     videoBackgroundColor: {
       backgroundColor: "#2F4858",
-    },
-    circle: {
-      marginTop: 20,
-      marginRight: 10,
-      width: 35,
-      height: 35,
-      borderRadius: 30,
-      backgroundColor: "#f2f2f2",
-      borderColor: "rgba(227, 227, 227, 0.8)",
-      borderWidth: 1,
     }
 })
 

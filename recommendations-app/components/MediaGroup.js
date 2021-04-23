@@ -20,6 +20,9 @@ const MediaGroup = (props) => {
         else if (props.mediaType == 'TikToks') {
             return 'TikTok'
         }
+        else if (props.mediaType == 'YouTube'){
+            return 'YouTube'
+        }
     }
 
     function recsFromPeople (numPeople) {

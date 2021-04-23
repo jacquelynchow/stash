@@ -83,7 +83,7 @@ export async function addPodToDB(pod) {
   const podName = pod.pod_name;
   userIds.forEach((uid) => {
     usersDb.doc(uid).update({
-      [`pods.${podName}`]: true,
+      [`${podName}`]: true,
     })
   })
 }
@@ -369,4 +369,27 @@ export async function getMediaRecs(recsRecieved,media_type){
     .catch((e) => console.log("error in adding pods to recsInMedia: " + e));
 
     recsRecieved(recsInMedia);
+}
+
+// update rec's seenBy property by updating the userId's value to either true (seen) or false (not seen)
+// or adding the userId to the seenBy property if it was the first time this rec was clicked on
+export async function updateRecSeenBy(userId, recId) {
+  await firebase.firestore().collection("recs")
+    .doc(recId)
+    .get()
+    .then( 
+      function(doc) {
+        let seenByList = doc.data().seenBy;
+        // check if user id was already set in the seenBy property
+        if (userId in seenByList) { 
+          let wasSeen = seenByList[userId];
+          // user has either seen or notSeen (but userId was set) the rec, just use the opposite of
+          // what the boolean value was before
+          return doc.ref.update({ [`seenBy.${userId}`]: !wasSeen });
+        }
+        // if user had never clicked seen rec at all, set bool as true
+        return doc.ref.update({ [`seenBy.${userId}`]: true });
+      }
+    )
+    .then(() => console.log(userId, "clicked a rec: ", recId))
 }

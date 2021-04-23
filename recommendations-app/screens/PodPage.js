@@ -76,7 +76,8 @@ const PodPage = ({ navigation, route}) => {
               rec_comment: recComment }
       setRecs([...recs, newRec]);
       // add rec object to database using firebase API function
-      await addRecToDB(newRec);
+      await addRecToDB(newRec)
+        .then(() => getRecs(podId, onRecsReceived)); // re-fetch pods (for wasSeen checkmark function)
       //close modal pop up
       toggleModal();
       //reset input fields to blank
@@ -174,9 +175,10 @@ const PodPage = ({ navigation, route}) => {
 
           {/* Make a rec for each rec stored in the recs list */}
           {recs && recs.length > 0 ?
-              recs.map((rec, index) =>
+              recs.map((rec, index) => 
                 <RecTile key={index}
                   podId={podId}
+                  recId={rec.id}
                   recName={rec.rec_title}
                   mediaType={rec.rec_type}
                   recSender={rec.rec_sender}
@@ -186,7 +188,10 @@ const PodPage = ({ navigation, route}) => {
                   recGenre={rec.rec_genre}
                   recYear={rec.rec_year.toString()}
                   recComment={rec.rec_comment}
-                  podName={podName} />) :
+                  seenBy={rec.seenBy} 
+                  currentUserUID={currentUserUID} 
+                  recs={recs} 
+                  onRecsReceived={onRecsReceived}/>) :
               <View style={styles.centeredView}>
                   <Text style={styles.noRecsYetTitle}>Click the > button to send a recommendation</Text>
                   <Text style={styles.noRecsYetText}>Recommendations will be shared with all members of this pod</Text>

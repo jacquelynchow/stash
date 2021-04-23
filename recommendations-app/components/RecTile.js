@@ -8,6 +8,7 @@ import songIcon from '../assets/type-icons/song.png';
 import tiktokIcon from '../assets/type-icons/tiktok.png';
 import articleIcon from '../assets/type-icons/article.png';
 import youtubeIcon from '../assets/type-icons/youtube.png';
+import { getRecs, updateRecSeenBy } from '../API/firebaseMethods';
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -187,9 +188,12 @@ function displayComments(){
       </Text>)}
 }
 
-// function recSeen(recKey) {
-
-// }
+// handle if rec was clicked as seen or unclicked as seen
+async function recSeen() {
+  // call firebase server function that handles changing userId: to true (if seen) or false (if unseen)
+  // then when this function is done, call getRecs to show the newly changed rec wasSeen checkmark
+  await updateRecSeenBy(props.currentUserUID, props.recId).then(async () => await getRecs(props.podId, props.onRecsReceived) )
+}
 
   return (
       <View style={styles.item}>
@@ -201,9 +205,13 @@ function displayComments(){
               </Text>
               <Text style={styles.media}>{props.mediaType}</Text>
           </TouchableOpacity>
-          {/* <TouchableOpacity activeOpacity={0.6} >
-            <View style={styles.checkmark} onClick = {() => recSeen(props.key)}></View>
-          </TouchableOpacity> */}
+          <TouchableOpacity activeOpacity={0.6} onPress = {() => recSeen()}>
+            <View style={styles.circle} >
+              {props.seenBy && props.currentUserUID in props.seenBy && props.seenBy[props.currentUserUID] ? 
+              <Image source={{uri: "https://img.icons8.com/cotton/80/000000/successfully-completed-task--v1.png"}}
+                style={{width: 30, height: 30, alignSelf: 'center'}}></Image> : null}
+            </View>
+          </TouchableOpacity>
 
           {/* Rec Details PopUp */}
           <Modal isVisible={isModalVisible}>
@@ -244,7 +252,7 @@ function displayComments(){
 
 const styles = StyleSheet.create({
     item: {
-      flexDirection: 'row', justifyContent: 'space-between',
+      flexDirection: 'row', justifyContent: 'space-evenly',
       width: '45%', // almost half of container width
       borderColor: "black",
       borderRadius: 10,
@@ -379,13 +387,11 @@ const styles = StyleSheet.create({
     videoBackgroundColor: {
       backgroundColor: "#2F4858",
     },
-    checkmark: {
-      alignContent: 'flex-end',
-      padding: 15,
+    circle: {
       marginTop: 20,
       marginRight: 10,
-      width: 1,
-      height: 1,
+      width: 35,
+      height: 35,
       borderRadius: 30,
       backgroundColor: "#f2f2f2",
       borderColor: "rgba(227, 227, 227, 0.8)",

@@ -4,6 +4,7 @@ import { StyleSheet, View, Text, TextInput, SafeAreaView } from 'react-native';
 export default function SongType(props) {
   const [recName, setrecName] = useState("");
   const [recAuthor, setrecAuthor] = useState("");
+  const [recLink, setrecLink] = useState("");
 
   return (
     <View>
@@ -35,6 +36,21 @@ export default function SongType(props) {
                 />
             </SafeAreaView>
         </View>
+          <View style={{ flexDirection: 'row'}}>
+          <Text style={styles.recCategoriesText}>
+              Link:
+          </Text>
+          <SafeAreaView>
+              <TextInput
+                  autoFocus={true}
+                  onChangeText={recLink => props.setrecLink(recLink)}
+                  style={styles.linkInput}
+                  defaultValue={recLink}
+                  placeholder={"Link to song"}
+                  selectTextOnFocus={true}
+              />
+          </SafeAreaView>
+      </View>
     </View>
   );
 }

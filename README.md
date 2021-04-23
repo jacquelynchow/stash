@@ -42,8 +42,8 @@ Stash is an effective solution because people typically make recommendations usi
 * **UI/UX Designing and Planning**: Figma
 
 ## Features
-#### **Login and Onboarding Screen**
-* Splash screen with Stash logo and "from CS71 Group #2"
+#### **Splash Screen**
+* Splash screen while app is waiting to open with Stash logo and "from CS71 Group #2"
 #### **Login and Onboarding Screen**
 * User can login or sign up for Stash when first opening the app
 * Swipe or click on tabs for various onboarding instructions

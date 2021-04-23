@@ -30,7 +30,7 @@ export default function SongType(props) {
                 <TextInput
                     autoFocus={true}
                     onChangeText={recAuthor => props.setrecAuthor(recAuthor)}
-                    style={styles.input}
+                    style={styles.artistInput}
                     defaultValue={recAuthor}
                     placeholder={"Add artist(s)"}
                 />

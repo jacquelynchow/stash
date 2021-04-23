@@ -55,7 +55,7 @@ const PodPage = ({ navigation, route}) => {
   const [recAuthor, setrecAuthor] = useState("");
   const [recLink, setrecLink] = useState("");
   const [recGenre, setrecGenre] = useState("");
-  const [recYear, setrecYear] = useState(0); 
+  const [recYear, setrecYear] = useState(0);
   const [recComment, setrecComment] = useState("");
 
   // init error state for various send rec form fields
@@ -116,7 +116,7 @@ const PodPage = ({ navigation, route}) => {
       if (recName === "" || !recName.replace(/\s/g, '').length) {
           setErrors({nameError: "*Title of this recommendation is required"});
           allValid = false;
-      } 
+      }
       // check if they uploaded link, and if so that it is valid
       if (recLink !== "" && !validURL(recLink)) {
           setErrors({linkError: "*Please enter a valid link"});
@@ -175,7 +175,7 @@ const PodPage = ({ navigation, route}) => {
 
           {/* Make a rec for each rec stored in the recs list */}
           {recs && recs.length > 0 ?
-              recs.map((rec, index) => 
+              recs.map((rec, index) =>
                 <RecTile key={index}
                   podId={podId}
                   recId={rec.id}
@@ -186,11 +186,11 @@ const PodPage = ({ navigation, route}) => {
                   recAuthor={rec.rec_author}
                   recLink={rec.rec_link}
                   recGenre={rec.rec_genre}
-                  recYear={rec.rec_year.toString()}
+                  recYear={rec.rec_year}
                   recComment={rec.rec_comment}
-                  seenBy={rec.seenBy} 
-                  currentUserUID={currentUserUID} 
-                  recs={recs} 
+                  seenBy={rec.seenBy}
+                  currentUserUID={currentUserUID}
+                  recs={recs}
                   onRecsReceived={onRecsReceived}
                   fromMediaTypePage={false}
                   fromPodPage={true} />) :

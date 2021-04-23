@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     },
     titleInput: {
       height: 30,
-      width: 135,
+      width: 134,
       fontSize: 16,
       backgroundColor: 'white',
       borderRadius: 10,
@@ -73,9 +73,20 @@ const styles = StyleSheet.create({
       marginLeft: 10,
       marginTop: 5,
     },
-    input: {
+    artistInput: {
       height: 30,
       width: 150,
+      fontSize: 16,
+      backgroundColor: 'white',
+      borderRadius: 10,
+      padding: 5,
+      paddingHorizontal: 10,
+      marginLeft: 10,
+      marginTop: 5,
+    },
+    linkInput: {
+      height: 30,
+      width: 182,
       fontSize: 16,
       backgroundColor: 'white',
       borderRadius: 10,

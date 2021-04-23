@@ -232,7 +232,13 @@ export async function deletePodFromDB(pod) {
   // delete pod image from firebase
   deleteImage(imageName);
 
-  // todo: delete all recs that were in the pod?
+  // delete all recs that were in the pod
+  db.collection('recs').where('pod_id', '==', pod.podId)
+  .get().then(function(querySnapshot) {
+    querySnapshot.forEach(function(doc) {
+      doc.ref.delete();
+    });
+  });
 }
 
 // let user leave pod***********************************

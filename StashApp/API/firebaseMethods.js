@@ -353,19 +353,21 @@ export async function getMediaRecs(recsRecieved, media_type){
     })
     .catch((e) => console.log("error in adding getting pods for current user: " + e));
 
-    await firebase.firestore()
-    .collection("recs")
-    .where('rec_type', '==', media_type) //only have recs of specific media type
-    .where('rec_pod','in',pods) //only have recs that are part of current user's pods
-    .get()
-    .then((obj) => {
-      obj.forEach((doc) => {
-          recsInMedia.push(doc.data());
-      });
-    })
-    .catch((e) => console.log("error in adding pods to recsInMedia: " + e));
+    if (pods.length > 0) {
+      await firebase.firestore()
+      .collection("recs")
+      .where('rec_type', '==', media_type) //only have recs of specific media type
+      .where('pod_id','in',pods) //only have recs that are part of current user's pods
+      .get()
+      .then((obj) => {
+        obj.forEach((doc) => {
+            recsInMedia.push(doc.data());
+        });
+      })
+      .catch((e) => console.log("error in adding pods to recsInMedia: " + e));
 
-    recsRecieved(recsInMedia);
+      recsRecieved(recsInMedia);
+    }
 }
 
 // update rec's seenBy property by updating the userId's value to either true (seen) or false (not seen)

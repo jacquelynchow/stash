@@ -58,7 +58,7 @@ export async function addPodToDB(pod) {
   const db = firebase.firestore();
   // add new pod to db
   const newPodRef = db.collection("pods").doc();
-  newPodRef.set({
+  await newPodRef.set({
       pod_id: newPodRef.id,
       pod_name: pod.pod_name,
       pod_picture: pod.pod_picture,
@@ -77,13 +77,11 @@ export async function addPodToDB(pod) {
   const usernamesList = Object.keys(pod.members);
   // get the uids of each user just added to this new pod
   const userIds = await getListOfUserIds(usernamesList, usersDb);
-
   // using the uid of each user, update their respective list of pods
   // by adding the new pod's name to the array without rewriting old data
-  const podName = pod.pod_name;
   userIds.forEach((uid) => {
     usersDb.doc(uid).update({
-      [`${podName}`]: true,
+      [`pods.${newPodRef.id}`]: true,
     })
   })
 }
@@ -116,7 +114,7 @@ export async function getPods(podsRecieved) {
     .doc(currentUserUid)
     .get()
     .then((doc) => {
-      pods = Object.keys(doc.data().pods) // save the pods keys (aka pod names) to pods list
+      pods = Object.keys(doc.data().pods) // save the pods keys (aka pod ids) to pods list
     })
     .catch((e) => console.log("error in adding getting pods for current user: " + e));
   // get all pods that current user is a part of and add to podList which will be re-rendered every refresh
@@ -127,9 +125,9 @@ export async function getPods(podsRecieved) {
 // get all pods that current user is a part of & podList is the returned and modified list
 async function getPodsForUser(podList, pods) {
   const podsRef = firebase.firestore().collection("pods");
-  for (const podName of pods) {
+  for (const podId of pods) {
     await podsRef
-      .where("pod_name", "==", podName) // save pod's data to podList
+      .where("pod_id", "==", podId) // save pod's data to podList
       .get()
       .then((obj) => {
         obj.forEach((doc) => {
@@ -206,7 +204,7 @@ export async function deletePodFromDB(pod) {
   const imageName = pod.image;
 
   // get pod from db and delete it
-  db.collection('pods').where('pod_name', '==', pod.groupName)
+  db.collection('pods').where('pod_name', '==', pod.pod_id)
   .get().then(function(querySnapshot) {
     querySnapshot.forEach(function(doc) {
       doc.ref.delete();
@@ -221,11 +219,10 @@ export async function deletePodFromDB(pod) {
   const userIds = await getListOfUserIds(usernamesList, usersDb);
 
   // using the uid of each user, update their respective list of pods
-  const podName = pod.groupName;
   userIds.forEach((uid) => {
     usersDb.doc(uid).update({
       // remove pod from user's list of pods
-      [`pods.${podName}`]: firebase.firestore.FieldValue.delete()
+      [`pods.${pod_id}`]: firebase.firestore.FieldValue.delete()
     })
   })
 
@@ -245,13 +242,13 @@ export async function deletePodFromDB(pod) {
 export async function removeMemberFromPod(pod) {
   const currentUserUid = firebase.auth().currentUser.uid;
   const userDb = firebase.firestore().collection("users").doc(currentUserUid);
-  const podName = pod.groupName;
+  // const podName = pod.groupName;
   let username = "";
-
+  
   // delete this pod from the user's list------------------
   await userDb
     .update({
-      [`pods.${podName}`]: firebase.firestore.FieldValue.delete()
+      [`pods.${pod.podId}`]: firebase.firestore.FieldValue.delete()
   })
 
   // get current user's username --------------------------
@@ -270,7 +267,7 @@ export async function removeMemberFromPod(pod) {
   const db = firebase.firestore();
   const decrement = firebase.firestore.FieldValue.increment(-1);
 
-  db.collection('pods').where('pod_name', '==', podName)
+  db.collection('pods').where('pod_id', '==', pod.podId)
   .get().then(function(querySnapshot) {
     querySnapshot.forEach(function(doc) {
       doc.ref.update({
@@ -281,7 +278,7 @@ export async function removeMemberFromPod(pod) {
   });
 
   // decrement from number of members in the pod
-  db.collection("pods").where('pod_name', '==', podName)
+  db.collection("pods").where('pod_id', '==', pod.podId)
   .get().then(function(querySnapshot) {
     querySnapshot.forEach(function(doc) {
       doc.ref.update({

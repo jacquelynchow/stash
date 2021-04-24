@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, Pressable, SafeAreaView, Dimensions, Image, Button, TouchableOpacity, Keyboard, Alert } from 'react-native';
+import { StyleSheet, View, Text, TextInput, Pressable, SafeAreaView, Dimensions, 
+  Image, TouchableOpacity, Alert } from 'react-native';
 import Modal from 'react-native-modal';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import closePopUpButton from '../assets/closePopUpButton.png';
-import { registration, updateUsername } from '../API/firebaseMethods';
+import { registration } from '../API/firebaseMethods';
 import { FirebaseRecaptchaVerifierModal, FirebaseRecaptchaBanner } from 'expo-firebase-recaptcha';
 import * as firebase from 'firebase';
-import { useNavigation } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
@@ -25,8 +25,6 @@ const SignupModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
 
     const [username, setUsername] = useState("");
     const [phoneNum, setPhoneNum] = useState("");
-
-    const navigation = useNavigation();
 
     const checkFieldsOnSendCode = () => {
       let allValid = true;

@@ -334,12 +334,12 @@ export async function getRecs(podId, recsRecieved) {
     snapshot.forEach((doc) => {
       recList.push(doc.data());
     });
-  // TODO: recs are sorted by new to old, do we want this?
+  // (if time): recs are sorted by new to old, or by notSeen to seen
 
   recsRecieved(recList); // callback function that occurs asyncronously
 }
 
-//makes list of recs for media
+// makes list of recs for media
 export async function getMediaRecs(recsRecieved, media_type){
   let recsInMedia = []; //init list of user's recs of specific media type
   let pods = []; // init list of pods the user is a current member of
@@ -356,7 +356,7 @@ export async function getMediaRecs(recsRecieved, media_type){
     await firebase.firestore()
     .collection("recs")
     .where('rec_type', '==', media_type) //only have recs of specific media type
-    .where('rec_pod','in',pods) //only have recs that are part of current user's pods
+    .where('rec_pod','in', pods) //only have recs that are part of current user's pods
     .get()
     .then((obj) => {
       obj.forEach((doc) => {

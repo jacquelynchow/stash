@@ -1,4 +1,4 @@
-import React, {useState, useEffect } from 'react';
+import React from 'react';
 import { StyleSheet, View, Dimensions } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import ByPod from './ByPod';
@@ -20,7 +20,6 @@ function PodsTab(props) {
   function RecsTab(props) {
     return (
       <View style={ styles.container }>
-        {/* <Text>Tab 2: Your Recs</Text> */}
         <ByMedia userId={props.userId} />
       </View>
     );

@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useCallback} from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, ScrollView, RefreshControl } from 'react-native';
 import MediaGroup from '../components/MediaGroup';
 import bookIcon from '../assets/type-icons/book.png';
@@ -27,11 +27,11 @@ const ByMedia = (props) => {
     function numRecsForMedia(media_Type) {
         const [recs, setRecs] = useState([]);
         useEffect(() => {
-        getMediaRecs(onRecsReceived,media_Type);
+            getMediaRecs(onRecsReceived,media_Type);
         }, []);
 
         const onRecsReceived = (recList) => {
-        setRecs(recList);
+            setRecs(recList);
         };
 
         const numRecs = recs.length;
@@ -42,11 +42,11 @@ const ByMedia = (props) => {
     function numPeopleForMedia(media_Type) {
         const [recs, setRecs] = useState([]);
         useEffect(() => {
-        getMediaRecs(onRecsReceived,media_Type);
+            getMediaRecs(onRecsReceived,media_Type);
         }, []);
 
         const onRecsReceived = (recList) => {
-        setRecs(recList);
+            setRecs(recList);
         };
         const ppl = [];
         for(var i=0; i<recs.length;i++) {
@@ -70,12 +70,24 @@ const ByMedia = (props) => {
                       onRefresh={onRefresh}
                     />
                   }>
-                <MediaGroup mediaType={"Articles"} numRecs={numRecsForMedia('Article')} numPeople={numPeopleForMedia('Article')} image={articleIcon} userId={currentUserUID} />
-                <MediaGroup mediaType={"Books"} numRecs={numRecsForMedia('Book')} numPeople={numPeopleForMedia('Book')} image={bookIcon} userId={currentUserUID} />
-                <MediaGroup mediaType={"Movies"} numRecs={numRecsForMedia('Movie')} numPeople={numPeopleForMedia('Movie')} image={movieIcon} userId={currentUserUID} />
-                <MediaGroup mediaType={"Songs"} numRecs={numRecsForMedia('Song')} numPeople={numPeopleForMedia('Song')} image={songIcon} userId={currentUserUID} />
-                <MediaGroup mediaType={"TikToks"} numRecs={numRecsForMedia('TikTok')} numPeople={numPeopleForMedia('TikTok')} image={tiktokIcon} userId={currentUserUID} />
-                <MediaGroup mediaType={"YouTube"} numRecs={numRecsForMedia('YouTube')} numPeople={numPeopleForMedia('YouTube')} image={youtubeIcon} userId={currentUserUID} />
+                <MediaGroup mediaType={"Articles"} numRecs={numRecsForMedia('Article')} 
+                    numPeople={numPeopleForMedia('Article')} image={articleIcon} 
+                    userId={currentUserUID} />
+                <MediaGroup mediaType={"Books"} numRecs={numRecsForMedia('Book')} 
+                    numPeople={numPeopleForMedia('Book')} image={bookIcon} 
+                    userId={currentUserUID} />
+                <MediaGroup mediaType={"Movies"} numRecs={numRecsForMedia('Movie')} 
+                    numPeople={numPeopleForMedia('Movie')} image={movieIcon} 
+                    userId={currentUserUID} />
+                <MediaGroup mediaType={"Songs"} numRecs={numRecsForMedia('Song')} 
+                    numPeople={numPeopleForMedia('Song')} image={songIcon} 
+                    userId={currentUserUID} />
+                <MediaGroup mediaType={"TikToks"} numRecs={numRecsForMedia('TikTok')} 
+                    numPeople={numPeopleForMedia('TikTok')} image={tiktokIcon} 
+                    userId={currentUserUID} />
+                <MediaGroup mediaType={"YouTube"} numRecs={numRecsForMedia('YouTube')} 
+                    numPeople={numPeopleForMedia('YouTube')} image={youtubeIcon} 
+                    userId={currentUserUID} />
             </ScrollView>
         </View>
     )

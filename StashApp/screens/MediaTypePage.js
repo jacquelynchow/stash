@@ -1,5 +1,5 @@
 import React, { useEffect, useState,useCallback } from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity, Image, Pressable, Text, Button, Alert, Dimensions, RefreshControl} from 'react-native';
+import { StyleSheet, View, ScrollView, Text, Dimensions, RefreshControl } from 'react-native';
 import RecTile from '../components/RecTile';
 import {getMediaRecs} from '../API/firebaseMethods';
 
@@ -23,10 +23,10 @@ export default function MediaTypePage({navigation, route }) {
   // refresh page function to see new recs
   const [refreshing, setRefreshing] = useState(false);
   const onRefresh = useCallback(async () => {
-          setRefreshing(true);
-          await getMediaRecs(onRecsReceived,media_Type) // use await to refresh until function finished
-          .then(() => setRefreshing(false));
-      }, []);
+    setRefreshing(true);
+    await getMediaRecs(onRecsReceived,media_Type) // use await to refresh until function finished
+    .then(() => setRefreshing(false));
+  }, []);
 
   return (
     <View style={{flex: 1}}>
@@ -71,8 +71,6 @@ export default function MediaTypePage({navigation, route }) {
     </View>
   );
 }
-
-
 
 const styles = StyleSheet.create({
   container: {

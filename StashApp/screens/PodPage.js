@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity, Image, Pressable, Text, TextInput, SafeAreaView, Keyboard, Dimensions, RefreshControl, Alert, Clipboard } from 'react-native';
+import { StyleSheet, View, ScrollView, TouchableOpacity, Image, 
+  Pressable, Text, TextInput, SafeAreaView, Keyboard, 
+  Dimensions, RefreshControl } from 'react-native';
 import Modal from 'react-native-modal';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -15,8 +17,7 @@ import BookType from '../components/media-types/BookType';
 import VideoType from '../components/media-types/VideoType';
 import SongType from '../components/media-types/SongType';
 // Server Related
-import * as firebase from 'firebase';
-import { addRecToDB, getRecs, getPodRecs } from '../API/firebaseMethods';
+import { addRecToDB, getRecs } from '../API/firebaseMethods';
 
 const windowHeight = Dimensions.get('window').height;
 
@@ -28,7 +29,6 @@ const PodPage = ({ navigation, route}) => {
   const currentUserUID = podData.userId;
   const username = podData.username;
   const podName = podData.name;
-  const podImageUri = podData.uri;
   const podId = podData.podId;
   // call firebase api function getRecs on onRecsReceived function to render recs from db
   useEffect(() => {
@@ -40,7 +40,7 @@ const PodPage = ({ navigation, route}) => {
   const toggleModal = () => {
       setModalVisible(!isModalVisible);
       resetFields();
-  };
+  }; 
 
   // display pop up when pod members modal view is on
   const [isMembersModalVisible, setMembersModalVisible] = useState(false);
@@ -65,10 +65,6 @@ const PodPage = ({ navigation, route}) => {
 
   // add new rec dynamically when 'Send a Rec' submitted
   const addNewRec = async (recs) => {
-      let recLength = 0;
-      if (recs && recs.length > 0) {
-        recLength = recs.length;
-      }
       // add group name of new pod to existing list
       let newRec = { pod_id: podId, rec_sender: username, rec_pod: podName,
               rec_type: mediaType, rec_title: recName, rec_author: recAuthor,
@@ -247,7 +243,7 @@ const PodPage = ({ navigation, route}) => {
                 </Text>
 
                 {/* prompt users to select a media type */}
-                <View style={{ flexDirection: 'column', alignSelf: 'flex-start', marginTop: 20}}>
+                <View style={styles.selectMediaDropdown}>
                   <DropDownPicker
                     placeholder="Select a media type"
                     items={[
@@ -476,6 +472,11 @@ const styles = StyleSheet.create({
   },
   errorMessage: {
       color: '#ffc9b9',
+  },
+  selectMediaDropdown: {
+    flexDirection: 'column', 
+    alignSelf: 'flex-start', 
+    marginTop: 20
   }
 })
 

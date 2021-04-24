@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, ScrollView, View, TouchableOpacity, Image, Pressable, Text, SafeAreaView, TextInput, Dimensions, FlatList, RefreshControl, ActivityIndicator, Keyboard, Clipboard } from 'react-native';
+import { StyleSheet, ScrollView, View, TouchableOpacity, Image, Pressable, Text, 
+    SafeAreaView, TextInput, Dimensions, FlatList, 
+    RefreshControl, ActivityIndicator } from 'react-native';
 import PodTile from '../components/PodTile';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import addPodButton from '../assets/addPodButton.png';
@@ -9,9 +11,9 @@ import Modal from 'react-native-modal';
 import { SearchBar } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
-import * as firebase from 'firebase';
 import { addPodToDB, getPods, uploadImageToStorage,
-    retrieveImageFromStorage, deleteImage, getUsers, deletePodFromDB, removeMemberFromPod } from '../API/firebaseMethods';
+    retrieveImageFromStorage, deleteImage, getUsers, 
+    deletePodFromDB, removeMemberFromPod } from '../API/firebaseMethods';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -19,7 +21,6 @@ const defaultImageUrl = "https://www.jaipuriaschoolpatna.in/wp-content/uploads/2
 
 // First view of homescreen displaying all pods under "Your Pods"
 const ByPod = (props) => {
-
     const currentUserUID = props.userId;
     const username = props.username;
 
@@ -40,23 +41,18 @@ const ByPod = (props) => {
     const [podNames, setPodNames] = useState([]);
     const [groupName, setGroupName] = useState("");
     const addNewPod = async (pods) => {
-        let podLength = 0;
-        if (pods && pods.length > 0) {
-            podLength = pods.length;
-        }
         // create dictionary of key value pairs, (memberName: true)
         let membersDictionary = members.reduce((m, member) => ({...m, [member]: true}), {})
         // add new pod to current pods list
         let newPod = { pod_name: groupName.trim(), num_members: members.length,
             pod_picture: selectedImageName, pod_picture_url: selectedImageUrl, num_recs: 0, members: membersDictionary };
-        // add pod object to database using firebase api function
+        // add pod object to database using firebase api function, once done, refresh pods to get new pod
         await addPodToDB(newPod)
             .then(() => getPods(onPodsReceived));
         // close modal
         toggleModal();
         // reset input fields to blank
         resetFields();
-
     };
     // once pods are received, set pods to these received pods
     const onPodsReceived = (podList) => {
@@ -191,7 +187,7 @@ const ByPod = (props) => {
         const imageName = currentUserUID + "_" + Date.now() + '.' + 'png';
         const resizedPhoto = await ImageManipulator.manipulateAsync(
             result.uri, [{ resize: { width: 200 } }], // resize to width of 200 and preserve aspect ratio
-            { compress: 0.7, format: 'png' }, // using png type of images
+            { compress: 0.7, format: 'png' }, // use png type of images
         );
 
         // check if image was changed (the second and following times), delete the old image on db
@@ -223,7 +219,7 @@ const ByPod = (props) => {
     const onRefresh = useCallback(async () => {
             setRefreshing(true);
             await getPods(onPodsReceived) // use await to refresh until function finished
-            .then(() => setRefreshing(false));
+                .then(() => setRefreshing(false));
         }, []);
 
     return (
@@ -268,15 +264,7 @@ const ByPod = (props) => {
             <Modal isVisible={isModalVisible}>
                 {/* Show loading screen (blocking all user interaction) if image is being sent to server & its image URL being fetched */}
                 {isLoading ?
-                <View style={{position: 'absolute',
-                        left: 0,
-                        right: 0,
-                        top: 0,
-                        bottom: 0,
-                        width:'100%',
-                        height:'100%',
-                        justifyContent: 'center',
-                        alignItems: 'center'}}>
+                <View style={styles.loading}>
                     <ActivityIndicator size="large"/>
                 </View> :
                 // if image not being sent right now, show the 'create a pod' modal
@@ -581,6 +569,17 @@ const styles = StyleSheet.create({
     errorMessage: {
         color: '#ffc9b9',
         marginVertical: 5
+    },
+    loading: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        width:'100%',
+        height:'100%',
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 })
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { StyleSheet, Image, TouchableOpacity, View, SafeAreaView, Text, Pressable} from 'react-native';
+import { StyleSheet, Image, TouchableOpacity, View, SafeAreaView, 
+    Text, Pressable } from 'react-native';
 import logoutButton from '../assets/logout-symbol.png';
 import Modal from 'react-native-modal';
 import { useNavigation } from '@react-navigation/native';

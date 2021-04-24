@@ -4,7 +4,6 @@ import Modal from 'react-native-modal';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import closePopUpButton from '../assets/closePopUpButton.png';
 import { useNavigation } from '@react-navigation/native';
-import {signIn} from '../API/firebaseMethods';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import * as firebase from "firebase";
 import { FontAwesome } from '@expo/vector-icons';
@@ -15,9 +14,6 @@ const windowWidth = Dimensions.get('window').width;
 
 // Modal pop up that handles all log in functionality 
 const LoginModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
-
-    const navigation = useNavigation();
-
     // function to show/hide modal
     const toggleModal = () => {
         setModalVisible(!isModalVisible);

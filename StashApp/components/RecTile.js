@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Dimensions, StyleSheet, Text, View, Image, TouchableOpacity, Pressable, Linking } from 'react-native';
+import { Dimensions, StyleSheet, Text, View, Image, 
+  TouchableOpacity, Pressable, Linking } from 'react-native';
 import closePopUpButton from '../assets/closePopUpButton.png';
 import Modal from 'react-native-modal';
 import bookIcon from '../assets/type-icons/book.png';

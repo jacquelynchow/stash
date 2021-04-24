@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import { Dimensions, StyleSheet, Text, View, StatusBar, Image, TouchableOpacity, Pressable, SafeAreaView, TextInput } from 'react-native';
+import { Dimensions, StyleSheet, Text, View, StatusBar, Image, TouchableOpacity } from 'react-native';
 import logo from '../assets/stash-transparent.png';
-import closePopUpButton from '../assets/closePopUpButton.png';
-import Modal from 'react-native-modal';
 import Swiper from 'react-native-swiper/src';
 import PodIcon from '../assets/onboard-icons/pod.png';
 import InteractIcon from '../assets/onboard-icons/interact.png';

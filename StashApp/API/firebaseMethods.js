@@ -204,7 +204,7 @@ export async function deletePodFromDB(pod) {
   const imageName = pod.image;
 
   // get pod from db and delete it
-  db.collection('pods').where('pod_name', '==', pod.pod_id)
+  db.collection('pods').where('pod_id', '==', pod.podId)
   .get().then(function(querySnapshot) {
     querySnapshot.forEach(function(doc) {
       doc.ref.delete();
@@ -222,7 +222,7 @@ export async function deletePodFromDB(pod) {
   userIds.forEach((uid) => {
     usersDb.doc(uid).update({
       // remove pod from user's list of pods
-      [`pods.${pod_id}`]: firebase.firestore.FieldValue.delete()
+      [`pods.${pod.podId}`]: firebase.firestore.FieldValue.delete()
     })
   })
 
@@ -353,19 +353,21 @@ export async function getMediaRecs(recsRecieved, media_type){
     })
     .catch((e) => console.log("error in adding getting pods for current user: " + e));
 
-    await firebase.firestore()
-    .collection("recs")
-    .where('rec_type', '==', media_type) //only have recs of specific media type
-    .where('rec_pod','in', pods) //only have recs that are part of current user's pods
-    .get()
-    .then((obj) => {
-      obj.forEach((doc) => {
-          recsInMedia.push(doc.data());
-      });
-    })
-    .catch((e) => console.log("error in adding pods to recsInMedia: " + e));
+    if (pods.length > 0) {
+      await firebase.firestore()
+      .collection("recs")
+      .where('rec_type', '==', media_type) //only have recs of specific media type
+      .where('pod_id','in',pods) //only have recs that are part of current user's pods
+      .get()
+      .then((obj) => {
+        obj.forEach((doc) => {
+            recsInMedia.push(doc.data());
+        });
+      })
+      .catch((e) => console.log("error in adding pods to recsInMedia: " + e));
 
-    recsRecieved(recsInMedia);
+      recsRecieved(recsInMedia);
+    }
 }
 
 // update rec's seenBy property by updating the userId's value to either true (seen) or false (not seen)

@@ -37,8 +37,8 @@ Stash is an effective solution because people typically make recommendations usi
 * **Programming Language**: ReactNative
 * **Development Environment**: Virtual Studio Code
 * **Platforms**: Stash will be a multiplatform mobile app available for iOS and Android.
-* **Software APIs**: Expo framework for developing ReactNative apps, MISSING for login stuff, various React Native modules
-* **Database**: Firebase
+* **Software APIs**: Expo framework for developing ReactNative apps, Firebase Phone Number authentication, various React Native & Expo modules
+* **Database**: Cloud Firestore (Firebase)
 * **Project Tools**: Team collaboration and communication: Slack
 * **Project Management**: Trello board (organize to-dos, in-progress, delegate tasks)
 * **UI/UX Designing and Planning**: Figma
@@ -48,8 +48,13 @@ Stash is an effective solution because people typically make recommendations usi
 * Splash screen while app is waiting to open with Stash logo and "from CS71 Group #2"
 #### **Login and Onboarding Screen**
 * User can login or sign up for Stash when first opening the app
+  * Verify login and signup using phone authentication with an SMS code and reCAPTCHA system
 * Swipe or click on tabs for various onboarding instructions
 * User will stay logged in even after exiting the app
+  * Upon opening app, loading screen redirects user to appropriate page based on logged in status
+* Error checking
+  * Check if username is already taken
+  * Check for empty fields, length and format of fields
 #### **Homepage with 2 Views**
 * Stash logo on the top left corner
 * Logout option at the top right corner

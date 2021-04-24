@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, ScrollView, View, TouchableOpacity, Image, Pressable, Text, SafeAreaView, TextInput, Dimensions, FlatList, RefreshControl, ActivityIndicator, Keyboard } from 'react-native';
+import { StyleSheet, ScrollView, View, TouchableOpacity, Image, Pressable, Text, SafeAreaView, TextInput, Dimensions, FlatList, RefreshControl, ActivityIndicator, Keyboard, Clipboard } from 'react-native';
 import PodTile from '../components/PodTile';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import addPodButton from '../assets/addPodButton.png';
@@ -385,9 +385,9 @@ const ByPod = (props) => {
                             <Pressable style={styles.createPodButton} onPress={checkAllFieldsOnSubmit}>
                                 <Text style={styles.createPodText}>Create Pod</Text>
                             </Pressable>
-                            <KeyboardSpacer />
                         </View>
                     </View>
+                    <KeyboardSpacer />
                 </View>
                 }
             </Modal>
@@ -497,7 +497,7 @@ const styles = StyleSheet.create({
     createPodButton: {
         backgroundColor: "white",
         borderRadius: 20,
-        marginTop: 55,
+        marginTop: 40,
         paddingVertical: 10,
         paddingHorizontal: 20,
         // ios
@@ -510,7 +510,7 @@ const styles = StyleSheet.create({
     userDetailsText: {
         fontSize: 16,
         color: 'white',
-        marginTop: 17,
+        marginTop: 13,
         flex: 1,
         justifyContent: "flex-start",
         alignItems: "flex-start",

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity, Image, Pressable, Text, TextInput, SafeAreaView, Keyboard, Dimensions, RefreshControl, Alert } from 'react-native';
+import { StyleSheet, View, ScrollView, TouchableOpacity, Image, Pressable, Text, TextInput, SafeAreaView, Keyboard, Dimensions, RefreshControl, Alert, Clipboard } from 'react-native';
 import Modal from 'react-native-modal';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -257,7 +257,6 @@ const PodPage = ({ navigation, route}) => {
                         {label: 'Song', value: 'Song'},
                         {label: 'TikTok', value: 'TikTok'},
                         {label: 'YouTube', value: 'YouTube'},
-                        //{label: 'Other', value: 'Other'},
                     ]}
                     defaultIndex={0}
                     dropDownMaxHeight={100}

@@ -17,6 +17,7 @@ const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 const defaultImageUrl = "https://www.jaipuriaschoolpatna.in/wp-content/uploads/2016/11/blank-img.jpg";
 
+// First view of homescreen displaying all pods under "Your Pods"
 const ByPod = (props) => {
 
     const currentUserUID = props.userId;

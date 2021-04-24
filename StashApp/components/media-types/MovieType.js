@@ -6,6 +6,8 @@ export default function MovieType(props) {
   const [recGenre, setrecGenre] = useState("");
   const [recYear, setrecYear] = useState("");
 
+  //for movie types, prompt user to input a title (mandatory) and (optional:) a genre
+  //  and a release year
   return (
     <View>
       <View style={{ flexDirection: 'row'}}>

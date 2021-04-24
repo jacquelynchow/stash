@@ -2,8 +2,11 @@ import React from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
+// Tiles to display media types under "All Recommendations" view of home page
 const MediaGroup = (props) => {
     const navigation = useNavigation();
+
+    // return the correct media type for each media tile
     function getMediaType () {
         if (props.mediaType == 'Articles') {
             return 'Article'
@@ -25,6 +28,7 @@ const MediaGroup = (props) => {
         }
     }
 
+    // display 1 "person" or multiple "people"
     function recsFromPeople (numPeople) {
         if (numPeople ==1){
             return "person"

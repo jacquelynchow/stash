@@ -10,8 +10,6 @@ import SortIcon from '../assets/onboard-icons/sort.png';
 import SignupModal from '../components/SignupModal';
 import LoginModal from '../components/LoginModal';
 
-// import { setStatusBarNetworkActivityIndicatorVisible } from 'expo-status-bar';
-
 // measurement of screen size for sizing of onboard buttons
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;

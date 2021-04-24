@@ -6,6 +6,8 @@ export default function SongType(props) {
   const [recAuthor, setrecAuthor] = useState("");
   const [recLink, setrecLink] = useState("");
 
+  //for song types, prompt user to input a title (mandatory) and (optional:) artists
+  //  and a link to the song
   return (
     <View>
         <View style={{ flexDirection: 'row'}}>

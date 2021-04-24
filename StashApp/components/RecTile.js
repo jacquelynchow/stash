@@ -12,6 +12,7 @@ import { getRecs, updateRecSeenBy, getMediaRecs } from '../API/firebaseMethods';
 
 const windowWidth = Dimensions.get('window').width;
 
+// Tiles to display each recommendation (in a pod or in media type view)
 const RecTile = (props) => {
 
   // For pop up display
@@ -256,7 +257,7 @@ async function recSeen() {
       } else if (props.fromMediaTypePage) {
         await getMediaRecs(props.onRecsReceived, props.media_Type)
       }
-    })  
+    })
 }
 
   return (
@@ -271,7 +272,7 @@ async function recSeen() {
           </TouchableOpacity>
           <TouchableOpacity activeOpacity={0.6} onPress = {() => recSeen()}>
             <View style={styles.circle} >
-              {props.seenBy && props.currentUserUID in props.seenBy && props.seenBy[props.currentUserUID] ? 
+              {props.seenBy && props.currentUserUID in props.seenBy && props.seenBy[props.currentUserUID] ?
               <Image source={{uri: "https://img.icons8.com/cotton/80/000000/successfully-completed-task--v1.png"}}
                 style={styles.seenIcon}></Image> : null}
             </View>
@@ -316,7 +317,7 @@ async function recSeen() {
 
 const styles = StyleSheet.create({
     item: {
-      flexDirection: 'row', 
+      flexDirection: 'row',
       justifyContent: 'space-evenly',
       width: '45%', // almost half of container width
       borderColor: "black",

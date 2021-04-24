@@ -13,6 +13,7 @@ import { FirebaseRecaptchaVerifierModal, FirebaseRecaptchaBanner } from 'expo-fi
 
 const windowWidth = Dimensions.get('window').width;
 
+// Modal pop up that handles all log in functionality 
 const LoginModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
 
     const navigation = useNavigation();

@@ -10,7 +10,7 @@ import youtubeIcon from '../assets/type-icons/youtube.png';
 import {getMediaRecs } from '../API/firebaseMethods';
 
 
-
+// Second view of homescreen displaying media types under "All Recommendations"
 const ByMedia = (props) => {
     const currentUserUID = props.userId;
 
@@ -23,29 +23,31 @@ const ByMedia = (props) => {
         wait(2000).then(() => setRefreshing(false));
       }, []);
 
+    // to count the number of recommendations of each media type
     function numRecsForMedia(media_Type) {
         const [recs, setRecs] = useState([]);
         useEffect(() => {
         getMediaRecs(onRecsReceived,media_Type);
-        }, []); 
+        }, []);
 
         const onRecsReceived = (recList) => {
         setRecs(recList);
-        };  
-        
+        };
+
         const numRecs = recs.length;
         return numRecs;
     }
-  
+
+    // to count the number of people who sent recommendations of each media type
     function numPeopleForMedia(media_Type) {
         const [recs, setRecs] = useState([]);
         useEffect(() => {
         getMediaRecs(onRecsReceived,media_Type);
-        }, []); 
+        }, []);
 
         const onRecsReceived = (recList) => {
         setRecs(recList);
-        }; 
+        };
         const ppl = [];
         for(var i=0; i<recs.length;i++) {
             if (!(ppl.includes(recs[i].rec_sender))) {
@@ -59,7 +61,6 @@ const ByMedia = (props) => {
     return (
         <View style={{flex: 1}}>
 
-
             {/* Show various rec types */}
             <ScrollView
                 contentContainerStyle={styles.container}
@@ -68,14 +69,13 @@ const ByMedia = (props) => {
                       refreshing={refreshing}
                       onRefresh={onRefresh}
                     />
-                  }> 
+                  }>
                 <MediaGroup mediaType={"Articles"} numRecs={numRecsForMedia('Article')} numPeople={numPeopleForMedia('Article')} image={articleIcon} userId={currentUserUID} />
                 <MediaGroup mediaType={"Books"} numRecs={numRecsForMedia('Book')} numPeople={numPeopleForMedia('Book')} image={bookIcon} userId={currentUserUID} />
                 <MediaGroup mediaType={"Movies"} numRecs={numRecsForMedia('Movie')} numPeople={numPeopleForMedia('Movie')} image={movieIcon} userId={currentUserUID} />
                 <MediaGroup mediaType={"Songs"} numRecs={numRecsForMedia('Song')} numPeople={numPeopleForMedia('Song')} image={songIcon} userId={currentUserUID} />
                 <MediaGroup mediaType={"TikToks"} numRecs={numRecsForMedia('TikTok')} numPeople={numPeopleForMedia('TikTok')} image={tiktokIcon} userId={currentUserUID} />
                 <MediaGroup mediaType={"YouTube"} numRecs={numRecsForMedia('YouTube')} numPeople={numPeopleForMedia('YouTube')} image={youtubeIcon} userId={currentUserUID} />
-                {/* is having the number of people neccessary for showing by media? */}
             </ScrollView>
         </View>
     )

@@ -11,6 +11,7 @@ import {
 
 const windowWidth = Dimensions.get('window').width;
 
+// Tiles to display pods under "Your Pods" view of home page
 const PodTile = (props) => {
     const navigation = useNavigation();
 

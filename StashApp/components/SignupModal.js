@@ -12,6 +12,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const windowWidth = Dimensions.get('window').width;
 
+// Modal pop up that handles all sign up functionality
 const SignupModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
 
     // function to show/hide modal

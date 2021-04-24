@@ -5,6 +5,7 @@ import {getMediaRecs} from '../API/firebaseMethods';
 
 const windowHeight = Dimensions.get('window').height;
 
+// view of all recommendations of a certain media type
 export default function MediaTypePage({navigation, route }) {
   const recData = JSON.parse(JSON.stringify(route.params));
   const media_Type = recData.media_Type;
@@ -54,8 +55,8 @@ export default function MediaTypePage({navigation, route }) {
                   recYear={rec.rec_year}
                   recComment={rec.rec_comment}
                   seenBy={rec.seenBy}
-                  currentUserUID={currentUserUID} 
-                  recs={recs} 
+                  currentUserUID={currentUserUID}
+                  recs={recs}
                   onRecsReceived={onRecsReceived}
                   media_Type={media_Type}
                   fromMediaTypePage={true}

@@ -5,6 +5,7 @@ export default function BookType(props) {
   const [recName, setrecName] = useState("");
   const [recAuthor, setrecAuthor] = useState("");
 
+  //for book/article types, prompt user to input a title (mandatory) and author (optional)
   return (
     <View>
         <View style={{ flexDirection: 'row'}}>

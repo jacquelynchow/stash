@@ -14,13 +14,13 @@ import MovieType from '../components/media-types/MovieType';
 import BookType from '../components/media-types/BookType';
 import VideoType from '../components/media-types/VideoType';
 import SongType from '../components/media-types/SongType';
-import JustTitleType from '../components/media-types/JustTitleType';
 // Server Related
 import * as firebase from 'firebase';
 import { addRecToDB, getRecs, getPodRecs } from '../API/firebaseMethods';
 
 const windowHeight = Dimensions.get('window').height;
 
+// view of all recommendations within a certain pod
 const PodPage = ({ navigation, route}) => {
   const podData = JSON.parse(JSON.stringify(route.params));
   const numMembers = podData.numMembers;

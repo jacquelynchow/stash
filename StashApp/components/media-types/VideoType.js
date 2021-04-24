@@ -5,6 +5,8 @@ export default function VideoType(props) {
   const [recName, setrecName] = useState("");
   const [recLink, setrecLink] = useState("");
 
+  //for video types (YouTube & TikToks), prompt user to input a title and a link
+  //  to the media (both mandatory)
   return (
     <View>
       <View style={{ flexDirection: 'row'}}>

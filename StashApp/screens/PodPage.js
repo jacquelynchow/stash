@@ -55,7 +55,7 @@ const PodPage = ({ navigation, route}) => {
   const [recAuthor, setrecAuthor] = useState("");
   const [recLink, setrecLink] = useState("");
   const [recGenre, setrecGenre] = useState("");
-  const [recYear, setrecYear] = useState(0);
+  const [recYear, setrecYear] = useState("");
   const [recComment, setrecComment] = useState("");
 
   // init error state for various send rec form fields
@@ -96,7 +96,7 @@ const PodPage = ({ navigation, route}) => {
       setrecAuthor("");
       setrecLink("");
       setrecGenre("");
-      setrecYear(0);
+      setrecYear("");
       setrecComment("");
       setErrors({mediaTypeError: '', nameError: '', linkError: ''});
   }

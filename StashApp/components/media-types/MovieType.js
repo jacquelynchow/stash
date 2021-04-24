@@ -4,7 +4,7 @@ import { StyleSheet, View, Text, TextInput, SafeAreaView } from 'react-native';
 export default function MovieType(props) {
   const [recName, setrecName] = useState("");
   const [recGenre, setrecGenre] = useState("");
-  const [recYear, setrecYear] = useState(0);
+  const [recYear, setrecYear] = useState("");
 
   return (
     <View>

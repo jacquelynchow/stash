@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, ScrollView, View, TouchableOpacity, Image, Pressable, Text, SafeAreaView, TextInput, Dimensions, FlatList, RefreshControl, ActivityIndicator } from 'react-native';
+import { StyleSheet, ScrollView, View, TouchableOpacity, Image, Pressable, Text, SafeAreaView, TextInput, Dimensions, FlatList, RefreshControl, ActivityIndicator, Keyboard } from 'react-native';
 import PodTile from '../components/PodTile';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
 import addPodButton from '../assets/addPodButton.png';
 import closePopUpButton from '../assets/closePopUpButton.png';
 import uploadPodImage from '../assets/uploadPodImage.png';
@@ -159,14 +160,14 @@ const ByPod = (props) => {
         }
     };
 
-    // init var for selected pod image 
+    // init var for selected pod image
     const [selectedImageName, setSelectedImageName] = useState("");
     const [selectedImageUrl, setSelectedImageUrl] = useState(defaultImageUrl);
     // init loading bool when activity indicator is needed
     const [isLoading, setLoading] = useState(false);
 
-    // allow user to choose image from photo library, uploads image to server, saves image URL; while image is 
-    // being sent to server and url is being saved, a loading indicator pops up blocking all user interaction 
+    // allow user to choose image from photo library, uploads image to server, saves image URL; while image is
+    // being sent to server and url is being saved, a loading indicator pops up blocking all user interaction
     let openImagePickerAsync = async () => {
         let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (permissionResult.granted === false) {
@@ -179,9 +180,9 @@ const ByPod = (props) => {
           return;
         }
         // set filename as username and current timestamp and resize image for more space in storage
-        const imageName = currentUserUID + "_" + Date.now() + '.' + 'png'; 
+        const imageName = currentUserUID + "_" + Date.now() + '.' + 'png';
         const resizedPhoto = await ImageManipulator.manipulateAsync(
-            result.uri, [{ resize: { width: 200 } }], // resize to width of 200 and preserve aspect ratio 
+            result.uri, [{ resize: { width: 200 } }], // resize to width of 200 and preserve aspect ratio
             { compress: 0.7, format: 'png' }, // using png type of images
         );
 
@@ -199,7 +200,7 @@ const ByPod = (props) => {
             .then(async () => {
                 // after uploading image to server, wait to get image url from firebase
                 await retrieveImageFromStorage(imageName, setSelectedImageUrl)
-                    // once image has been uploaded to server and image url is saved, we can stop showing the activity indicator 
+                    // once image has been uploaded to server and image url is saved, we can stop showing the activity indicator
                     .then(() => setLoading(false))
                     .catch(() => setLoading(false));
             })
@@ -245,7 +246,7 @@ const ByPod = (props) => {
                             deletePod={deletePodFromDB}
                             leavePod={removeMemberFromPod}
                             refresh={onRefresh}
-                            image={pod.pod_picture} 
+                            image={pod.pod_picture}
                             />) :
                     <View style={styles.centeredView}>
                         <Text style={styles.noPodsYetText}>Welcome, {username}!</Text>
@@ -258,7 +259,7 @@ const ByPod = (props) => {
             {/* Create A Pod PopUp */}
             <Modal isVisible={isModalVisible}>
                 {/* Show loading screen (blocking all user interaction) if image is being sent to server & its image URL being fetched */}
-                {isLoading ? 
+                {isLoading ?
                 <View style={{position: 'absolute',
                         left: 0,
                         right: 0,
@@ -384,10 +385,11 @@ const ByPod = (props) => {
                             <Pressable style={styles.createPodButton} onPress={checkAllFieldsOnSubmit}>
                                 <Text style={styles.createPodText}>Create Pod</Text>
                             </Pressable>
+                            <KeyboardSpacer />
                         </View>
                     </View>
                 </View>
-                }   
+                }
             </Modal>
 
             {/* Add Pod Button on Screen */}

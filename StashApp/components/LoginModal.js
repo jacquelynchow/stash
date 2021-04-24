@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, Pressable, SafeAreaView, Dimensions, Image, Alert } from 'react-native';
+import { StyleSheet, View, Text, TextInput, Pressable, SafeAreaView, Dimensions, Image, Alert, Keyboard } from 'react-native';
 import Modal from 'react-native-modal';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
 import closePopUpButton from '../assets/closePopUpButton.png';
 import { useNavigation } from '@react-navigation/native';
 import {signIn} from '../API/firebaseMethods';
@@ -13,7 +14,7 @@ import { FirebaseRecaptchaVerifierModal, FirebaseRecaptchaBanner } from 'expo-fi
 const windowWidth = Dimensions.get('window').width;
 
 const LoginModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
-  
+
     const navigation = useNavigation();
 
     // function to show/hide modal
@@ -34,9 +35,9 @@ const LoginModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
 
     const checkFieldsOnSendCode = () => {
       if (phoneNum === "") {
-        setErrors({phoneError: "Phone number is required"});
+        setErrors({phoneError: "*Phone number is required"});
       } else if (phoneNum[0] != "+" || phoneNum.length != 12) {
-        setErrors({phoneError: "Please use the format +1 999 999 9999"});
+        setErrors({phoneError: "*Please use the format +1 999 999 9999"});
       } else {
         sendCode();
         setErrors({phoneError: '', codeError: ''});
@@ -46,9 +47,9 @@ const LoginModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
     const checkFieldsOnLogin = () => {
       // check if confirmation code is empty
       if (verificationCode === "") {
-        setErrors({codeError: "Verification code is required"});
+        setErrors({codeError: "*Verification code is required"});
       } else if (verificationCode.length != 6) {
-        setErrors({codeError: "Please enter 6 digits"});
+        setErrors({codeError: "*Please enter 6 digits"});
       } else {
         completeLogin();
       }
@@ -116,7 +117,7 @@ const LoginModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
                 </Pressable>
                 <Text style={styles.modalTitle}>Login</Text>
                 <Text style={styles.modalText}>Login to view your pods and start sending recommendations!</Text>
-                
+
                 {/* recaptcha modal (will pop up when user clicks 'send verification code') */}
                 <FirebaseRecaptchaVerifierModal
                 ref={recaptchaVerifier}
@@ -126,19 +127,19 @@ const LoginModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
 
                 {/* conditional rendering of phone verification fields */}
                 {/* show input to enter 6 digit code and confirmation button after the code has been sent */}
-                {codeVisible ? 
+                {codeVisible ?
                 [<Text style={styles.userDetailsText}>
                     6-Digit Code
-                </Text>] : 
+                </Text>] :
                 [<Text style={styles.userDetailsText}>
                     Phone Number
                 </Text>]}
 
-                {codeVisible ? 
+                {codeVisible ?
                 [<View style={{ flexDirection: 'row'}}>
                   <MaterialCommunityIcons name="cellphone-iphone" size={28} color="white" style={{ marginTop: 8 }} />
                   <SafeAreaView>
-                      <TextInput 
+                      <TextInput
                           onChangeText={verificationCode => setVerificationCode(verificationCode)}
                           style={ inputActive.codeActive ? styles.userInputActive : styles.userInput }
                           placeholder={"123456"}
@@ -150,14 +151,14 @@ const LoginModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
                           defaultValue={verificationCode}
                       />
                   </SafeAreaView>
-                </View>] : 
+                </View>] :
                 [<View style={{ flexDirection: 'row'}}>
                 <FontAwesome name="phone" size={28} color="white" style={{ marginTop: 8 }} />
                 <SafeAreaView>
-                    <TextInput 
+                    <TextInput
                         onChangeText={phoneNum => setPhoneNum(phoneNum)}
                         style={ inputActive.phoneActive ? styles.userInputActive : styles.userInput }
-                        defaultValue={phoneNum} 
+                        defaultValue={phoneNum}
                         placeholder={"+1 999 999 9999"}
                         autoCompleteType="tel"
                         keyboardType="phone-pad"
@@ -175,16 +176,17 @@ const LoginModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
                 </View>
 
                 {/* confirm verification code button ----------------------------------------------- */}
-                {codeVisible ? 
+                {codeVisible ?
                 [<TouchableOpacity style={styles.signUpButton} onPress={checkFieldsOnLogin}>
                   <Text style={styles.signUpText}>Login</Text>
-                </TouchableOpacity>] : 
+                </TouchableOpacity>] :
                 [<TouchableOpacity style={styles.verificationButton} onPress={checkFieldsOnSendCode}>
                   <Text style={styles.verificationText}>Send Verification Code</Text>
                 </TouchableOpacity>]}
 
             {attemptInvisibleVerification && <FirebaseRecaptchaBanner />}
 
+                <KeyboardSpacer />
                 </View>
             </View>
         </Modal>
@@ -250,6 +252,7 @@ const styles = StyleSheet.create({
       userDetailsText: {
         fontSize: 15,
         color: 'white',
+        fontWeight: '600',
         marginRight: 'auto',
         marginLeft: (windowWidth - windowWidth/1.75)/4
       },
@@ -274,7 +277,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         marginLeft: 12,
         marginTop: 5,
-        backgroundColor: '#FEFEE3'
       },
       modalText: {
         marginTop: 10,
@@ -289,18 +291,17 @@ const styles = StyleSheet.create({
       fontSize: 12
     },
     verificationText: {
-      color: "#6f1d1b",
+      color: "#D68C45",
       fontWeight: 'bold',
-      fontSize: 12,
+      textTransform: 'uppercase',
       textAlign: 'center',
     },
     verificationButton: {
-      backgroundColor: '#FEFEE3',
+      backgroundColor: 'white',
       borderRadius: 20,
       marginTop: 20,
       paddingVertical: 10,
       paddingHorizontal: 20,
-      width: windowWidth/2,
       // ios
       shadowOffset: {width: 10, height: 10},
       shadowOpacity: 0.1,

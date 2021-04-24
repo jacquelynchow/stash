@@ -204,7 +204,7 @@ export async function deletePodFromDB(pod) {
   const imageName = pod.image;
 
   // get pod from db and delete it
-  db.collection('pods').where('pod_name', '==', pod.pod_id)
+  db.collection('pods').where('pod_id', '==', pod.podId)
   .get().then(function(querySnapshot) {
     querySnapshot.forEach(function(doc) {
       doc.ref.delete();
@@ -222,7 +222,7 @@ export async function deletePodFromDB(pod) {
   userIds.forEach((uid) => {
     usersDb.doc(uid).update({
       // remove pod from user's list of pods
-      [`pods.${pod_id}`]: firebase.firestore.FieldValue.delete()
+      [`pods.${pod.podId}`]: firebase.firestore.FieldValue.delete()
     })
   })
 

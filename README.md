@@ -73,7 +73,7 @@ Stash is an effective solution because people typically make recommendations usi
 * Show group members button on the bottom right will list all members in that pod 
 * Add/Send a Rec button on the bottom right allows users to create recommendations for that specific pod
   * Based on the media type selected (Article, Book, Movie, Song, TikTok, or YouTube), users will be able to fill in different fields based on the selected media type
-  * Error checking: MISSING
+  * Error checking: user must select a media type and provide at least a name for all recommendation types and a link for video types (YouTube & TikTok), all other fields are optional. Links inputted for both video types (YouTube & TikTok) and the song types will also be checked for validity before it can be added to a recommendation.  
 * Click on a Rec for more information about that Rec
   * Displays Full Rec name, media type, other media type specific details, comments (if provided), who the rec was recommended by, and in what pod this rec was recommended in
 #### **Recommendations Feed (By Type)**

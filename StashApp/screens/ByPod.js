@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, ScrollView, View, TouchableOpacity, Image, Pressable, Text, 
-    SafeAreaView, TextInput, Dimensions, FlatList, 
+import { StyleSheet, ScrollView, View, TouchableOpacity, Image, Pressable, Text,
+    SafeAreaView, TextInput, Dimensions, FlatList,
     RefreshControl, ActivityIndicator } from 'react-native';
 import PodTile from '../components/PodTile';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
@@ -12,7 +12,7 @@ import { SearchBar } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { addPodToDB, getPods, uploadImageToStorage,
-    retrieveImageFromStorage, deleteImage, getUsers, 
+    retrieveImageFromStorage, deleteImage, getUsers,
     deletePodFromDB, removeMemberFromPod } from '../API/firebaseMethods';
 
 const windowWidth = Dimensions.get('window').width;
@@ -382,8 +382,8 @@ const ByPod = (props) => {
                                 <Text style={styles.createPodText}>Create Pod</Text>
                             </Pressable>
                         </View>
-                    </View>
                     <KeyboardSpacer />
+                    </View>
                 </View>
                 }
             </Modal>

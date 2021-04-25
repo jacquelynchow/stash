@@ -63,6 +63,7 @@ Stash is an effective solution because people typically make recommendations usi
 #### **Recommendations Feed (By Pod)**
 * Create a Pod pop up with essential information for making a group (name, search for members, etc)
 * Option to leave pod (last member in the pod will be able to delete pod instead of leave pod)
+* Option to change pod's name
 * Displays pods on refresh (pull down screen) and upon the creation of a new pod
   * Pod name, number of members, number of recs shown on pod tile
 * Create A Pod button on the bottom right corner

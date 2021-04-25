@@ -20,6 +20,7 @@ import SongType from '../components/media-types/SongType';
 import { addRecToDB, getRecs } from '../API/firebaseMethods';
 
 const windowHeight = Dimensions.get('window').height;
+const windowWidth = Dimensions.get('window').width;
 
 // view of all recommendations within a certain pod
 const PodPage = ({ navigation, route}) => {
@@ -256,7 +257,7 @@ const PodPage = ({ navigation, route}) => {
                     ]}
                     defaultIndex={0}
                     dropDownMaxHeight={100}
-                    containerStyle={{height: 40, marginBottom: 15}}
+                    containerStyle={{height: 40, marginBottom: 15, width: windowWidth/1.5}}
                     onChangeItem={items => setmediaType(items.value)}
                   />
 
@@ -461,7 +462,7 @@ const styles = StyleSheet.create({
   },
   commentInput: {
     height: 50,
-    width: 225,
+    width: '100%',
     fontSize: 16,
     backgroundColor: 'white',
     borderRadius: 10,
@@ -476,7 +477,7 @@ const styles = StyleSheet.create({
   selectMediaDropdown: {
     flexDirection: 'column', 
     alignSelf: 'flex-start', 
-    marginTop: 20
+    marginTop: 20,
   }
 })
 

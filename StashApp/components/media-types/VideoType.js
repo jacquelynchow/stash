@@ -13,7 +13,7 @@ export default function VideoType(props) {
         <Text style={styles.recCategoriesText}>
           Title:
         </Text>
-        <SafeAreaView>
+        <SafeAreaView style={{flex: 1}}>
           <TextInput
             autoFocus={true}
             onChangeText={recName => props.setrecName(recName)}
@@ -27,7 +27,7 @@ export default function VideoType(props) {
         <Text style={styles.recCategoriesText}>
           Link:
         </Text>
-        <SafeAreaView>
+        <SafeAreaView style={{flex: 1}}>
           <TextInput
               autoFocus={true}
               onChangeText={recLink => props.setrecLink(recLink)}
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 30,
-    width: 175,
+    width: '100%',
     fontSize: 16,
     backgroundColor: 'white',
     borderRadius: 10,

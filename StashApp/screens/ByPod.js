@@ -303,7 +303,7 @@ const ByPod = (props) => {
                             </Text>
                             <View style={{flex: 1, alignItems: 'center', marginTop: 5}}>
                                 {/* if image selected, show image; also allow user to re-choose an image */}
-                                <View style={{ flexDirection: 'row'}}>
+                                <View style={{ flexDirection: 'row', alignSelf: 'flex-end' }}>
                                      <Image
                                          source={{ uri: selectedImageUrl }}
                                          style={styles.thumbnail}
@@ -357,7 +357,7 @@ const ByPod = (props) => {
                                 placeholder="Enter a username"
                                 value={search}
                                 containerStyle={{ backgroundColor: '#6f1d1b', borderTopColor: '#6f1d1b',
-                                 borderBottomColor: '#6f1d1b', width: windowWidth/1.5 }}
+                                 borderBottomColor: '#6f1d1b', width: "100%" }}
                                 inputContainerStyle={{ backgroundColor: 'white', height: 30, borderRadius: 10 }}
                                 inputStyle={{ fontSize: 16 }}
                                 />

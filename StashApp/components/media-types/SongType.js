@@ -14,7 +14,7 @@ export default function SongType(props) {
             <Text style={styles.recCategoriesText}>
                 Song Title:
             </Text>
-            <SafeAreaView>
+            <SafeAreaView style={{flex: 1}}>
                 <TextInput
                 autoFocus={true}
                 onChangeText={recName => props.setrecName(recName)}
@@ -28,7 +28,7 @@ export default function SongType(props) {
             <Text style={styles.recCategoriesText}>
                 Artist(s):
             </Text>
-            <SafeAreaView>
+            <SafeAreaView style={{flex: 1}}>
                 <TextInput
                     autoFocus={true}
                     onChangeText={recAuthor => props.setrecAuthor(recAuthor)}
@@ -42,7 +42,7 @@ export default function SongType(props) {
           <Text style={styles.recCategoriesText}>
               Link:
           </Text>
-          <SafeAreaView>
+          <SafeAreaView style={{flex: 1}}>
               <TextInput
                   autoFocus={true}
                   onChangeText={recLink => props.setrecLink(recLink)}
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     },
     titleInput: {
       height: 30,
-      width: 134,
+      width: '100%',
       fontSize: 16,
       backgroundColor: 'white',
       borderRadius: 10,
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     },
     artistInput: {
       height: 30,
-      width: 150,
+      width: '100%',
       fontSize: 16,
       backgroundColor: 'white',
       borderRadius: 10,
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     },
     linkInput: {
       height: 30,
-      width: 182,
+      width: '100%',
       fontSize: 16,
       backgroundColor: 'white',
       borderRadius: 10,

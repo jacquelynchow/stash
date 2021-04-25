@@ -263,21 +263,25 @@ async function recSeen() {
 
   return (
       <View style={styles.item}>
-          <TouchableOpacity activeOpacity={0.25} onPress={toggleModal}>
-              <Image source={selectImage()} style={styles.recImage}></Image>
-              <Text style={[styles.name, selectColor()]}>
-                {/* if rec title is longer than two lines worth, shorten it with "..." */}
-                { props.recName.length > 22 ? props.recName.substring(0,22) + "..." : props.recName }
-              </Text>
-              <Text style={styles.media}>{props.mediaType}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity activeOpacity={0.6} onPress = {() => recSeen()}>
-            <View style={styles.circle} >
-              {props.seenBy && props.currentUserUID in props.seenBy && props.seenBy[props.currentUserUID] ?
-              <Image source={{uri: "https://img.icons8.com/cotton/80/000000/successfully-completed-task--v1.png"}}
-                style={styles.seenIcon}></Image> : null}
+          <View style={{ flexDirection: 'column' }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <TouchableOpacity activeOpacity={0.25} onPress={toggleModal}>
+                  <Image source={selectImage()} style={styles.recImage}></Image>
+              </TouchableOpacity>
+              <TouchableOpacity activeOpacity={0.6} onPress = {() => recSeen()}>
+                <View style={styles.circle} >
+                  {props.seenBy && props.currentUserUID in props.seenBy && props.seenBy[props.currentUserUID] ?
+                  <Image source={{uri: "https://img.icons8.com/cotton/80/000000/successfully-completed-task--v1.png"}}
+                    style={styles.seenIcon}></Image> : null}
+                </View>
+              </TouchableOpacity>
             </View>
-          </TouchableOpacity>
+            <Text style={[styles.name, selectColor()]}>
+                    {/* if rec title is longer than two lines worth, shorten it with "..." */}
+                    { props.recName.length > 22 ? props.recName.substring(0,22) + "..." : props.recName }
+                  </Text>
+                  <Text style={styles.media}>{props.mediaType}</Text>
+          </View>
 
           {/* Rec Details PopUp */}
           <Modal isVisible={isModalVisible}>
@@ -318,8 +322,6 @@ async function recSeen() {
 
 const styles = StyleSheet.create({
     item: {
-      flexDirection: 'row',
-      justifyContent: 'space-evenly',
       width: '45%', // almost half of container width
       borderColor: "black",
       borderRadius: 10,

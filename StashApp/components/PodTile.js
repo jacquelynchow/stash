@@ -32,7 +32,7 @@ const PodTile = (props) => {
                     onPress: () => console.log("Cancel Pressed"),
                     style: "cancel"
                 },
-                { text: "OK", onPress: () => deletePod() }
+                { text: "OK", onPress: () => deletePod(props) }
             ],
             { cancelable: false }
             );
@@ -43,14 +43,14 @@ const PodTile = (props) => {
                     onPress: () => console.log("Cancel Pressed"),
                     style: "cancel"
                 },
-                { text: "OK", onPress: () => deletePod() }
+                { text: "OK", onPress: () => deletePod(props) }
             ],
             { cancelable: false }
             );
         }
     }
 
-    const deletePod = useCallback(async () => {
+    const deletePod = async (props) => {
         if (props.numMembers == 1) {
             await props.deletePod(props) // delete from db, calling function passed in from parent
             .then(() => props.refresh()); // refresh pods displayed in ByPod
@@ -58,7 +58,7 @@ const PodTile = (props) => {
             await props.leavePod(props)
             .then(() => props.refresh());
         }
-    }, []);
+    };
 
     // display 1 "Member" or multiple "Members"
     function numMembers (numMembers) {

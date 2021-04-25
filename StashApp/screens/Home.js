@@ -10,6 +10,7 @@ const windowWidth = Dimensions.get('window').width;
 // set up tab navigation
 const Tab = createMaterialTopTabNavigator();
 
+//for viewing by pod
 function PodsTab(props) {
     return (
       <View style={ styles.container }>
@@ -18,6 +19,7 @@ function PodsTab(props) {
     );
 }
   
+//for viewing by media type
   function RecsTab(props) {
     return (
       <View style={ styles.container }>

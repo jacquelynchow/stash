@@ -10,8 +10,8 @@ const windowHeight = Dimensions.get('window').height;
 // view of all recommendations of a certain media type
 export default function MediaTypePage({navigation, route }) {
   const recData = JSON.parse(JSON.stringify(route.params));
-  const media_Type = recData.media_Type;
-  const currentUserUID = recData.userId;
+  const media_Type = recData.media_Type; //gets media type according to which media type was clicked
+  const currentUserUID = recData.userId; //gets current user's ID
 
   const [recs, setRecs] = useState([]);
   useEffect(() => {
@@ -64,6 +64,7 @@ export default function MediaTypePage({navigation, route }) {
                   fromMediaTypePage={true}
                   fromPodPage={false} />) :
               <View style={styles.centeredView}>
+                {/* If no recs of certain media type exists for the user */}
                   <Text style={styles.noRecsYetTitle}>No recommendations of this type yet</Text>
                   <Text style={styles.noRecsYetText}>Send/receive recommendations in a pod and they will appear here</Text>
               </View>

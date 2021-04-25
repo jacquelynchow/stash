@@ -105,5 +105,11 @@ const styles = StyleSheet.create({
       marginRight:25,
       marginTop: 10,
       fontSize: 14
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
   }
 });

@@ -10,7 +10,6 @@ import {
 } from 'react-native-popup-menu';
 
 const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
 
 // Tiles to display pods under "Your Pods" view of home page
 const PodTile = (props) => {
@@ -138,10 +137,8 @@ const styles = StyleSheet.create({
     },
     groupImage: {
         marginLeft: 15,
-        marginRight: windowWidth/10,
-        flex: 1,
-        width: null,
-        height: windowHeight/4,
+        width: 100,
+        height: 100,
         marginTop: 20,
         borderRadius: 10,
     },

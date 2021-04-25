@@ -8,34 +8,34 @@ export default function BookType(props) {
   //for book/article types, prompt user to input a title (mandatory) and author (optional)
   return (
     <View>
-        <View style={{ flexDirection: 'row'}}>
-            <Text style={styles.recCategoriesText}>
-                Title:
-            </Text>
-            <SafeAreaView>
-                <TextInput
-                autoFocus={true}
-                onChangeText={recName => props.setrecName(recName)}
-                style={styles.titleInput}
-                defaultValue={recName}
-                placeholder={"Enter a title"}
-                />
-            </SafeAreaView>
-        </View>
-            <View style={{ flexDirection: 'row'}}>
-            <Text style={styles.recCategoriesText}>
-                Author(s):
-            </Text>
-            <SafeAreaView>
-                <TextInput
-                    autoFocus={true}
-                    onChangeText={recAuthor => props.setrecAuthor(recAuthor)}
-                    style={styles.input}
-                    defaultValue={recAuthor}
-                    placeholder={"Add author(s)"}
-                />
-            </SafeAreaView>
-        </View>
+      <View style={{ flexDirection: 'row'}}>
+        <Text style={styles.recCategoriesText}>
+            Title:
+        </Text>
+        <SafeAreaView style={{flex: 1}}>
+            <TextInput
+            autoFocus={true}
+            onChangeText={recName => props.setrecName(recName)}
+            style={styles.titleInput}
+            defaultValue={recName}
+            placeholder={"Enter a title"}
+            />
+        </SafeAreaView>
+      </View>
+      <View style={{ flexDirection: 'row'}}>
+        <Text style={styles.recCategoriesText}>
+            Author(s):
+        </Text>
+        <SafeAreaView style={{flex: 1}}>
+          <TextInput
+              autoFocus={true}
+              onChangeText={recAuthor => props.setrecAuthor(recAuthor)}
+              style={styles.input}
+              defaultValue={recAuthor}
+              placeholder={"Add author(s)"}
+          />
+        </SafeAreaView>
+      </View>
     </View>
   );
 }
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
     },
     titleInput: {
       height: 30,
-      width: 175,
+      width: '100%',
       fontSize: 16,
       backgroundColor: 'white',
       borderRadius: 10,
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     },
     input: {
       height: 30,
-      width: 135,
+      width: '100%',
       fontSize: 16,
       backgroundColor: 'white',
       borderRadius: 10,

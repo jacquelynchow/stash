@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity, Image, 
-  Pressable, Text, TextInput, SafeAreaView, Keyboard, 
+import { StyleSheet, View, ScrollView, TouchableOpacity, Image,
+  Pressable, Text, TextInput, SafeAreaView, Keyboard,
   Dimensions, RefreshControl } from 'react-native';
 import Modal from 'react-native-modal';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
@@ -16,6 +16,7 @@ import MovieType from '../components/media-types/MovieType';
 import BookType from '../components/media-types/BookType';
 import VideoType from '../components/media-types/VideoType';
 import SongType from '../components/media-types/SongType';
+import ArticleType from '../components/media-types/ArticleType';
 // Server Related
 import { addRecToDB, getRecs } from '../API/firebaseMethods';
 
@@ -41,7 +42,7 @@ const PodPage = ({ navigation, route}) => {
   const toggleModal = () => {
       setModalVisible(!isModalVisible);
       resetFields();
-  }; 
+  };
 
   // display pop up when pod members modal view is on
   const [isMembersModalVisible, setMembersModalVisible] = useState(false);
@@ -148,8 +149,10 @@ const PodPage = ({ navigation, route}) => {
   function selectMediaType() {
     if (mediaType == "Movie") {
       return (<MovieType setrecName={setrecName} setrecGenre={setrecGenre} setrecYear={setrecYear}></MovieType>)
-    } else if (mediaType == "Book" || mediaType == "Article") {
+    } else if (mediaType == "Book") {
       return (<BookType setrecName={setrecName} setrecAuthor={setrecAuthor}> </BookType>)
+    } else if (mediaType == "Article") {
+      return (<ArticleType setrecName={setrecName} setrecAuthor={setrecAuthor} setrecLink={setrecLink}> </ArticleType>)
     } else if (mediaType == "TikTok" || mediaType == "YouTube") {
       return (<VideoType setrecName={setrecName} setrecLink={setrecLink}></VideoType>)
     } else if (mediaType == "Song") {
@@ -475,8 +478,8 @@ const styles = StyleSheet.create({
       color: '#ffc9b9',
   },
   selectMediaDropdown: {
-    flexDirection: 'column', 
-    alignSelf: 'flex-start', 
+    flexDirection: 'column',
+    alignSelf: 'flex-start',
     marginTop: 20,
   }
 })

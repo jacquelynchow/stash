@@ -5,7 +5,7 @@ export default function BookType(props) {
   const [recName, setrecName] = useState("");
   const [recAuthor, setrecAuthor] = useState("");
 
-  //for book/article types, prompt user to input a title (mandatory) and author (optional)
+  //for book type, prompt user to input a title (mandatory) and author (optional)
   return (
     <View>
       <View style={{ flexDirection: 'row'}}>
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
     },
     titleInput: {
       height: 30,
-      width: '100%',
+      width: '95%',
       fontSize: 16,
       backgroundColor: 'white',
       borderRadius: 10,
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     },
     input: {
       height: 30,
-      width: '100%',
+      width: '94%',
       fontSize: 16,
       backgroundColor: 'white',
       borderRadius: 10,

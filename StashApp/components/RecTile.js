@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Dimensions, StyleSheet, Text, View, Image, 
+import { Dimensions, StyleSheet, Text, View, Image,
   TouchableOpacity, Pressable, Linking } from 'react-native';
 import Modal from 'react-native-modal';
 // Components
@@ -93,8 +93,8 @@ function selectBackgroundColor() {
 // determines what to display in addition to title and comment based on media type
 // and what the sender actually inputted when sending the rec
 function displayRecDetails(){
-  // for Articles and Books, only display author/artist if provided
-  if (props.mediaType == "Article" || props.mediaType == "Book"){
+  // for Books, only display author if provided
+  if (props.mediaType == "Book"){
     // if they didn't include an author, display "not provided"
     if (props.recAuthor == ""){
       return(
@@ -122,21 +122,21 @@ function displayRecDetails(){
           </Text>
         </Text>)
 
-  // for songs, display artist and link if provided
-  } else if (props.mediaType == "Song"){
-    //ARTIST & LINK COMBINATIONS - display "not provided" if not inputted
-    // (1) if they didn't include an artist or a link
+  // for articles, display author and link if provided
+  } else if (props.mediaType == "Article"){
+    //AUTHOR & LINK COMBINATIONS - display "not provided" if not inputted
+    // (1) if they didn't include an author or a link
     if (props.recAuthor == "" && props.recLink == "") {
       return(
         <Text style={styles.modalText}>
-          <Text style={styles.modalHeading}>Artist(s): </Text>
+          <Text style={styles.modalHeading}>By: </Text>
           <Text style={styles.modalSubtitle}>Not provided </Text>
           {"\n"}
           <Text style={styles.modalHeading}>Link: </Text>
           <Text style={styles.modalSubtitle}>Not provided </Text>
         </Text>)
     }
-    // (2) if they included a genre but no year
+    // (2) if they included a link but no author
     else if (props.recAuthor !== "" && props.recLink == ""){
       return(
         <Text style={styles.modalText}>
@@ -147,7 +147,7 @@ function displayRecDetails(){
           <Text style={styles.modalSubtitle}>Not provided </Text>
         </Text>)
     }
-    // (3) if they included a year but no genre
+    // (3) if they included an author but no link
     else if (props.recAuthor == "" && props.recLink !== "") {
       return(
         <Text style={styles.modalText}>
@@ -166,7 +166,7 @@ function displayRecDetails(){
     else {
       return(
         <Text style={styles.modalText}>
-          <Text style={styles.modalHeading}>Artist(s): </Text>
+          <Text style={styles.modalHeading}>By: </Text>
           {props.recAuthor}
           {"\n"}
           <Text style={styles.modalHeading}>Link: </Text>
@@ -176,6 +176,61 @@ function displayRecDetails(){
           </Text>
         </Text>)
     }
+
+    // for songs, display artist and link if provided
+    } else if (props.mediaType == "Song"){
+      //ARTIST & LINK COMBINATIONS - display "not provided" if not inputted
+      // (1) if they didn't include an artist or a link
+      if (props.recAuthor == "" && props.recLink == "") {
+        return(
+          <Text style={styles.modalText}>
+            <Text style={styles.modalHeading}>By: </Text>
+            <Text style={styles.modalSubtitle}>Not provided </Text>
+            {"\n"}
+            <Text style={styles.modalHeading}>Link: </Text>
+            <Text style={styles.modalSubtitle}>Not provided </Text>
+          </Text>)
+      }
+      // (2) if they included a link but no artist
+      else if (props.recAuthor !== "" && props.recLink == ""){
+        return(
+          <Text style={styles.modalText}>
+            <Text style={styles.modalHeading}>By: </Text>
+            {props.recAuthor}
+            {"\n"}
+            <Text style={styles.modalHeading}>Link: </Text>
+            <Text style={styles.modalSubtitle}>Not provided </Text>
+          </Text>)
+      }
+      // (3) if they included an artist but no link
+      else if (props.recAuthor == "" && props.recLink !== "") {
+        return(
+          <Text style={styles.modalText}>
+            <Text style={styles.modalHeading}>By: </Text>
+            <Text style={styles.modalSubtitle}>Not provided </Text>
+            {"\n"}
+            <Text style={styles.modalHeading}>Link: </Text>
+            <Text style={styles.modalText}
+                onPress={() => Linking.openURL(props.recLink)}>
+              {props.recLink}
+            </Text>
+          </Text>
+           )
+      }
+      // (4) if they provided both
+      else {
+        return(
+          <Text style={styles.modalText}>
+            <Text style={styles.modalHeading}>By: </Text>
+            {props.recAuthor}
+            {"\n"}
+            <Text style={styles.modalHeading}>Link: </Text>
+            <Text style={styles.modalText}
+                onPress={() => Linking.openURL(props.recLink)}>
+              {props.recLink}
+            </Text>
+          </Text>)
+      }
 
   // for movies, display genre and year
   } else if (props.mediaType == "Movie") {

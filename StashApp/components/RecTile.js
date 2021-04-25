@@ -322,9 +322,12 @@ async function recSeen() {
       <View style={styles.item}>
           <View style={{ flexDirection: 'column' }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              {/* RecTile display with media type icon, seen button and text*/}
+              {/* (1) pressable icon based on media type - opens modal pop up*/}
               <TouchableOpacity activeOpacity={0.25} onPress={toggleModal}>
                   <Image source={selectImage()} style={styles.recImage}></Image>
               </TouchableOpacity>
+              {/* (2) pressable "seen" button - marks rec as visited*/}
               <TouchableOpacity activeOpacity={0.6} onPress = {() => recSeen()}>
                 <View style={styles.circle} >
                   {props.seenBy && props.currentUserUID in props.seenBy && props.seenBy[props.currentUserUID] ?
@@ -333,11 +336,14 @@ async function recSeen() {
                 </View>
               </TouchableOpacity>
             </View>
+            {/* (3) pressable rec information - opens same modal pop up as icon in (1)*/}
+            <TouchableOpacity activeOpacity={0.25} onPress={toggleModal}>
             <Text style={[styles.name, selectColor()]}>
                     {/* if rec title is longer than two lines worth, shorten it with "..." */}
                     { props.recName.length > 22 ? props.recName.substring(0,22) + "..." : props.recName }
                   </Text>
                   <Text style={styles.media}>{props.mediaType}</Text>
+            </TouchableOpacity>
           </View>
 
           {/* Rec Details PopUp */}

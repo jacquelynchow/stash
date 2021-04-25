@@ -82,6 +82,8 @@ Stash is an effective solution because people typically make recommendations usi
   * Error checking: user must select a media type and provide at least a name for all recommendation types and a link for video types (YouTube & TikTok), all other fields are optional. Links inputted for both video types (YouTube & TikTok) and the song types will also be checked for validity before it can be added to a recommendation.  
 * Click on a Rec for more information about that Rec
   * Displays Full Rec name, media type, other media type specific details, comments (if provided), who the rec was recommended by, and in what pod this rec was recommended in
+  * Links included in the rec are clickable and navigates to the article, song,
+  or video that is linked
 #### **Recommendations Feed (By Type)**
 * Shows recs by selected type (Article, Book, Movie, Song, TikTok, or YouTube)
   * Color coded tile icons and titles according to selected type

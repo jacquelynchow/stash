@@ -14,26 +14,27 @@ import {getMediaRecs } from '../API/firebaseMethods';
 const ByMedia = (props) => {
     const currentUserUID = props.userId;
 
-    // const wait = (timeout) => {
-    //     return new Promise(resolve => setTimeout(resolve, timeout));
-    //   }
-    // const [refreshing, setRefreshing] = React.useState(false);
-    // const onRefresh = React.useCallback(() => {
-    //     setRefreshing(true);
-    //     wait(2000).then(() => setRefreshing(false));
-    //   }, []);
+    const wait = (timeout) => {
+        return new Promise(resolve => setTimeout(resolve, timeout));
+      }
+    const [refreshing, setRefreshing] = React.useState(false);
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        wait(2000).then(() => setRefreshing(false));
+      }, []);
 
     //create function for refresh and give media_type as argument
-    function refreshForType(media_Type){
-        const [refreshing, setRefreshing] = useState(false);
-        const onRefresh = useCallback(async () => {
-            setRefreshing(true);
-            await getMediaRecs(onRecsReceived,media_Type) // use await to refresh until function finished
-            .then(() => setRefreshing(false));
-        }, []);
-        return [onRefresh, refreshing];
-    }
+    // function refreshForType(media_Type){
+    //     const [refreshing, setRefreshing] = useState(false);
+    //     const onRefresh = useCallback(async () => {
+    //         setRefreshing(true);
+    //         await getMediaRecs(onRecsReceived,media_Type) // use await to refresh until function finished
+    //         .then(() => setRefreshing(false));
+    //     }, []);
+    //     return [onRefresh, refreshing];
+    // }
 
+    //gets number of user's recs for specific media type
     function numRecsForMedia(media_Type) {
         const [recs, setRecs] = useState([]);
         useEffect(() => {
@@ -48,6 +49,7 @@ const ByMedia = (props) => {
         return numRecs;
     }
   
+    //gets number of people who sent recs of specific media type to the user
     function numPeopleForMedia(media_Type) {
         const [recs, setRecs] = useState([]);
         useEffect(() => {
@@ -72,15 +74,14 @@ const ByMedia = (props) => {
     return (
         <View style={{flex: 1}}>
 
-
             {/* Show various rec types */}
             <ScrollView
                 contentContainerStyle={styles.container}
                 refreshControl={
                     <RefreshControl
                     //refresh for all media types
-                      refreshing={refreshForType('Article')[1]}
-                      onRefresh={refreshForType('Article')[0]}
+                      refreshing={refreshing}
+                      onRefresh={onRefresh}
                     />
                   }> 
                 <MediaGroup mediaType={"Articles"} numRecs={numRecsForMedia('Article')} numPeople={numPeopleForMedia('Article')} image={articleIcon} userId={currentUserUID} />
@@ -89,7 +90,6 @@ const ByMedia = (props) => {
                 <MediaGroup mediaType={"Songs"} numRecs={numRecsForMedia('Song')} numPeople={numPeopleForMedia('Song')} image={songIcon} userId={currentUserUID} />
                 <MediaGroup mediaType={"TikToks"} numRecs={numRecsForMedia('TikTok')} numPeople={numPeopleForMedia('TikTok')} image={tiktokIcon} userId={currentUserUID} />
                 <MediaGroup mediaType={"YouTube"} numRecs={numRecsForMedia('YouTube')} numPeople={numPeopleForMedia('YouTube')} image={youtubeIcon} userId={currentUserUID} />
-                {/* is having the number of people neccessary for showing by media? */}
             </ScrollView>
         </View>
     )
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-between',
-        alignItems: 'flex-start' // if you want to fill rows left to right
+        alignItems: 'flex-start' 
     },
     textBox: {
         margin: 50,

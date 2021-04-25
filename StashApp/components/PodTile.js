@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, Dimensions, Alert, 
-    Pressable, SafeAreaView, TextInput } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, Dimensions, Alert,
+    Pressable, SafeAreaView, TextInput, Keyboard} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
@@ -10,6 +10,7 @@ import {
     MenuTrigger,
 } from 'react-native-popup-menu';
 import Modal from 'react-native-modal';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
 // Components
 import closePopUpButton from '../assets/closePopUpButton.png';
 // Server related
@@ -110,8 +111,8 @@ const PodTile = (props) => {
         toggleModal();
         await changePodNameInDB(groupName, props.podId, props.members)
             .then(() => {
-                props.refresh(); 
-                setGroupName(""); 
+                props.refresh();
+                setGroupName("");
                 setErrors("");
             } );
     }
@@ -137,7 +138,7 @@ const PodTile = (props) => {
                         </MenuOption>
                         {/* change pod name option */}
                         <MenuOption onSelect={toggleModal} >
-                            <Text style={{ color: '#6f1d1b', fontWeight: 'bold', padding: 6 }}>Change Pod Name</Text> 
+                            <Text style={{ color: '#6f1d1b', fontWeight: 'bold', padding: 6 }}>Change Pod Name</Text>
                         </MenuOption>
                     </MenuOptions>
                 </Menu>
@@ -152,7 +153,7 @@ const PodTile = (props) => {
             <View style={styles.centeredView}>
                 <View style={styles.modalView}>
                     <Pressable style={[styles.button, styles.buttonClose]}
-                        // close modal popup 
+                        // close modal popup
                         onPress={toggleModal} >
                         <Image source={closePopUpButton} style={{width: 30, height: 30}}/>
                     </Pressable>
@@ -180,6 +181,7 @@ const PodTile = (props) => {
                         </TouchableOpacity>
                     </View>
                 </View>
+                <KeyboardSpacer />
             </View>
         </Modal>
         </>

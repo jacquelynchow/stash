@@ -149,6 +149,16 @@ export async function changePodNameInDB(newName, podId) {
     })
     .then(() => console.log("updated new pod name"))
     .catch((e) => console.log("error in changing pod name: " + e));
+
+    firebase.firestore().collection('recs').where('pod_id', '==', podId)
+    .get().then(function(querySnapshot) {
+      querySnapshot.forEach(function(doc) {
+        doc.ref.update({
+          rec_pod : newName
+        });
+      });
+    });
+  
 }
 
 // upload image to firebase storage folder called pod_images

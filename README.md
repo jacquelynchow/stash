@@ -73,7 +73,7 @@ Stash is an effective solution because people typically make recommendations usi
   * Error checking: user must choose at least one user to add to their new pod
 #### **Pod Page**
 * Back symbol on top left corner, pod name in the center, pod image on top right corner 
-* Dispays all recs for that specific pod with the Rec name, Media Type, Media Type icon
+* Displays all recs for that specific pod with the Rec name, Media Type, Media Type icon
 * Users can click on the circle if that rec was seen or not (upon refresh or upon click)
 * Show group members button on the bottom right will list all members in that pod 
 * Add/Send a Rec button on the bottom right allows users to create recommendations for that specific pod
@@ -86,6 +86,7 @@ Stash is an effective solution because people typically make recommendations usi
   * Color coded tile icons and titles according to selected type
   * Displays how many recs per media type and from how many people (or person)
 #### **MediaType Page**
+* Displays all the user's recs for that specific media type
 * This feed will have all of the same rec functionalities as **Pod Page**, except for the ability to add a recommendation; recs must be added within pods
 
 ## Files and Folders

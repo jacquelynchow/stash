@@ -177,15 +177,15 @@ const SignupModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
             {/* conditional rendering of phone verification fields */}
             {/* show input to enter 6 digit code and confirmation button after the code has been sent */}
             {codeVisible ?
-            [<Text style={styles.userDetailsText}>
+            <Text style={styles.userDetailsText}>
                 6-Digit Code
-            </Text>] :
-            [<Text style={styles.userDetailsText}>
+            </Text> :
+            <Text style={styles.userDetailsText}>
                 Phone Number
-            </Text>]}
+            </Text>}
 
             {codeVisible ?
-            [<View style={{ flexDirection: 'row'}}>
+            <View style={{ flexDirection: 'row'}}>
               <MaterialCommunityIcons name="cellphone-iphone" size={28} color="white" style={{ marginTop: 8 }} />
               <SafeAreaView>
                   <TextInput
@@ -200,8 +200,8 @@ const SignupModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
                       defaultValue={verificationCode}
                   />
               </SafeAreaView>
-            </View>] :
-            [<View style={{ flexDirection: 'row'}}>
+            </View> :
+            <View style={{ flexDirection: 'row'}}>
             <FontAwesome name="phone" size={28} color="white" style={{ marginTop: 8 }} />
             <SafeAreaView>
                 <TextInput
@@ -217,7 +217,7 @@ const SignupModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
                     onBlur={() => setInputActive({ phoneActive: false })}
                 />
             </SafeAreaView>
-            </View>]}
+            </View>}
 
             <View style={{ display: 'flex', justifyContent: 'flex-start' }}>
               <Text style={styles.errorMessage}>{errors.codeError}</Text>
@@ -226,13 +226,13 @@ const SignupModal = ({ isModalVisible, setModalVisible, setModalSelected }) => {
 
             {/* signup button ----------------------------------------------- */}
             {codeVisible ?
-            [<TouchableOpacity style={styles.signUpButton} onPress={checkFieldsOnSignup}>
+            <TouchableOpacity style={styles.signUpButton} onPress={checkFieldsOnSignup}>
               <Text style={styles.signUpText}>Signup</Text>
-            </TouchableOpacity>] :
+            </TouchableOpacity> :
             // send verification code button ------------------------------------------
-            [<TouchableOpacity style={styles.verificationButton} onPress={checkFieldsOnSendCode}>
+            <TouchableOpacity style={styles.verificationButton} onPress={checkFieldsOnSendCode}>
               <Text style={styles.verificationText}>Send Verification Code</Text>
-            </TouchableOpacity>]}
+            </TouchableOpacity>}
 
         {attemptInvisibleVerification && <FirebaseRecaptchaBanner />}
         <KeyboardSpacer />

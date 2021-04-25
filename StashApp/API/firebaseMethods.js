@@ -1,6 +1,7 @@
+import {Alert} from "react-native";
+// Server related
 import * as firebase from "firebase";
 import "firebase/firestore";
-import {Alert} from "react-native";
 
 // --------- LOG IN / SIGN UP RELATED --------------------------
 // sign up a new user
@@ -136,6 +137,18 @@ async function getPodsForUser(podList, pods) {
       })
       .catch((e) => console.log("error in adding pods to podList: " + e));
   }
+}
+
+// change pod's name to a new name using its podId
+export async function changePodNameInDB(newName, podId) {
+  const podsRef = firebase.firestore().collection("pods");
+  await podsRef
+    .doc(podId) 
+    .update({
+      pod_name : newName // update old pod name to new name
+    })
+    .then(() => console.log("updated new pod name"))
+    .catch((e) => console.log("error in changing pod name: " + e));
 }
 
 // upload image to firebase storage folder called pod_images

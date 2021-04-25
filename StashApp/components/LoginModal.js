@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, Pressable, SafeAreaView, Dimensions, Image, Alert, Keyboard } from 'react-native';
+import { StyleSheet, View, Text, TextInput, Pressable, SafeAreaView, Dimensions, Image, Alert } from 'react-native';
 import Modal from 'react-native-modal';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
-import closePopUpButton from '../assets/closePopUpButton.png';
-import { useNavigation } from '@react-navigation/native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import * as firebase from "firebase";
 import { FontAwesome } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { FirebaseRecaptchaVerifierModal, FirebaseRecaptchaBanner } from 'expo-firebase-recaptcha';
+// Components
+import closePopUpButton from '../assets/closePopUpButton.png';
+// Server related
+import * as firebase from "firebase";
 
 const windowWidth = Dimensions.get('window').width;
 

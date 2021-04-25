@@ -3,12 +3,14 @@ import { StyleSheet, View, Text, TextInput, Pressable, SafeAreaView, Dimensions,
   Image, TouchableOpacity, Alert } from 'react-native';
 import Modal from 'react-native-modal';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
-import closePopUpButton from '../assets/closePopUpButton.png';
-import { registration } from '../API/firebaseMethods';
 import { FirebaseRecaptchaVerifierModal, FirebaseRecaptchaBanner } from 'expo-firebase-recaptcha';
-import * as firebase from 'firebase';
 import { FontAwesome } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+// Components
+import closePopUpButton from '../assets/closePopUpButton.png';
+// Server related
+import { registration } from '../API/firebaseMethods';
+import * as firebase from 'firebase';
 
 const windowWidth = Dimensions.get('window').width;
 

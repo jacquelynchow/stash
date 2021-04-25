@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Dimensions, StyleSheet, Text, View, StatusBar, Image, TouchableOpacity } from 'react-native';
-import logo from '../assets/stash-transparent.png';
 import Swiper from 'react-native-swiper/src';
+// Components
+import logo from '../assets/stash-transparent.png';
 import PodIcon from '../assets/onboard-icons/pod.png';
 import InteractIcon from '../assets/onboard-icons/interact.png';
 import SortIcon from '../assets/onboard-icons/sort.png';

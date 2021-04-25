@@ -1,6 +1,8 @@
 import React, { useEffect, useState,useCallback } from 'react';
 import { StyleSheet, View, ScrollView, Text, Dimensions, RefreshControl } from 'react-native';
+// Components
 import RecTile from '../components/RecTile';
+// Server related
 import {getMediaRecs} from '../API/firebaseMethods';
 
 const windowHeight = Dimensions.get('window').height;

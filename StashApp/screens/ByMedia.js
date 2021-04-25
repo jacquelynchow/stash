@@ -1,5 +1,6 @@
 import React, {useEffect, useState, useCallback} from 'react';
 import { StyleSheet, View, ScrollView, RefreshControl } from 'react-native';
+// Components
 import MediaGroup from '../components/MediaGroup';
 import bookIcon from '../assets/type-icons/book.png';
 import movieIcon from '../assets/type-icons/movie.png';
@@ -7,9 +8,8 @@ import songIcon from '../assets/type-icons/song.png';
 import tiktokIcon from '../assets/type-icons/tiktok.png';
 import articleIcon from '../assets/type-icons/article.png';
 import youtubeIcon from '../assets/type-icons/youtube.png';
+// Server related
 import {getMediaRecs } from '../API/firebaseMethods';
-
-
 
 const ByMedia = (props) => {
     const currentUserUID = props.userId;

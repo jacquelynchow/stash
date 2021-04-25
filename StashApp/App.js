@@ -1,8 +1,7 @@
 import React from 'react';
-import { Image } from 'react-native';
+import { Image, Alert, TouchableOpacity, SafeAreaView } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import * as firebase from 'firebase';
 import { MenuProvider } from 'react-native-popup-menu';
 // Screens
 import LoginScreen from './screens/Login';
@@ -16,6 +15,8 @@ import Back from './components/Back';
 import StashLogo from './assets/stash-transparent.png';
 // Config File
 import apiKeys from './config/keys';
+// Server related
+import * as firebase from 'firebase';
 
 const Stack = createStackNavigator();
 
@@ -27,12 +28,23 @@ function IconHeader(props) {
     style={{ width: 40, height: 40, borderRadius: 40/2, marginRight : 15, marginBottom: 5 }} />
   );
 }
-// stash logo header that shows image on top left corner
+
+// stash logo header that shows image on top left corner and when clicked shows 'about' info
 function StashIconHeader() {
+  const showAbout = () => {
+    Alert.alert("About Us", "Creators: Alice Huang, Jacquelyn Chow, Leia Rich, Lamia Makkar\n\nStash © 2021", 
+      [ { text: "Back" } ]
+    )}
+
   return (
-    <Image
-    source={StashLogo}
-    style={{ width: 80, height: 60, resizeMode: "contain", marginLeft: 22, marginBottom: 10 }} />
+    <SafeAreaView>
+        <TouchableOpacity onPress={showAbout} activeOpacity={0.6}>
+          <Image
+          source={StashLogo}
+          style={{ width: 80, height: 60, resizeMode: "contain", 
+            marginLeft: 22, marginBottom: 10 }} />
+        </TouchableOpacity>
+    </SafeAreaView>
   );
 }
 

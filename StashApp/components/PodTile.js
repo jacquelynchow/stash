@@ -1,5 +1,6 @@
-import React, { useCallback } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, Dimensions, Alert } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { StyleSheet, Text, View, Image, TouchableOpacity, Dimensions, Alert, 
+    Pressable, SafeAreaView, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
@@ -8,6 +9,11 @@ import {
     MenuOption,
     MenuTrigger,
 } from 'react-native-popup-menu';
+import Modal from 'react-native-modal';
+// Components
+import closePopUpButton from '../assets/closePopUpButton.png';
+// Server related
+import { changePodNameInDB } from '../API/firebaseMethods';
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -53,7 +59,7 @@ const PodTile = (props) => {
         }
     }, []);
 
-    //display 1 "Member" or multiple "Members"
+    // display 1 "Member" or multiple "Members"
     function numMembers (numMembers) {
         if (numMembers ==1){
             return "Member"
@@ -63,7 +69,7 @@ const PodTile = (props) => {
         }
     }
 
-    //display 1 "Rec" or multiple "Recs"
+    // display 1 "Rec" or multiple "Recs"
     function numRecs (numRecs) {
         if (numRecs ==1){
             return "Rec"
@@ -73,9 +79,45 @@ const PodTile = (props) => {
         }
     }
 
+    // init modal visibility vars
+    const [isModalVisible, setModalVisible] = useState(false);
+    const toggleModal = () => {
+        setModalVisible(!isModalVisible);
+    };
 
+    // init error message for changing pod name
+    const [errors, setErrors] = useState("");
+    // init group name for changing pod name
+    const [groupName, setGroupName] = useState("");
+    // checks if new pod name is not empty and if < 20 chars, then it calls changePodName()
+    const checkAllFieldsOnSubmit = () => {
+        let allValid = true;
+        // check if group name empty or only has whitespace
+        if (groupName === "" || !groupName.replace(/\s/g, '').length) {
+            setErrors({nameError: "*Pod name is empty"});
+            allValid = false;
+        } else if (groupName.length > 20) {
+            setErrors({nameError: "*Maximum 20 characters"});
+            allValid = false;
+        }
+        // if everything checks out, add to pods list
+        if (allValid) {
+            changePodName();
+        }
+    }
+    // closes change pod name modal, calls firebase function to update pod name with new name, then resets fields
+    const changePodName = async () => {
+        toggleModal();
+        await changePodNameInDB(groupName, props.podId, props.members)
+            .then(() => {
+                props.refresh(); 
+                setGroupName(""); 
+                setErrors("");
+            } );
+    }
 
     return (
+        <>
         <View style={styles.item}>
             <TouchableOpacity activeOpacity={.7} onPress={() => navigation.navigate('Pod',
                     { podId: props.podId, name: props.groupName, numMembers: props.numMembers, members: props.members,
@@ -87,10 +129,15 @@ const PodTile = (props) => {
                         <MaterialCommunityIcons name="dots-horizontal" size={32} color="#ccc" />
                     </MenuTrigger>
                     <MenuOptions customStyles={optionsStyles} >
+                        {/* delete or leave pod option */}
                         <MenuOption onSelect={confirmDeletePod} >
                             {props.numMembers == 1 ?
                             <Text style={{ color: '#6f1d1b', fontWeight: 'bold', padding: 6 }}>Delete Pod</Text> :
                             <Text style={{ color: '#6f1d1b', fontWeight: 'bold', padding: 6 }}>Leave Pod</Text>}
+                        </MenuOption>
+                        {/* change pod name option */}
+                        <MenuOption onSelect={toggleModal} >
+                            <Text style={{ color: '#6f1d1b', fontWeight: 'bold', padding: 6 }}>Change Pod Name</Text> 
                         </MenuOption>
                     </MenuOptions>
                 </Menu>
@@ -100,6 +147,42 @@ const PodTile = (props) => {
                 <Text style={styles.recommendations}>{props.numRecs} {numRecs(props.numRecs)}</Text>
             </TouchableOpacity>
         </View>
+        {/* Change Pod Name Modal */}
+        <Modal isVisible={isModalVisible}>
+            <View style={styles.centeredView}>
+                <View style={styles.modalView}>
+                    <Pressable style={[styles.button, styles.buttonClose]}
+                        // close modal popup 
+                        onPress={toggleModal} >
+                        <Image source={closePopUpButton} style={{width: 30, height: 30}}/>
+                    </Pressable>
+                    <Text style={styles.modalTitle}>Change Pod Name</Text>
+                    <View style={{flexDirection: 'row'}}>
+                        <Text style={styles.modalText}>New name: </Text>
+                        <SafeAreaView>
+                            <TextInput
+                            onChangeText={groupName => setGroupName(groupName)}
+                            style={styles.userInput}
+                            defaultValue={groupName}
+                            placeholder={"Enter a pod name"}
+                            value={groupName}
+                            />
+                        </SafeAreaView>
+                    </View>
+                    <View style={{ display: 'flex', marginTop: 10}}>
+                        <Text style={styles.errorMessage}>{errors.nameError}</Text>
+                    </View>
+
+                    {/* Confirm Pod Name change button */}
+                    <View>
+                        <TouchableOpacity style={styles.changeButton} onPress={checkAllFieldsOnSubmit}>
+                            <Text style={styles.changeButtonText}>Confirm Change</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
+        </Modal>
+        </>
     )
 }
 
@@ -146,7 +229,81 @@ const styles = StyleSheet.create({
         color: '#6f1d1b',
         fontWeight: 'bold',
         padding: 6
-    }
+    },
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 22,
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: "#6F1D1B",
+        borderRadius: 20,
+        padding: 35,
+        // ios
+        shadowOffset: {width: 10, height: 10},
+        shadowOpacity: 0.1,
+        shadowRadius: 10,
+        // android
+        elevation: 2
+    },
+    button: {
+        padding: 10
+    },
+    buttonClose: {
+        position: 'absolute',
+        alignSelf: 'flex-start',
+        marginBottom: 5,
+    },
+    modalTitle: {
+        textAlign: "center",
+        fontWeight: 'bold',
+        fontSize: 25,
+        marginTop: 10,
+        color: "white",
+    },
+    modalText: {
+        fontSize: 16,
+        color: 'white',
+        marginTop: 20,
+        marginRight: 10,
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+    },
+    userInput: {
+        height: 30,
+        width: windowWidth/2.5,
+        fontSize: 16,
+        backgroundColor: 'white',
+        borderRadius: 10,
+        padding: 5,
+        paddingHorizontal: 10,
+        marginLeft: 0,
+        marginTop: 15,
+    },
+    changeButtonText: {
+        color: "#D68C45",
+        fontWeight: 'bold',
+        textTransform: 'uppercase',
+        fontSize: 18,
+        textAlign: 'center'
+    },
+    changeButton: {
+        backgroundColor: "white",
+        borderRadius: 20,
+        marginTop: 40,
+        paddingVertical: 10,
+        // ios
+        shadowOffset: {width: 10, height: 10},
+        shadowOpacity: 0.1,
+        shadowRadius: 10,
+        // android
+        elevation: 2,
+    },
+    errorMessage: {
+        color: '#ffc9b9',
+    },
 })
 
 const triggerStyles = {

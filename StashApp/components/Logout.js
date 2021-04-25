@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { StyleSheet, Image, TouchableOpacity, View, SafeAreaView, 
     Text, Pressable } from 'react-native';
-import logoutButton from '../assets/logout-symbol.png';
 import Modal from 'react-native-modal';
 import { useNavigation } from '@react-navigation/native';
+// Components
+import logoutButton from '../assets/logout-symbol.png';
+// Server related
 import {loggingOut} from '../API/firebaseMethods';
 
 // logout icon button

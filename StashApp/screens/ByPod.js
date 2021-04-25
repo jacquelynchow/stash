@@ -2,15 +2,17 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { StyleSheet, ScrollView, View, TouchableOpacity, Image, Pressable, Text,
     SafeAreaView, TextInput, Dimensions, FlatList,
     RefreshControl, ActivityIndicator } from 'react-native';
-import PodTile from '../components/PodTile';
-import KeyboardSpacer from 'react-native-keyboard-spacer';
-import addPodButton from '../assets/addPodButton.png';
-import closePopUpButton from '../assets/closePopUpButton.png';
-import uploadPodImage from '../assets/uploadPodImage.png';
 import Modal from 'react-native-modal';
 import { SearchBar } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
+// Components
+import PodTile from '../components/PodTile';
+import addPodButton from '../assets/addPodButton.png';
+import closePopUpButton from '../assets/closePopUpButton.png';
+import uploadPodImage from '../assets/uploadPodImage.png';
+// Server related
 import { addPodToDB, getPods, uploadImageToStorage,
     retrieveImageFromStorage, deleteImage, getUsers,
     deletePodFromDB, removeMemberFromPod } from '../API/firebaseMethods';
@@ -83,13 +85,9 @@ const ByPod = (props) => {
         let allValid = true;
         // check if group name empty or only has whitespace
         if (groupName === "" || !groupName.replace(/\s/g, '').length) {
-            setErrors({nameError: "*Group name is required"});
+            setErrors({nameError: "*Pod name is required"});
             allValid = false;
-        // check if user isn't already in a pod with this same pod name
-        } else if (groupName in podNames) {
-            setErrors({nameError: "*This is an existing group name"});
-            allValid = false;
-        } else if (groupName.length > 20) {
+        }  else if (groupName.length > 20) {
             setErrors({nameError: "*Maximum 20 characters"});
             allValid = false;
         }
@@ -253,7 +251,7 @@ const ByPod = (props) => {
                             image={pod.pod_picture}
                             />) :
                     <View style={styles.centeredView}>
-                        <Text style={styles.noPodsYetText}>Welcome, {username}!</Text>
+                        <Text style={styles.noPodsYetWelcome}>Welcome,  <Text style={{fontStyle:'italic', fontWeight: '700'}} >{username}</Text>!</Text>
                         <Text style={styles.noPodsYetTitle}>Click the + button to start a pod</Text>
                         <Text style={styles.noPodsYetText}>Pods can be with one person or a group</Text>
                     </View>
@@ -433,6 +431,11 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginTop: 22,
     },
+    noPodsYetWelcome: {
+        color: "#6F1D1B",
+        marginTop: -10,
+        fontSize: 23
+    },
     noPodsYetTitle: {
         marginTop: windowHeight/4,
         color: "#6F1D1B",
@@ -442,7 +445,7 @@ const styles = StyleSheet.create({
     noPodsYetText: {
         color: "#6F1D1B",
         fontStyle: 'italic',
-        marginTop: 10,
+        marginTop: 0,
         fontSize: 14
     },
     modalView: {

@@ -1,7 +1,8 @@
 import React from 'react';
 import { Image, TouchableOpacity, View, SafeAreaView} from 'react-native';
-import backButton from '../assets/back-symbol.png';
 import { useNavigation } from '@react-navigation/native';
+// Components
+import backButton from '../assets/back-symbol.png';
 
 // back icon button
 const Back = () => {

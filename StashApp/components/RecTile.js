@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { Dimensions, StyleSheet, Text, View, Image, 
   TouchableOpacity, Pressable, Linking } from 'react-native';
-import closePopUpButton from '../assets/closePopUpButton.png';
 import Modal from 'react-native-modal';
+// Components
+import closePopUpButton from '../assets/closePopUpButton.png';
 import bookIcon from '../assets/type-icons/book.png';
 import movieIcon from '../assets/type-icons/movie.png';
 import songIcon from '../assets/type-icons/song.png';
 import tiktokIcon from '../assets/type-icons/tiktok.png';
 import articleIcon from '../assets/type-icons/article.png';
 import youtubeIcon from '../assets/type-icons/youtube.png';
+// Server related
 import { getRecs, updateRecSeenBy, getMediaRecs } from '../API/firebaseMethods';
 
 const windowWidth = Dimensions.get('window').width;

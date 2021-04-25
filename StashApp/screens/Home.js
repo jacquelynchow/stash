@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Dimensions } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+// Screens
 import ByPod from './ByPod';
 import ByMedia from './ByMedia';
 

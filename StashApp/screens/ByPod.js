@@ -378,9 +378,9 @@ const ByPod = (props) => {
 
                         {/* Add A Pod Button for pop up */}
                         <View>
-                            <Pressable style={styles.createPodButton} onPress={checkAllFieldsOnSubmit}>
+                            <TouchableOpacity style={styles.createPodButton} onPress={checkAllFieldsOnSubmit}>
                                 <Text style={styles.createPodText}>Create Pod</Text>
-                            </Pressable>
+                            </TouchableOpacity>
                         </View>
                     <KeyboardSpacer />
                     </View>

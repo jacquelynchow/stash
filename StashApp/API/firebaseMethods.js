@@ -415,3 +415,35 @@ export async function updateRecSeenBy(userId, recId) {
     )
     .then(() => console.log(userId, "clicked a rec: ", recId))
 }
+
+// delete existing rec object from the db
+export async function deleteRecFromDB(recId, podId) {
+  const db = firebase.firestore();
+
+  // get rec from db and delete it
+  await db.collection('recs').where('id', '==', recId)
+  .get().then(function(querySnapshot) {
+    querySnapshot.forEach(function(doc) {
+      doc.ref.delete();
+    });
+  });
+
+  // delete this rec id data from the pod it is in
+  const podsDb = db.collection("pods");
+  await podsDb.doc(podId).update({
+    // remove rec from pod's list of rec ids
+    "recIds" : firebase.firestore.FieldValue.arrayRemove(recId)
+  })
+
+  // decrement number of recs in pod data
+  const decrement = firebase.firestore.FieldValue.increment(-1);
+  await db.collection("pods").where('pod_id', '==', podId)
+  .get().then(function(querySnapshot) {
+    querySnapshot.forEach(function(doc) {
+      doc.ref.update({
+        num_recs: decrement
+      })
+      .catch((error) => console.log(error));
+    });
+  });
+}

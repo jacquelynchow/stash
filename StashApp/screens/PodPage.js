@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { StyleSheet, View, ScrollView, TouchableOpacity, Image,
   Pressable, Text, TextInput, SafeAreaView, Keyboard,
-  Dimensions, RefreshControl } from 'react-native';
+  Dimensions, RefreshControl, ActivityIndicator } from 'react-native';
 import Modal from 'react-native-modal';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -18,7 +18,7 @@ import VideoType from '../components/media-types/VideoType';
 import SongType from '../components/media-types/SongType';
 import ArticleType from '../components/media-types/ArticleType';
 // Server Related
-import { addRecToDB, getRecs } from '../API/firebaseMethods';
+import { addRecToDB, getRecs, getPods } from '../API/firebaseMethods';
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
@@ -32,10 +32,14 @@ const PodPage = ({ navigation, route}) => {
   const username = podData.username;
   const podName = podData.name;
   const podId = podData.podId;
+  
   // call firebase api function getRecs on onRecsReceived function to render recs from db
   useEffect(() => {
     getRecs(podId, onRecsReceived);
   }, []);
+
+  // init loading bool when activity indicator is needed
+  const [isLoading, setLoading] = useState(false);
 
   // display pop up when send rec modal view is on
   const [isModalVisible, setModalVisible] = useState(false);
@@ -75,7 +79,7 @@ const PodPage = ({ navigation, route}) => {
       setRecs([...recs, newRec]);
       // add rec object to database using firebase API function
       await addRecToDB(newRec)
-        .then(() => getRecs(podId, onRecsReceived)); // re-fetch pods (for wasSeen checkmark function)
+        .then(() => { getRecs(podId, onRecsReceived);  setLoading(false);}); // re-fetch pods (for wasSeen checkmark function)
       //close modal pop up
       toggleModal();
       //reset input fields to blank
@@ -84,7 +88,7 @@ const PodPage = ({ navigation, route}) => {
 
   // once recs are received, set recs to these received recs
   const onRecsReceived = (recList) => {
-      setRecs(recList);
+    setRecs(recList);
   };
 
   // resets all form fields on Send a Rec modal
@@ -122,7 +126,8 @@ const PodPage = ({ navigation, route}) => {
       }
       // if everything checks out, add to recs list
       if (allValid) {
-          addNewRec(recs);
+        setLoading(true);
+        addNewRec(recs);
       }
   };
 
@@ -191,6 +196,7 @@ const PodPage = ({ navigation, route}) => {
                   seenBy={rec.seenBy}
                   currentUserUID={currentUserUID}
                   recs={recs}
+                  refresh={onRefresh}
                   onRecsReceived={onRecsReceived}
                   fromMediaTypePage={false}
                   fromPodPage={true} />) :
@@ -235,6 +241,10 @@ const PodPage = ({ navigation, route}) => {
 
         {/* Add A Rec PopUp */}
         <Modal isVisible={isModalVisible}>
+          {isLoading ?
+          <View style={styles.loading}>
+              <ActivityIndicator size="large"/>
+          </View> :
           <View style={styles.centeredView} >
             <View style={styles.modalView}>
                 <Pressable style={[styles.button, styles.buttonClose]}
@@ -296,6 +306,7 @@ const PodPage = ({ navigation, route}) => {
                 <KeyboardSpacer />
             </View>
           </View>
+          }
         </Modal>
 
         {/* Send A Rec Button */}
@@ -475,12 +486,23 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   errorMessage: {
-      color: '#ffc9b9',
+    color: '#ffc9b9',
   },
   selectMediaDropdown: {
     flexDirection: 'column',
     alignSelf: 'flex-start',
     marginTop: 20,
+  },
+  loading: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    width:'100%',
+    height:'100%',
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 })
 

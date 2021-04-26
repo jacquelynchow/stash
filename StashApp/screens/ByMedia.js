@@ -13,7 +13,7 @@ import {getMediaRecs } from '../API/firebaseMethods';
 
 const ByMedia = (props) => {
     const currentUserUID = props.userId;
-
+    var recTypes = ['Article','Book','Movie','Song','TikTok','YouTube'];
     const wait = (timeout) => {
         return new Promise(resolve => setTimeout(resolve, timeout));
       }
@@ -59,17 +59,15 @@ const ByMedia = (props) => {
         const onRecsReceived = (recList) => {
         setRecs(recList);
         }; 
-        const ppl = [];
+        const people = [];
         for(var i=0; i<recs.length;i++) {
-            if (!(ppl.includes(recs[i].rec_sender))) {
-                ppl.push(recs[i].rec_sender)
+            if (!(people.includes(recs[i].rec_sender))) {
+                people.push(recs[i].rec_sender)
             }
         }
-        const numPpl = ppl.length;
-        return numPpl;
+        const numPeople = people.length;
+        return numPeople;
     }
-
-    var recTypes = ['Article','Book','Movie','Song','TikTok','YouTube'];
 
     return (
         <View style={{flex: 1}}>

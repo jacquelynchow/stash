@@ -372,7 +372,7 @@ export async function getMediaRecs(recsRecieved, media_type){
     .doc(currentUserUid)
     .get()
     .then((doc) => {
-      pods = Object.keys(doc.data().pods) // save the pods keys (aka pod names) to pods list
+      pods = Object.keys(doc.data().pods) // save the pods keys to pods list
     })
     .catch((e) => console.log("error in adding getting pods for current user: " + e));
 

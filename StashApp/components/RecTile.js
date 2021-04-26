@@ -30,7 +30,12 @@ const RecTile = (props) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const toggleModal = () => {
       setModalVisible(!isModalVisible);
+      setErrors({linkError: ''});
   };
+
+  const [errors, setErrors] = useState({
+      linkError: ''
+  });
 
 //To display different icon based on media type
 function selectImage() {
@@ -124,8 +129,7 @@ function displayRecDetails(){
       return(
         <Text>
           <Text style={styles.modalHeading}>View at: </Text>
-          <Text style={styles.modalText}
-              onPress={() => Linking.openURL(props.recLink)}>
+          <Text style={styles.modalText} onPress={tryURL}>
             {props.recLink}
           </Text>
         </Text>)
@@ -163,8 +167,7 @@ function displayRecDetails(){
           <Text style={styles.modalSubtitle}>Not provided </Text>
           {"\n"}
           <Text style={styles.modalHeading}>Link: </Text>
-          <Text style={styles.modalText}
-              onPress={() => Linking.openURL(props.recLink)}>
+          <Text style={styles.modalText} onPress={tryURL}>
             {props.recLink}
           </Text>
         </Text>
@@ -178,8 +181,7 @@ function displayRecDetails(){
           {props.recAuthor}
           {"\n"}
           <Text style={styles.modalHeading}>Link: </Text>
-          <Text style={styles.modalText}
-              onPress={() => Linking.openURL(props.recLink)}>
+          <Text style={styles.modalText} onPress={tryURL}>
             {props.recLink}
           </Text>
         </Text>)
@@ -218,8 +220,7 @@ function displayRecDetails(){
             <Text style={styles.modalSubtitle}>Not provided </Text>
             {"\n"}
             <Text style={styles.modalHeading}>Link: </Text>
-            <Text style={styles.modalText}
-                onPress={() => Linking.openURL(props.recLink)}>
+            <Text style={styles.modalText} onPress={tryURL}>
               {props.recLink}
             </Text>
           </Text>
@@ -233,8 +234,7 @@ function displayRecDetails(){
             {props.recAuthor}
             {"\n"}
             <Text style={styles.modalHeading}>Link: </Text>
-            <Text style={styles.modalText}
-                onPress={() => Linking.openURL(props.recLink)}>
+            <Text style={styles.modalText} onPress={tryURL}>
               {props.recLink}
             </Text>
           </Text>)
@@ -308,6 +308,21 @@ function displayComments(){
         <Text style={styles.modalHeading}>Comments: </Text>
         {props.recComment}
       </Text>)}
+}
+
+// checks if URL can actually be opened, if not, throws an error in console and
+//  on screen
+function tryURL(){
+  Linking.canOpenURL(props.recLink)
+    .then((supported) => {
+      if (!supported) {
+        console.log("Can't handle url: " + props.recLink);
+        setErrors({linkError: "*Sorry, can't open this URL"});
+      } else {
+        return Linking.openURL(props.recLink);
+      }
+  })
+  .catch((err) => console.error('An error occurred', err));
 }
 
 // handle if rec was clicked as seen or unclicked as seen
@@ -394,6 +409,12 @@ async function confirmDeleteRec() {
 
                       {/* display other fields based on media type*/}
                       { displayRecDetails() }
+
+                      {/* for media types with links, catch any errors if link
+                          cannot open */}
+                      <Text style={styles.errorMessage}>
+                        {errors.linkError}
+                      </Text>
 
                       {/* display comments - not required when sending rec*/}
                       { displayComments() }
@@ -493,7 +514,13 @@ const styles = StyleSheet.create({
         paddingBottom: 0,
         // colour is determined based on selectColor() function - options below
     },
-
+    errorMessage: {
+        color: 'white',
+        fontWeight: "600",
+        fontSize: 12,
+        marginTop: 3,
+        marginBottom: -2,
+    },
     media: {
         padding: 15,
         paddingTop: 5,
@@ -509,7 +536,8 @@ const styles = StyleSheet.create({
       width: windowWidth/3,
       height: windowWidth/5,
       borderRadius: 10,
-    },    //circle for "seen" button
+    },
+    //circle for "seen" button
     circle: {
       marginRight: 10,
       marginBottom: 10,

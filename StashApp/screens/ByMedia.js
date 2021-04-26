@@ -74,7 +74,7 @@ const ByMedia = (props) => {
     return (
         <View style={{flex: 1}}>
 
-            {/* Displays the 6 media types and the number of recs and number of senders for each media type  */}
+            {/* Show various rec types */}
             <ScrollView
                 contentContainerStyle={styles.container}
                 refreshControl={

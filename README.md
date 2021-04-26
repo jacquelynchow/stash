@@ -84,6 +84,7 @@ Stash is an effective solution because people typically make recommendations usi
   * Displays Full Rec name, media type, other media type specific details, comments (if provided), who the rec was recommended by, and in what pod this rec was recommended in
   * Links included in the rec are clickable and navigates to the article, song,
   or video that is linked
+* Option to delete a Rec 
 #### **Recommendations Feed (By Type)**
 * Shows recs by selected type (Article, Book, Movie, Song, TikTok, or YouTube)
   * Color coded tile icons and titles according to selected type

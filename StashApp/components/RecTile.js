@@ -2,6 +2,13 @@ import React, { useState } from 'react';
 import { Dimensions, StyleSheet, Text, View, Image,
   TouchableOpacity, Pressable, Linking } from 'react-native';
 import Modal from 'react-native-modal';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import {
+  Menu,
+  MenuOptions,
+  MenuOption,
+  MenuTrigger,
+} from 'react-native-popup-menu';
 // Components
 import closePopUpButton from '../assets/closePopUpButton.png';
 import bookIcon from '../assets/type-icons/book.png';
@@ -11,7 +18,8 @@ import tiktokIcon from '../assets/type-icons/tiktok.png';
 import articleIcon from '../assets/type-icons/article.png';
 import youtubeIcon from '../assets/type-icons/youtube.png';
 // Server related
-import { getRecs, updateRecSeenBy, getMediaRecs } from '../API/firebaseMethods';
+import { getRecs, updateRecSeenBy, getMediaRecs, deleteRecFromDB } from '../API/firebaseMethods';
+import { SafeAreaView } from 'react-native';
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -22,7 +30,12 @@ const RecTile = (props) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const toggleModal = () => {
       setModalVisible(!isModalVisible);
+      setErrors({linkError: ''});
   };
+
+  const [errors, setErrors] = useState({
+      linkError: ''
+  });
 
 //To display different icon based on media type
 function selectImage() {
@@ -116,8 +129,7 @@ function displayRecDetails(){
       return(
         <Text>
           <Text style={styles.modalHeading}>View at: </Text>
-          <Text style={styles.modalText}
-              onPress={() => Linking.openURL(props.recLink)}>
+          <Text style={styles.modalText} onPress={tryURL}>
             {props.recLink}
           </Text>
         </Text>)
@@ -155,8 +167,7 @@ function displayRecDetails(){
           <Text style={styles.modalSubtitle}>Not provided </Text>
           {"\n"}
           <Text style={styles.modalHeading}>Link: </Text>
-          <Text style={styles.modalText}
-              onPress={() => Linking.openURL(props.recLink)}>
+          <Text style={styles.modalText} onPress={tryURL}>
             {props.recLink}
           </Text>
         </Text>
@@ -170,8 +181,7 @@ function displayRecDetails(){
           {props.recAuthor}
           {"\n"}
           <Text style={styles.modalHeading}>Link: </Text>
-          <Text style={styles.modalText}
-              onPress={() => Linking.openURL(props.recLink)}>
+          <Text style={styles.modalText} onPress={tryURL}>
             {props.recLink}
           </Text>
         </Text>)
@@ -210,8 +220,7 @@ function displayRecDetails(){
             <Text style={styles.modalSubtitle}>Not provided </Text>
             {"\n"}
             <Text style={styles.modalHeading}>Link: </Text>
-            <Text style={styles.modalText}
-                onPress={() => Linking.openURL(props.recLink)}>
+            <Text style={styles.modalText} onPress={tryURL}>
               {props.recLink}
             </Text>
           </Text>
@@ -225,8 +234,7 @@ function displayRecDetails(){
             {props.recAuthor}
             {"\n"}
             <Text style={styles.modalHeading}>Link: </Text>
-            <Text style={styles.modalText}
-                onPress={() => Linking.openURL(props.recLink)}>
+            <Text style={styles.modalText} onPress={tryURL}>
               {props.recLink}
             </Text>
           </Text>)
@@ -302,6 +310,21 @@ function displayComments(){
       </Text>)}
 }
 
+// checks if URL can actually be opened, if not, throws an error in console and
+//  on screen
+function tryURL(){
+  Linking.canOpenURL(props.recLink)
+    .then((supported) => {
+      if (!supported) {
+        console.log("Can't handle url: " + props.recLink);
+        setErrors({linkError: "*Sorry, can't open this URL"});
+      } else {
+        return Linking.openURL(props.recLink);
+      }
+  })
+  .catch((err) => console.error('An error occurred', err));
+}
+
 // handle if rec was clicked as seen or unclicked as seen
 async function recSeen() {
   // call firebase server function that handles changing userId: to true (if seen) or false (if unseen)
@@ -318,31 +341,52 @@ async function recSeen() {
     })
 }
 
+async function confirmDeleteRec() {
+  await deleteRecFromDB(props.recId, props.podId)
+    .then(() => props.refresh());
+}
+
   return (
       <View style={styles.item}>
           <View style={{ flexDirection: 'column' }}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <SafeAreaView style={{height: 20}}>
+              {/* pressable menu for delete a rec option */}
+              <Menu>
+                {/* 3 dots icon triggers menu to open*/}
+                <MenuTrigger customStyles={triggerStyles}>
+                    <MaterialCommunityIcons name="dots-horizontal" size={32} color="#ccc" />
+                </MenuTrigger>
+                <MenuOptions customStyles={optionsStyles} >
+                    {/* delete a rec option */}
+                    <MenuOption onSelect={confirmDeleteRec} >
+                        <Text style={{ color: '#6f1d1b', fontWeight: 'bold', padding: 6 }}>Delete Rec</Text> 
+                    </MenuOption>
+                </MenuOptions>
+              </Menu>
+            </SafeAreaView>
+
+            {/* pressable rec information */}
+            <TouchableOpacity activeOpacity={0.6} onPress={toggleModal}>
               {/* RecTile display with media type icon, seen button and text*/}
               {/* (1) pressable icon based on media type - opens modal pop up*/}
-              <TouchableOpacity activeOpacity={0.25} onPress={toggleModal}>
-                  <Image source={selectImage()} style={styles.recImage}></Image>
-              </TouchableOpacity>
-              {/* (2) pressable "seen" button - marks rec as visited*/}
-              <TouchableOpacity activeOpacity={0.6} onPress = {() => recSeen()}>
-                <View style={styles.circle} >
-                  {props.seenBy && props.currentUserUID in props.seenBy && props.seenBy[props.currentUserUID] ?
-                  <Image source={{uri: "https://img.icons8.com/cotton/80/000000/successfully-completed-task--v1.png"}}
-                    style={styles.seenIcon}></Image> : null}
-                </View>
-              </TouchableOpacity>
-            </View>
-            {/* (3) pressable rec information - opens same modal pop up as icon in (1)*/}
-            <TouchableOpacity activeOpacity={0.25} onPress={toggleModal}>
-            <Text style={[styles.name, selectColor()]}>
-                    {/* if rec title is longer than two lines worth, shorten it with "..." */}
-                    { props.recName.length > 22 ? props.recName.substring(0,22) + "..." : props.recName }
-                  </Text>
-                  <Text style={styles.media}>{props.mediaType}</Text>
+              <Image source={selectImage()} style={styles.recImage}></Image>
+              {/* (2) rec name */}
+              <Text style={[styles.name, selectColor()]}>
+                {/* if rec title is longer than two lines worth, shorten it with "..." */}
+                { props.recName.length > 22 ? props.recName.substring(0,22) + "..." : props.recName }
+              </Text>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                {/* (3) rec media type */}
+                <Text style={styles.media}>{props.mediaType}</Text>
+                {/* (4) pressable "seen" button - marks rec as visited */}
+                <TouchableOpacity activeOpacity={0.6} onPress = {() => recSeen()}>
+                  <View style={styles.circle} >
+                    {props.seenBy && props.currentUserUID in props.seenBy && props.seenBy[props.currentUserUID] ?
+                    <Image source={{uri: "https://img.icons8.com/cotton/80/000000/successfully-completed-task--v1.png"}}
+                      style={styles.seenIcon}></Image> : null}
+                  </View>
+                </TouchableOpacity>
+              </View>
             </TouchableOpacity>
           </View>
 
@@ -365,6 +409,12 @@ async function recSeen() {
 
                       {/* display other fields based on media type*/}
                       { displayRecDetails() }
+
+                      {/* for media types with links, catch any errors if link
+                          cannot open */}
+                      <Text style={styles.errorMessage}>
+                        {errors.linkError}
+                      </Text>
 
                       {/* display comments - not required when sending rec*/}
                       { displayComments() }
@@ -464,7 +514,13 @@ const styles = StyleSheet.create({
         paddingBottom: 0,
         // colour is determined based on selectColor() function - options below
     },
-
+    errorMessage: {
+        color: 'white',
+        fontWeight: "600",
+        fontSize: 12,
+        marginTop: 3,
+        marginBottom: -2,
+    },
     media: {
         padding: 15,
         paddingTop: 5,
@@ -480,10 +536,11 @@ const styles = StyleSheet.create({
       width: windowWidth/3,
       height: windowWidth/5,
       borderRadius: 10,
-    },    //circle for "seen" button
+    },
+    //circle for "seen" button
     circle: {
-      marginTop: 20,
       marginRight: 10,
+      marginBottom: 10,
       width: 35,
       height: 35,
       borderRadius: 30,
@@ -536,5 +593,36 @@ const styles = StyleSheet.create({
       backgroundColor: "#2F4858",
     }
 })
+
+const triggerStyles = {
+  triggerTouchable: {
+    underlayColor: '#e3e3e3',
+    style : {
+      width: 36,
+      borderRadius: 15,
+      marginLeft: 'auto',
+      alignItems: 'center',
+      marginRight: 15,
+      marginBottom: -20,
+    },
+  }
+};
+
+const optionsStyles = {
+  optionsContainer: {
+    borderRadius: 10,
+    width: 100,
+    marginTop: 30,
+    marginLeft: windowWidth/6
+  },
+  optionTouchable: {
+    underlayColor: '#ccc',
+    style : {
+      borderRadius: 10,
+      width: 100,
+      opacity: 50
+    },
+  },
+};
 
 export default RecTile;

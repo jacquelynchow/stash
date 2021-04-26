@@ -3,6 +3,7 @@ import { StyleSheet, ScrollView, View, TouchableOpacity, Image, Pressable, Text,
     SafeAreaView, TextInput, Dimensions, FlatList,
     RefreshControl, ActivityIndicator } from 'react-native';
 import Modal from 'react-native-modal';
+import { useIsFocused } from '@react-navigation/native';
 import { SearchBar } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
@@ -26,10 +27,15 @@ const ByPod = (props) => {
     const currentUserUID = props.userId;
     const username = props.username;
 
+    // check if screen is focused 
+    const isFocused = useIsFocused(); // mostly for when recs change (get added) and we are returning from podpage to bypod page
+    // listen for isFocused, if useFocused changes 
+    // call the function that you use to mount the component in useEffect.
+
     // call firebase api function getPods on onPodsReceived function to render pods from db
     useEffect(() => {
         getPods(onPodsReceived);
-    }, []);
+    }, [isFocused]);
 
     // display pop up when add pod modal view is on
     const [isModalVisible, setModalVisible] = useState(false);
@@ -40,7 +46,6 @@ const ByPod = (props) => {
 
     // add new pod dynamically when 'Create a Pod' submitted
     const [pods, setPods] = useState([]);
-    const [podNames, setPodNames] = useState([]);
     const [groupName, setGroupName] = useState("");
     const addNewPod = async (pods) => {
         // create dictionary of key value pairs, (memberName: true)
@@ -50,7 +55,7 @@ const ByPod = (props) => {
             pod_picture: selectedImageName, pod_picture_url: selectedImageUrl, num_recs: 0, members: membersDictionary };
         // add pod object to database using firebase api function, once done, refresh pods to get new pod
         await addPodToDB(newPod)
-            .then(() => getPods(onPodsReceived));
+            .then(() => {getPods(onPodsReceived);  setLoading(false);});
         // close modal
         toggleModal();
         // reset input fields to blank
@@ -60,8 +65,6 @@ const ByPod = (props) => {
     const onPodsReceived = (podList) => {
         // set list of pods and their data
         setPods(podList);
-        // set list of just pod names
-        setPodNames(podList.map((pod) => pod.pod_name))
     };
 
     // resets all form fields on Create a Pod modal
@@ -98,6 +101,7 @@ const ByPod = (props) => {
         }
         // if everything checks out, add to pods list
         if (allValid) {
+            setLoading(true);
             addNewPod(pods);
         }
     };

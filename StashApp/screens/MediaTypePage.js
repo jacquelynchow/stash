@@ -47,6 +47,7 @@ export default function MediaTypePage({navigation, route }) {
               recs.map((rec, index) =>
                 <RecTile key={index}
                   recId={rec.id}
+                  podId={rec.pod_id}
                   recName={rec.rec_title}
                   mediaType={rec.rec_type}
                   recSender={rec.rec_sender}
@@ -61,6 +62,7 @@ export default function MediaTypePage({navigation, route }) {
                   recs={recs}
                   onRecsReceived={onRecsReceived}
                   media_Type={media_Type}
+                  refresh={onRefresh}
                   fromMediaTypePage={true}
                   fromPodPage={false} />) :
               <View style={styles.centeredView}>

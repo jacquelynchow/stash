@@ -109,7 +109,7 @@ const PodTile = (props) => {
     // closes change pod name modal, calls firebase function to update pod name with new name, then resets fields
     const changePodName = async () => {
         toggleModal();
-        await changePodNameInDB(groupName, props.podId, props.members)
+        await changePodNameInDB(groupName, props.podId)
             .then(() => {
                 props.refresh();
                 setGroupName("");

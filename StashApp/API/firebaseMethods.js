@@ -105,11 +105,11 @@ async function getListOfUserIds(usernamesList, usersDb) {
 }
 
 // make a list of pods from the current state of the database and call callback function to run asyncronously
-export async function getPods(podsRecieved) {
+export async function getPods(podsRecieved, currentUserUID) {
   let pods = []; // init list of pods the user is a current member of
   let podList = []; // init podList for pod data
   // grab current user's uid
-  const currentUserUid = firebase.auth().currentUser.uid;
+  const currentUserUid = currentUserUID;
   // get all current user's pods and add to list
   await firebase.firestore().collection("users")
     .doc(currentUserUid)

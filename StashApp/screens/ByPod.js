@@ -34,7 +34,12 @@ const ByPod = (props) => {
 
     // call firebase api function getPods on onPodsReceived function to render pods from db
     useEffect(() => {
-        getPods(onPodsReceived);
+        let gettingPods = true;
+        getPods(onPodsReceived, currentUserUID);
+
+        return () => {
+            gettingPods = false;
+        };
     }, [isFocused]);
 
     // display pop up when add pod modal view is on
@@ -55,7 +60,7 @@ const ByPod = (props) => {
             pod_picture: selectedImageName, pod_picture_url: selectedImageUrl, num_recs: 0, members: membersDictionary };
         // add pod object to database using firebase api function, once done, refresh pods to get new pod
         await addPodToDB(newPod)
-            .then(() => {getPods(onPodsReceived);  setLoading(false);});
+            .then(() => {getPods(onPodsReceived, currentUserUID);  setLoading(false);});
         // close modal
         toggleModal();
         // reset input fields to blank
@@ -220,7 +225,7 @@ const ByPod = (props) => {
     const [refreshing, setRefreshing] = useState(false);
     const onRefresh = useCallback(async () => {
             setRefreshing(true);
-            await getPods(onPodsReceived) // use await to refresh until function finished
+            await getPods(onPodsReceived, currentUserUID) // use await to refresh until function finished
                 .then(() => setRefreshing(false));
         }, []);
 

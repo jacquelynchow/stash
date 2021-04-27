@@ -20,6 +20,7 @@ import youtubeIcon from '../assets/type-icons/youtube.png';
 // Server related
 import { getRecs, updateRecSeenBy, getMediaRecs, deleteRecFromDB } from '../API/firebaseMethods';
 import { SafeAreaView } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -127,12 +128,9 @@ function displayRecDetails(){
   // recLink is required for videos, so no else case
   } else if (props.mediaType == "TikTok" || props.mediaType == "YouTube") {
       return(
-        <Text>
-          <Text style={styles.modalHeading}>View at: </Text>
-          <Text style={styles.modalText} onPress={tryURL}>
-            {props.recLink}
-          </Text>
-        </Text>)
+          <TouchableOpacity style={styles.goToRecButton} onPress={tryURL}>
+              <Text style={styles.goToRecText}>Go to rec link</Text>
+          </TouchableOpacity>)
 
   // for articles, display author and link if provided
   } else if (props.mediaType == "Article"){
@@ -148,43 +146,43 @@ function displayRecDetails(){
           <Text style={styles.modalSubtitle}>Not provided </Text>
         </Text>)
     }
-    // (2) if they included a link but no author
+    // (2) if they included an author but no link
     else if (props.recAuthor !== "" && props.recLink == ""){
-      return(
-        <Text style={styles.modalText}>
-          <Text style={styles.modalHeading}>Artist(s): </Text>
-          {props.recAuthor}
-          {"\n"}
-          <Text style={styles.modalHeading}>Link: </Text>
-          <Text style={styles.modalSubtitle}>Not provided </Text>
-        </Text>)
-    }
-    // (3) if they included an author but no link
-    else if (props.recAuthor == "" && props.recLink !== "") {
-      return(
-        <Text style={styles.modalText}>
-          <Text style={styles.modalHeading}>Artist(s): </Text>
-          <Text style={styles.modalSubtitle}>Not provided </Text>
-          {"\n"}
-          <Text style={styles.modalHeading}>Link: </Text>
-          <Text style={styles.modalText} onPress={tryURL}>
-            {props.recLink}
-          </Text>
-        </Text>
-         )
-    }
-    // (4) if they provided both
-    else {
       return(
         <Text style={styles.modalText}>
           <Text style={styles.modalHeading}>By: </Text>
           {props.recAuthor}
           {"\n"}
           <Text style={styles.modalHeading}>Link: </Text>
-          <Text style={styles.modalText} onPress={tryURL}>
-            {props.recLink}
-          </Text>
+          <Text style={styles.modalSubtitle}>Not provided </Text>
         </Text>)
+    }
+    // (3) if they included a link but no author
+    else if (props.recAuthor == "" && props.recLink !== "") {
+      return(
+        <View>
+          <Text style={styles.modalText}>
+            <Text style={styles.modalHeading}>By: </Text>
+            <Text style={styles.modalSubtitle}>Not provided </Text>
+          </Text>
+          <TouchableOpacity style={styles.goToRecButton} onPress={tryURL}>
+              <Text style={styles.goToRecText}>Go to rec link</Text>
+          </TouchableOpacity>
+        </View>
+         )
+    }
+    // (4) if they provided both
+    else {
+      return(
+        <View>
+          <Text style={styles.modalText}>
+            <Text style={styles.modalHeading}>By: </Text>
+            {props.recAuthor}
+          </Text>
+          <TouchableOpacity style={styles.goToRecButton} onPress={tryURL}>
+              <Text style={styles.goToRecText}>Go to rec link</Text>
+          </TouchableOpacity>
+        </View>)
     }
 
     // for songs, display artist and link if provided
@@ -194,50 +192,51 @@ function displayRecDetails(){
       if (props.recAuthor == "" && props.recLink == "") {
         return(
           <Text style={styles.modalText}>
-            <Text style={styles.modalHeading}>By: </Text>
+            <Text style={styles.modalHeading}>Artist(s): </Text>
             <Text style={styles.modalSubtitle}>Not provided </Text>
             {"\n"}
             <Text style={styles.modalHeading}>Link: </Text>
             <Text style={styles.modalSubtitle}>Not provided </Text>
           </Text>)
       }
-      // (2) if they included a link but no artist
+      // (2) if they included an artist but no link
       else if (props.recAuthor !== "" && props.recLink == ""){
         return(
           <Text style={styles.modalText}>
-            <Text style={styles.modalHeading}>By: </Text>
+            <Text style={styles.modalHeading}>Artist(s): </Text>
             {props.recAuthor}
             {"\n"}
             <Text style={styles.modalHeading}>Link: </Text>
             <Text style={styles.modalSubtitle}>Not provided </Text>
           </Text>)
       }
-      // (3) if they included an artist but no link
+      // (3) if they included a link but no artist
       else if (props.recAuthor == "" && props.recLink !== "") {
         return(
-          <Text style={styles.modalText}>
-            <Text style={styles.modalHeading}>By: </Text>
-            <Text style={styles.modalSubtitle}>Not provided </Text>
-            {"\n"}
-            <Text style={styles.modalHeading}>Link: </Text>
-            <Text style={styles.modalText} onPress={tryURL}>
-              {props.recLink}
+          <View>
+            <Text style={styles.modalText}>
+              <Text style={styles.modalHeading}>Artist(s): </Text>
+              <Text style={styles.modalSubtitle}>Not provided </Text>
             </Text>
-          </Text>
+            <TouchableOpacity style={styles.goToRecButton} onPress={tryURL}>
+              <Text style={styles.goToRecText}>Go to rec link</Text>
+            </TouchableOpacity>
+          </View>
            )
       }
       // (4) if they provided both
       else {
         return(
-          <Text style={styles.modalText}>
-            <Text style={styles.modalHeading}>By: </Text>
-            {props.recAuthor}
-            {"\n"}
-            <Text style={styles.modalHeading}>Link: </Text>
-            <Text style={styles.modalText} onPress={tryURL}>
-              {props.recLink}
+          <View>
+            <Text style={styles.modalText}>
+              <Text style={styles.modalHeading}>Artist(s): </Text>
+              {props.recAuthor}
             </Text>
-          </Text>)
+            <TouchableOpacity style={styles.goToRecButton} onPress={tryURL}>
+              <Text style={styles.goToRecText}>Go to rec link</Text>
+            </TouchableOpacity>
+          </View>
+          )
       }
 
   // for movies, display genre and year
@@ -298,14 +297,16 @@ function displayComments(){
   if (props.recComment == ""){
     return(
       <Text style={styles.modalText}>
-        <Text style={styles.modalHeading}>Comments: </Text>
+        <FontAwesome name="comment-o" size={24} color="white" />
+        <Text style={styles.modalHeading}>&nbsp; Comments: </Text>
         <Text style={styles.modalSubtitle}>Not provided </Text>
       </Text>)}
   // if they did, display the author name
   else {
     return(
       <Text style={styles.modalText}>
-        <Text style={styles.modalHeading}>Comments: </Text>
+        <FontAwesome name="comment-o" size={24} color="white" />
+        <Text style={styles.modalHeading}>&nbsp; Comments: </Text>
         {props.recComment}
       </Text>)}
 }
@@ -591,7 +592,25 @@ const styles = StyleSheet.create({
     },
     videoBackgroundColor: {
       backgroundColor: "#2F4858",
-    }
+    },
+    goToRecText: {
+      color: "#D68C45",
+      fontWeight: 'bold',
+      textTransform: 'uppercase',
+    },
+    goToRecButton: {
+      backgroundColor: "white",
+      borderRadius: 20,
+      marginTop: 20,
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+      // ios
+      shadowOffset: {width: 10, height: 10},
+      shadowOpacity: 0.1,
+      shadowRadius: 10,
+      // android
+      elevation: 2,
+    },
 })
 
 const triggerStyles = {

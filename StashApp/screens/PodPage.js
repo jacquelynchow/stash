@@ -120,7 +120,7 @@ const PodPage = ({ navigation, route}) => {
           allValid = false;
       }
       // check if they uploaded link, and if so that it is valid
-      if (recLink !== "" && !validURL(recLink)) {
+      if (mediaType != "Movie" && mediaType != "Book" && (recLink == "" || !validURL(recLink))) {
           setErrors({linkError: "*Please enter a valid link"});
           allValid = false;
       }

@@ -50,7 +50,7 @@ Stash is an effective solution because people typically make recommendations usi
 * User can login or sign up for Stash when first opening the app
   * Verify login and signup using phone authentication with an SMS code and reCAPTCHA system
 * Swipe or click on tabs for various onboarding instructions
-* User will stay logged in even after exiting the app
+* User stay logged in even after exiting the app
   * Upon opening app, loading screen redirects user to appropriate page based on logged in status
 * Error checking
   * Check if username is already taken
@@ -91,7 +91,7 @@ Stash is an effective solution because people typically make recommendations usi
   * Displays how many recs per media type and from how many people (or person)
 #### **MediaType Page**
 * Displays all the user's recs for that specific media type
-* This feed will have all of the same rec functionalities as **Pod Page**, except for the ability to add a recommendation; recs must be added within pods
+* This feed has all of the same recommendation functionalities as **Pod Page**, except for the ability to add a recommendation; recs must be added within pods. 
 
 ## Folders & Files
 An overview and description of key files in the StashApp repository: 

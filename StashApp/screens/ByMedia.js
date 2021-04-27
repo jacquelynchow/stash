@@ -53,6 +53,16 @@ const ByMedia = (props) => {
         }
     }
 
+    //gets correct media type
+    function getMediaType(mediaType){
+        if (mediaType == 'YouTube'){
+            return 'YouTube'
+        }
+        else{
+            return mediaType + 's'
+        }
+    }
+
     return (
         <View style={{flex: 1}}>
 
@@ -68,14 +78,14 @@ const ByMedia = (props) => {
                 {dict && Object.keys(dict).length > 0 ?
                     Object.entries(dict).map(([mediaType,[numMediaRec,numSenders]]) =>
                         <MediaGroup key = {mediaType}
-                        mediaType={mediaType+ 's'}
-                         numRecs={numMediaRec}
-                         numPeople={numSenders}
-                         image={mediaIcon(mediaType)}
+                        mediaType={getMediaType(mediaType)}
+                         numRecs={numMediaRec} 
+                         numPeople={numSenders} 
+                         image={mediaIcon(mediaType)} 
                          userId={currentUserUID} />) :
                     <View style={styles.centeredView}>
                         {/* If no recs exist for the user */}
-                        <Text style={styles.noRecsYetTitle}>No recommendations yet!</Text>
+                        <Text style={styles.noRecsYetTitle}>No recommendations yet</Text>
                         <Text style={styles.noRecsYetText}>Send/receive recommendations in a pod</Text>
                     </View>
                 }
@@ -94,7 +104,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-between',
-        alignItems: 'flex-start'
+        alignItems: 'flex-start' 
     },
     textBox: {
         margin: 50,

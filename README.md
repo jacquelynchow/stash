@@ -88,8 +88,7 @@ Stash is an effective solution because people typically make recommendations usi
 #### **Recommendations Feed (By Type)**
 * Shows recs that user has by selected type (Article, Book, Movie, Song, TikTok, or YouTube)
   * Color coded tile icons and titles according to selected type
-  * Displays how many recs per media type and from how many people (or person) if the user has 
-  recs of the certain media type
+  * Displays how many recs per media type and from how many people (or person)
 #### **MediaType Page**
 * Displays all the user's recs for that specific media type
 * This feed will have all of the same rec functionalities as **Pod Page**, except for the ability to add a recommendation; recs must be added within pods

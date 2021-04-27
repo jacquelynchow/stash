@@ -400,7 +400,10 @@ export async function getNumRecsAndPeople(mediaDict){
   var dictNumPeople = {}; //dictionary with media types for keys and values as arrays of senders
   let pods = []; // init list of pods the user is a current member of
   const currentUserUid = firebase.auth().currentUser.uid; // grab current user's uid
-  
+  var recTypes = ['Article','Book','Movie','Song','TikTok','YouTube']; //all media types
+  for(rectype in recTypes){
+    dictionaryForMedia[recTypes[rectype]]=[0,0]; //init number of recs and people as 0
+  }
   await firebase.firestore().collection("users")
     .doc(currentUserUid)
     .get()

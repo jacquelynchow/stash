@@ -32,7 +32,7 @@ const PodPage = ({ navigation, route}) => {
   const username = podData.username;
   const podName = podData.name;
   const podId = podData.podId;
-  
+
   // call firebase api function getRecs on onRecsReceived function to render recs from db
   useEffect(() => {
     getRecs(podId, onRecsReceived);
@@ -375,7 +375,9 @@ const styles = StyleSheet.create({
     margin: 20,
     backgroundColor: "#6F1D1B",
     borderRadius: 20,
-    padding: 35,
+    width: "100%",
+    paddingHorizontal: windowWidth/7,
+    paddingVertical: windowHeight/22,
     alignItems: "center",
     // ios
     shadowOffset: {width: 10, height: 10},

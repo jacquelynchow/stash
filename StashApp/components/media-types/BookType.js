@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
     },
     titleInput: {
       height: 30,
-      width: '95%',
+      width: '100%',
       fontSize: 16,
       backgroundColor: 'white',
       borderRadius: 10,
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     },
     input: {
       height: 30,
-      width: '94%',
+      width: '100%',
       fontSize: 16,
       backgroundColor: 'white',
       borderRadius: 10,

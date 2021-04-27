@@ -14,7 +14,7 @@ import {getNumRecsAndPeople } from '../API/firebaseMethods';
 const windowHeight = Dimensions.get('window').height;
 
 const ByMedia = (props) => {
-    const currentUserUID = props.userId;
+    const currentUserUID = props.userId; //gets current user's ID
     const [dict, setDict] = useState({});
     useEffect(() => {
         getNumRecsAndPeople(mediaDict);
@@ -32,23 +32,23 @@ const ByMedia = (props) => {
     }, []);
 
     //display icon according to media type
-    function mediaIcon(key){
-        if (key == "Article") {
+    function mediaIcon(mediaType){
+        if (mediaType == "Article") {
             return articleIcon
         }
-        else if (key == "Book") {
+        else if (mediaType == "Book") {
             return bookIcon
         }
-        else if (key == "Movie") {
+        else if (mediaType == "Movie") {
             return movieIcon
         }
-        else if (key == "Song") {
+        else if (mediaType == "Song") {
             return songIcon
         }
-        else if (key == "TikTok") {
+        else if (mediaType == "TikTok") {
             return tiktokIcon
         }
-        else if (key == "YouTube") {
+        else if (mediaType == "YouTube") {
             return youtubeIcon
         }
     }
@@ -56,7 +56,7 @@ const ByMedia = (props) => {
     return (
         <View style={{flex: 1}}>
 
-            {/* Show various rec types */}
+            {/* Show various rec types that the user has */}
             <ScrollView
                 contentContainerStyle={styles.container}
                 refreshControl={
@@ -66,11 +66,12 @@ const ByMedia = (props) => {
                     />
                 }>
                 {dict && Object.keys(dict).length > 0 ?
-                    Object.entries(dict).map(([key,values]) =>
-                        <MediaGroup mediaType={key+ 's'}
-                         numRecs={values[0]} 
-                         numPeople={values[1]} 
-                         image={mediaIcon(key)} 
+                    Object.entries(dict).map(([mediaType,[numMediaRec,numSenders]]) =>
+                        <MediaGroup key = {mediaType}
+                        mediaType={mediaType+ 's'}
+                         numRecs={numMediaRec} 
+                         numPeople={numSenders} 
+                         image={mediaIcon(mediaType)} 
                          userId={currentUserUID} />) :
                     <View style={styles.centeredView}>
                         {/* If no recs exist for the user */}
@@ -118,6 +119,12 @@ const styles = StyleSheet.create({
         marginRight:25,
         marginTop: 10,
         fontSize: 14
+    },
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 22,
     }
 })
 

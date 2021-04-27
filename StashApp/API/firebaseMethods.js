@@ -1,4 +1,4 @@
-import {Alert} from "react-native";
+import {Alert, DatePickerIOSBase} from "react-native";
 // Server related
 import * as firebase from "firebase";
 import "firebase/firestore";
@@ -105,11 +105,11 @@ async function getListOfUserIds(usernamesList, usersDb) {
 }
 
 // make a list of pods from the current state of the database and call callback function to run asyncronously
-export async function getPods(podsRecieved, currentUserUID) {
+export async function getPods(podsRecieved) {
   let pods = []; // init list of pods the user is a current member of
   let podList = []; // init podList for pod data
   // grab current user's uid
-  const currentUserUid = currentUserUID;
+  const currentUserUid = firebase.auth().currentUser.uid;
   // get all current user's pods and add to list
   await firebase.firestore().collection("users")
     .doc(currentUserUid)
@@ -387,7 +387,7 @@ export async function getMediaRecs(recsRecieved, media_type){
             recsInMedia.push(doc.data());
         });
       })
-      .catch((e) => console.log("error in adding pods: " + e));
+      .catch((e) => console.log("error in recsInMedia: " + e));
 
       recsRecieved(recsInMedia);
     }
@@ -395,9 +395,9 @@ export async function getMediaRecs(recsRecieved, media_type){
 
 // makes dictionary of num recs and senders for all media types
 export async function getNumRecsAndPeople(mediaDict){
-  var dictionaryForMedia= {}; 
-  var dictNumRecs = {};
-  var dictNumPeople = {};
+  var dictionaryForMedia= {}; //dictionary with media types for keys and values of number of recs & people
+  var dictNumRecs = {}; //dictionary with media types for keys and values as number of recs
+  var dictNumPeople = {}; //dictionary with media types for keys and values as arrays of senders
   let pods = []; // init list of pods the user is a current member of
   const currentUserUid = firebase.auth().currentUser.uid; // grab current user's uid
   
@@ -416,24 +416,21 @@ export async function getNumRecsAndPeople(mediaDict){
       .get()
       .then(function(querySnapshot) {
         querySnapshot.forEach(function(doc) {
-            var data = doc.data();
-            var type = data.rec_type;
-            dictNumRecs[type] = (dictNumRecs[type] || 0) + 1;
+            var data = doc.data(); //get data for document
+            var type = data.rec_type; //get media type for document
+            dictNumRecs[type] = (dictNumRecs[type] || 0) + 1; //update number of recs for media type
+            //if there are no people for that media type
             if(!(type in dictNumPeople)){
-              dictNumPeople[type] == 0;
+              dictNumPeople[type] = [];
             }
-            //dictNumPeople[type] = 2;
-            if((!type in dictNumPeople)){
-              dictNumPeople[type] = 0;
+            //if there exists the key 'type' and the sender is not in the array
+            if((type in dictNumPeople) && !(dictNumPeople[type].includes(data.rec_sender))){
+             dictNumPeople[type].push(data.rec_sender);
             }
-            // if((type in dictNumPeople) && !(dictNumPeople[type].includes(data.rec_sender))){
-            //  dictNumPeople[type] +=1;
-            // }
-            //dictNumPeople[type].push(data.rec_sender)
-            dictionaryForMedia[type] = [dictNumRecs[type],dictNumPeople[type]];
+            dictionaryForMedia[type] = [dictNumRecs[type],dictNumPeople[type].length];
         });
     })
-      .catch((e) => console.log("error in adding pods to recsInMedia: " + e));
+      .catch((e) => console.log("error in dictionaryForMedia: " + e));
 
       mediaDict(dictionaryForMedia);
     }

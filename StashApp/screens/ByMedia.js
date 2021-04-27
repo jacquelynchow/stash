@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useCallback} from 'react';
-import { StyleSheet, View, ScrollView, RefreshControl } from 'react-native';
+import { StyleSheet, View, ScrollView, RefreshControl, Text, Dimensions } from 'react-native';
 // Components
 import MediaGroup from '../components/MediaGroup';
 import bookIcon from '../assets/type-icons/book.png';
@@ -9,64 +9,48 @@ import tiktokIcon from '../assets/type-icons/tiktok.png';
 import articleIcon from '../assets/type-icons/article.png';
 import youtubeIcon from '../assets/type-icons/youtube.png';
 // Server related
-import {getMediaRecs } from '../API/firebaseMethods';
+import {getNumRecsAndPeople } from '../API/firebaseMethods';
+
+const windowHeight = Dimensions.get('window').height;
 
 const ByMedia = (props) => {
     const currentUserUID = props.userId;
-    var recTypes = ['Article','Book','Movie','Song','TikTok','YouTube'];
-    const wait = (timeout) => {
-        return new Promise(resolve => setTimeout(resolve, timeout));
-      }
+    const [dict, setDict] = useState({});
+    useEffect(() => {
+        getNumRecsAndPeople(mediaDict);
+    }, []);
+
+    const mediaDict = (dictForMedia) => {
+        setDict(dictForMedia);
+    };
+
     const [refreshing, setRefreshing] = useState(false);
-    const onRefresh = useCallback(() => {
+    const onRefresh = useCallback(async () => {
         setRefreshing(true);
-        wait(2000).then(() => setRefreshing(false));
-      }, []);
+        await getNumRecsAndPeople(mediaDict) // use await to refresh until function finished
+        .then(() => setRefreshing(false));
+    }, []);
 
-    //create function for refresh and give media_type as argument
-    // function refreshForType(media_Type){
-    //     const [refreshing, setRefreshing] = useState(false);
-    //     const onRefresh = useCallback(async () => {
-    //         setRefreshing(true);
-    //         await getMediaRecs(onRecsReceived,media_Type) // use await to refresh until function finished
-    //         .then(() => setRefreshing(false));
-    //     }, []);
-    //     return [onRefresh, refreshing];
-    // }
-
-    //gets number of user's recs for specific media type
-    function numRecsForMedia(media_Type) {
-        const [recs, setRecs] = useState([]);
-        useEffect(() => {
-        getMediaRecs(onRecsReceived,media_Type);
-        }, []); 
-
-        const onRecsReceived = (recList) => {
-        setRecs(recList);
-        };  
-        
-        const numRecs = recs.length;
-        return numRecs;
-    }
-  
-    //gets number of people who sent recs of specific media type to the user
-    function numPeopleForMedia(media_Type) {
-        const [recs, setRecs] = useState([]);
-        useEffect(() => {
-        getMediaRecs(onRecsReceived,media_Type);
-        }, []); 
-
-        const onRecsReceived = (recList) => {
-        setRecs(recList);
-        }; 
-        const people = [];
-        for(var i=0; i<recs.length;i++) {
-            if (!(people.includes(recs[i].rec_sender))) {
-                people.push(recs[i].rec_sender)
-            }
+    //display icon according to media type
+    function mediaIcon(key){
+        if (key == "Article") {
+            return articleIcon
         }
-        const numPeople = people.length;
-        return numPeople;
+        else if (key == "Book") {
+            return bookIcon
+        }
+        else if (key == "Movie") {
+            return movieIcon
+        }
+        else if (key == "Song") {
+            return songIcon
+        }
+        else if (key == "TikTok") {
+            return tiktokIcon
+        }
+        else if (key == "YouTube") {
+            return youtubeIcon
+        }
     }
 
     return (
@@ -77,17 +61,23 @@ const ByMedia = (props) => {
                 contentContainerStyle={styles.container}
                 refreshControl={
                     <RefreshControl
-                    //refresh for all media types
-                      refreshing={refreshing}
-                      onRefresh={onRefresh}
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
                     />
-                  }> 
-                <MediaGroup mediaType={"Articles"} numRecs={numRecsForMedia('Article')} numPeople={numPeopleForMedia('Article')} image={articleIcon} userId={currentUserUID} />
-                <MediaGroup mediaType={"Books"} numRecs={numRecsForMedia('Book')} numPeople={numPeopleForMedia('Book')} image={bookIcon} userId={currentUserUID} />
-                <MediaGroup mediaType={"Movies"} numRecs={numRecsForMedia('Movie')} numPeople={numPeopleForMedia('Movie')} image={movieIcon} userId={currentUserUID} />
-                <MediaGroup mediaType={"Songs"} numRecs={numRecsForMedia('Song')} numPeople={numPeopleForMedia('Song')} image={songIcon} userId={currentUserUID} />
-                <MediaGroup mediaType={"TikToks"} numRecs={numRecsForMedia('TikTok')} numPeople={numPeopleForMedia('TikTok')} image={tiktokIcon} userId={currentUserUID} />
-                <MediaGroup mediaType={"YouTube"} numRecs={numRecsForMedia('YouTube')} numPeople={numPeopleForMedia('YouTube')} image={youtubeIcon} userId={currentUserUID} />
+                }>
+                {dict && Object.keys(dict).length > 0 ?
+                    Object.entries(dict).map(([key,values]) =>
+                        <MediaGroup mediaType={key+ 's'}
+                         numRecs={values[0]} 
+                         numPeople={values[1]} 
+                         image={mediaIcon(key)} 
+                         userId={currentUserUID} />) :
+                    <View style={styles.centeredView}>
+                        {/* If no recs exist for the user */}
+                        <Text style={styles.noRecsYetTitle}>No recommendations yet</Text>
+                        <Text style={styles.noRecsYetText}>Send/receive recommendations in a pod</Text>
+                    </View>
+                }
             </ScrollView>
         </View>
     )
@@ -110,6 +100,24 @@ const styles = StyleSheet.create({
         padding: 30,
         alignContent: 'center',
         justifyContent: 'center',
+    },
+    noRecsYetTitle: {
+        marginTop: windowHeight/4,
+        textAlign: "center",
+        color: "#6F1D1B",
+        fontWeight: "700",
+        marginLeft:25,
+        marginRight:25,
+        fontSize: 22,
+    },
+    noRecsYetText: {
+        textAlign: "center",
+        color: "#6F1D1B",
+        fontStyle: 'italic',
+        marginLeft:25,
+        marginRight:25,
+        marginTop: 10,
+        fontSize: 14
     }
 })
 

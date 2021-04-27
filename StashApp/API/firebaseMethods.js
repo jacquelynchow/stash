@@ -387,9 +387,55 @@ export async function getMediaRecs(recsRecieved, media_type){
             recsInMedia.push(doc.data());
         });
       })
-      .catch((e) => console.log("error in adding pods to recsInMedia: " + e));
+      .catch((e) => console.log("error in adding pods: " + e));
 
       recsRecieved(recsInMedia);
+    }
+}
+
+// makes dictionary of num recs and senders for all media types
+export async function getNumRecsAndPeople(mediaDict){
+  var dictionaryForMedia= {}; 
+  var dictNumRecs = {};
+  var dictNumPeople = {};
+  let pods = []; // init list of pods the user is a current member of
+  const currentUserUid = firebase.auth().currentUser.uid; // grab current user's uid
+  
+  await firebase.firestore().collection("users")
+    .doc(currentUserUid)
+    .get()
+    .then((doc) => {
+      pods = Object.keys(doc.data().pods) // save the pods keys to pods list
+    })
+    .catch((e) => console.log("error in adding getting pods for current user: " + e));
+
+    if (pods.length > 0) {
+      await firebase.firestore()
+      .collection("recs")
+      .where('pod_id','in',pods) //only have recs that are part of current user's pods
+      .get()
+      .then(function(querySnapshot) {
+        querySnapshot.forEach(function(doc) {
+            var data = doc.data();
+            var type = data.rec_type;
+            dictNumRecs[type] = (dictNumRecs[type] || 0) + 1;
+            if(!(type in dictNumPeople)){
+              dictNumPeople[type] == 0;
+            }
+            //dictNumPeople[type] = 2;
+            if((!type in dictNumPeople)){
+              dictNumPeople[type] = 0;
+            }
+            // if((type in dictNumPeople) && !(dictNumPeople[type].includes(data.rec_sender))){
+            //  dictNumPeople[type] +=1;
+            // }
+            //dictNumPeople[type].push(data.rec_sender)
+            dictionaryForMedia[type] = [dictNumRecs[type],dictNumPeople[type]];
+        });
+    })
+      .catch((e) => console.log("error in adding pods to recsInMedia: " + e));
+
+      mediaDict(dictionaryForMedia);
     }
 }
 

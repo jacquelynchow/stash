@@ -69,13 +69,13 @@ const ByMedia = (props) => {
                     Object.entries(dict).map(([mediaType,[numMediaRec,numSenders]]) =>
                         <MediaGroup key = {mediaType}
                         mediaType={mediaType+ 's'}
-                         numRecs={numMediaRec} 
-                         numPeople={numSenders} 
-                         image={mediaIcon(mediaType)} 
+                         numRecs={numMediaRec}
+                         numPeople={numSenders}
+                         image={mediaIcon(mediaType)}
                          userId={currentUserUID} />) :
                     <View style={styles.centeredView}>
                         {/* If no recs exist for the user */}
-                        <Text style={styles.noRecsYetTitle}>No recommendations yet</Text>
+                        <Text style={styles.noRecsYetTitle}>No recommendations yet!</Text>
                         <Text style={styles.noRecsYetText}>Send/receive recommendations in a pod</Text>
                     </View>
                 }
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-between',
-        alignItems: 'flex-start' 
+        alignItems: 'flex-start'
     },
     textBox: {
         margin: 50,

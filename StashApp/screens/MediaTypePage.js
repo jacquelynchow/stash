@@ -67,7 +67,7 @@ export default function MediaTypePage({navigation, route }) {
                   fromPodPage={false} />) :
               <View style={styles.centeredView}>
                 {/* If no recs of certain media type exists for the user */}
-                  <Text style={styles.noRecsYetTitle}>No recommendations of this type yet</Text>
+                  <Text style={styles.noRecsYetTitle}>No recommendations of this type yet!</Text>
                   <Text style={styles.noRecsYetText}>Send/receive recommendations in a pod and they will appear here</Text>
               </View>
           }
@@ -118,4 +118,3 @@ const styles = StyleSheet.create({
     marginTop: 22,
   }
 });
-

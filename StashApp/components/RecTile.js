@@ -129,7 +129,7 @@ function displayRecDetails(){
   } else if (props.mediaType == "TikTok" || props.mediaType == "YouTube") {
       return(
           <TouchableOpacity style={styles.goToRecButton} onPress={tryURL}>
-              <Text style={styles.goToRecText}>Go to rec link</Text>
+              <Text style={styles.goToRecText}>Visit recommendation</Text>
           </TouchableOpacity>)
 
   // for articles, display author and link if provided
@@ -166,7 +166,7 @@ function displayRecDetails(){
             <Text style={styles.modalSubtitle}>Not provided </Text>
           </Text>
           <TouchableOpacity style={styles.goToRecButton} onPress={tryURL}>
-              <Text style={styles.goToRecText}>Go to rec link</Text>
+              <Text style={styles.goToRecText}>Visit recommendation</Text>
           </TouchableOpacity>
         </View>
          )
@@ -180,7 +180,7 @@ function displayRecDetails(){
             {props.recAuthor}
           </Text>
           <TouchableOpacity style={styles.goToRecButton} onPress={tryURL}>
-              <Text style={styles.goToRecText}>Go to rec link</Text>
+              <Text style={styles.goToRecText}>Visit recommendation</Text>
           </TouchableOpacity>
         </View>)
     }
@@ -219,7 +219,7 @@ function displayRecDetails(){
               <Text style={styles.modalSubtitle}>Not provided </Text>
             </Text>
             <TouchableOpacity style={styles.goToRecButton} onPress={tryURL}>
-              <Text style={styles.goToRecText}>Go to rec link</Text>
+              <Text style={styles.goToRecText}>Visit recommendation</Text>
             </TouchableOpacity>
           </View>
            )
@@ -233,7 +233,7 @@ function displayRecDetails(){
               {props.recAuthor}
             </Text>
             <TouchableOpacity style={styles.goToRecButton} onPress={tryURL}>
-              <Text style={styles.goToRecText}>Go to rec link</Text>
+              <Text style={styles.goToRecText}>Visit recommendation</Text>
             </TouchableOpacity>
           </View>
           )
@@ -297,7 +297,7 @@ function displayComments(){
   if (props.recComment == ""){
     return(
       <Text style={styles.modalText}>
-        <FontAwesome name="comment-o" size={24} color="white" />
+        <FontAwesome name="comment-o" size={20} color="white" />
         <Text style={styles.modalHeading}>&nbsp; Comments: </Text>
         <Text style={styles.modalSubtitle}>Not provided </Text>
       </Text>)}
@@ -360,7 +360,7 @@ async function confirmDeleteRec() {
                 <MenuOptions customStyles={optionsStyles} >
                     {/* delete a rec option */}
                     <MenuOption onSelect={confirmDeleteRec} >
-                        <Text style={{ color: '#6f1d1b', fontWeight: 'bold', padding: 6 }}>Delete Rec</Text> 
+                        <Text style={{ color: '#6f1d1b', fontWeight: 'bold', padding: 6 }}>Delete Rec</Text>
                     </MenuOption>
                 </MenuOptions>
               </Menu>
@@ -512,7 +512,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
         padding: 15,
-        paddingBottom: 0,
+        paddingBottom: 8,
         // colour is determined based on selectColor() function - options below
     },
     errorMessage: {
@@ -530,7 +530,6 @@ const styles = StyleSheet.create({
         marginLeft: 15,
         width: 70,
         height: 70,
-        marginTop: 20,
         borderRadius: 10,
     },
     recImagePopUp:{
@@ -594,7 +593,7 @@ const styles = StyleSheet.create({
       backgroundColor: "#2F4858",
     },
     goToRecText: {
-      color: "#D68C45",
+      color: "#6F1D1B",
       fontWeight: 'bold',
       textTransform: 'uppercase',
     },
@@ -621,7 +620,7 @@ const triggerStyles = {
       borderRadius: 15,
       marginLeft: 'auto',
       alignItems: 'center',
-      marginRight: 15,
+      marginRight: 10,
       marginBottom: -20,
     },
   }

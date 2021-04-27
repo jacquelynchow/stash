@@ -93,9 +93,28 @@ Stash is an effective solution because people typically make recommendations usi
 * Displays all the user's recs for that specific media type
 * This feed will have all of the same rec functionalities as **Pod Page**, except for the ability to add a recommendation; recs must be added within pods
 
-## Files and Folders
-### **Test**
-#### **Test**
+## Folders & Files
+An overview and description of key files in the StashApp repository: 
+### **.../Screens/**
+This folder is home to the six main views in the StashApp, along with a loading page when moving and interacting on these pages. 
+#### **Home.js**
+#### **Login.js**
+#### **ByPod.js & ByMedia.js**
+#### **PodPage.js**
+#### **MediaTypePage.js**
+#### **Loading.js**
+
+### **.../Components/**
+This folder is home to the main components that are used across various parts of the StashApp, including... 
+
+#### **LoginModal.js & SignupModal.js**
+#### **PodTile.js**
+#### **RecTile.js**
+#### **MediaGroup.js**
+#### **media-types/**
+
+### **.../API/**
+#### **firebaseMethods.js**
 
 ## Future Improvements
 * Once the user marks a recommendations as watched/read/listened to, removing that recommendation from their main feeds. In this case, the user would be able to visit ‘Past Recommendations’ in order to see what they have already visited. 

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Stash App",
-    "slug": "recommendations-app",
+    "name": "Stash",
+    "slug": "stash",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -27,6 +27,8 @@
     },
     "web": {
       "favicon": "./assets/icon.png"
-    }
+    },
+    "owner": "stash-team",
+    "description": "Stash is a multi-platform mobile application that facilitates social interactions between friends online. Stash centralizes the recommendations for songs, movies, books, YouTube videos and other media your friends send you into one convenient dashboard, so you never lose track of what they share with you again. You can create groups to share recommendations with, sort the recommendations you’ve received by sender or by media type, and react to what was sent to you, all on the same platform."
   }
 }

@@ -20,7 +20,7 @@ Created by **Alice Huang**, **Jacquelyn Chow**, **Leia Rich**, and **Lamia Makka
 * Beta version is currently compatible with iPhone and Android phones. 
 
 ## Demo
-
+Coming soon! 
 
 ## Context
 Social interactions in this digital age rely heavily on sending and receiving multimedia content from friends, including links to articles, music videos, TikToks and more, as well as recommendations for songs, movies, books and podcasts to check out. These recommendations form the foundation of our conversations and relationships with others. People like to connect over shared interests or new ideas they have come across.
@@ -97,24 +97,53 @@ Stash is an effective solution because people typically make recommendations usi
 An overview and description of key files in the StashApp repository: 
 ### **.../Screens/**
 This folder is home to the six main views in the StashApp, along with a loading page when moving and interacting on these pages. 
-#### **Home.js**
 #### **Login.js**
+* Displays the first landing screen when users are signing up or logging in, including...
+  * Swipeable onboarding cards that describe the functionality of the app 
+  * Options to login (calling the Login modal component, more below) or to sign up (calling the Signup modal component, more below). 
+#### **Home.js**
+* Sets up a home screen as a tab navigation between two views: one with all of your pods (through ByPod.js, below) and the other with all of your recommendations (through ByMedia.js, below)
 #### **ByPod.js & ByMedia.js**
+* ByPod.js creates the first view available through the homescreen display, which allows the user to add, view and click on Pods, or groups they make with other users. This includes code for...
+  * Viewing the "add a pod" pop up;
+  * Adding a pod with other users through that pop up, including uploading an image, searching for users by username, and all of the corresponding error handling; 
+  * Refreshing the page by pulling down the screen. 
+* ByMedia.js creates the second view available through the homescreen display, which allows the user to view all of the recommendations from all of their Pods, organised by the six clickable media type icons. This includes code for...
+  * Viewing the six media types and their corresponding icons;
+  * Seeing how many recommendations of that type have been sent across Pods and by how many people they were sent;
+  * Refreshing the page by pulling down the screen. 
 #### **PodPage.js**
+* Allows the user to see contents within one of their pods, accessible by clicking on one of the created pods in the "Your Pods" view of the homescreen. This screen allows the user to add, view and click on recommendations, or items that they recommend to the other users in that pod. This includes code for... 
+  * Viewing the "add a rec" pop up;
+  * Adding a recommendation for the users in that Pod through that pop up, including selecting a media type and calling the corresponding mediaType object (more below) to display other input fields, and all of the corresponding error handling; 
+  * Viewing the "RecTile" object and its corresponding functionality (more below);
+  * Viewing a pop up that shows all members of that pod;
+  * Refreshing the page by pulling down the screen. 
 #### **MediaTypePage.js**
+* Allows the user to see contents within one of the media types, accessible by clicking on one of the tiles in the "All Recommendations" view of the homescreen. This screen allows the user to view and click on recommendations. This includes code for... 
+  * Viewing the "RecTile" objects that only fall within that media type, along with teh recommendation's corresponding functionality (more below);
 #### **Loading.js**
-
+* When opening the application, this page includes code to determine whether the user should be directed to the login page, or whether they are already logged in and ready to use the app. 
 ### **.../Components/**
 This folder is home to the main components that are used across various parts of the StashApp, including... 
 
 #### **LoginModal.js & SignupModal.js**
+* LoginModal.js is used on the login screen as the pop up when users select the login option, to allow existing users to log back in to their accounts using their phone numbers. This includes using a recaptcha check, and prompting users to input a verification code sent to their phone numbers. 
+* SignupModal.js is used on the login screen as the pop up when users select the signup option, to allow new users to create new accounts. Thisincludes asking users to input their account information, using a recaptcha check, and prompting users to input a verification code sent to their phone numbers. 
 #### **PodTile.js**
+* Used in the pod view of the homescreen to display the clickable groups that users create. This includes displaying an image, pod name and the number of memebrs in the pod, as well as an option to either leave the pod or, if you are the last member in a pod, delete the pod and its corresponding content altogether. 
 #### **RecTile.js**
+* Used to display the recommendations, either when in a selected pod, or in a selected media type. This includes displaying the media type icon for that recommendation, the stated media type and the given name to that recommendation. 
+* The recommendation tile also includes the ability to delete the recommendation from that pod, and a button in the bottom right corner for users to mark that recommendation as "seen."' 
+* This file also includes code that handles the recommendation's pop up functionality, where clicking on the tile will display the relevant information about that item. 
 #### **MediaGroup.js**
+* Used in the media type view of the homescreen to display the clickable media type tiles that leads users to the recommendations of that selected type. 
 #### **media-types/**
+* Each media type has a corresponding object with slightly different corresponding attributes. For example, a MovieType object has a genre and a year attribute, whereas a SongType object has a link attribute. Each of the files in this folder state the attributes of each media type object. 
 
 ### **.../API/**
 #### **firebaseMethods.js**
+* All of these different files utilise methods that are stored in the firebaseMethods.js file, which comprises all of the functions used for server side functionality. This includes, signing up a new user, logging out of an account, creating and deleting both pods recommendations on the database, and more. 
 
 ## Future Improvements
 * Once the user marks a recommendations as watched/read/listened to, removing that recommendation from their main feeds. In this case, the user would be able to visit ‘Past Recommendations’ in order to see what they have already visited. 

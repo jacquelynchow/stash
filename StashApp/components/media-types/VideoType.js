@@ -8,8 +8,8 @@ export default function VideoType(props) {
   //for video types (YouTube & TikToks), prompt user to input a title and a link
   //  to the media (both mandatory)
   return (
-    <View>
-      <View style={{ flexDirection: 'row'}}>
+    <View style={{alignSelf: 'flex-start', marginLeft: 'auto', marginRight: 'auto'}}>
+      <View style={{ flexDirection: 'row', width: '100%'}}>
         <Text style={styles.recCategoriesText}>
           Title:
         </Text>

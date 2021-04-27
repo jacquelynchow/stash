@@ -292,6 +292,7 @@ const PodPage = ({ navigation, route}) => {
                       <TextInput style={styles.commentInput}
                             onChangeText={recComment => setrecComment(recComment)}
                             maxLength={200}
+                            scrollEnabled={true}
                             multiline={true}
                             defaultValue={recComment}
                             returnKeyType="done"
@@ -472,11 +473,11 @@ const styles = StyleSheet.create({
   recCategoriesText: {
     fontSize: 18,
     color: 'white',
-    marginTop: 10,
+    marginTop: 20,
   },
   commentInput: {
-    height: 50,
-    width: '100%',
+    height: 70,
+    width: windowWidth/1.5,
     fontSize: 16,
     backgroundColor: 'white',
     borderRadius: 10,
@@ -484,13 +485,15 @@ const styles = StyleSheet.create({
     paddingBottom:10,
     paddingHorizontal: 10,
     marginTop: 5,
+    marginLeft: 20,
+    marginRight: 20
   },
   errorMessage: {
     color: '#ffc9b9',
   },
   selectMediaDropdown: {
     flexDirection: 'column',
-    alignSelf: 'flex-start',
+    alignItems: 'center',
     marginTop: 20,
   },
   loading: {

@@ -9,8 +9,8 @@ export default function SongType(props) {
   //for song types, prompt user to input a title (mandatory) and (optional:) artists
   //  and a link to the song
   return (
-    <View>
-        <View style={{ flexDirection: 'row'}}>
+    <View style={{alignSelf: 'flex-start', marginLeft: 'auto', marginRight: 'auto'}}>
+        <View style={{ flexDirection: 'row', width: '100%'}}>
             <Text style={styles.recCategoriesText}>
                 Song Title:
             </Text>

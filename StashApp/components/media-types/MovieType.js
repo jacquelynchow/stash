@@ -9,8 +9,8 @@ export default function MovieType(props) {
   //for movie types, prompt user to input a title (mandatory) and (optional:) a genre
   //  and a release year
   return (
-    <View>
-      <View style={{ flexDirection: 'row'}}>
+    <View style={{alignSelf: 'flex-start', marginLeft: 'auto', marginRight: 'auto'}}>
+      <View style={{ flexDirection: 'row', width: '100%'}}>
         <Text style={styles.recCategoriesText}>
           Title:
         </Text>

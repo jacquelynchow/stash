@@ -9,8 +9,8 @@ export default function ArticleType(props) {
   //for article types, prompt user to input a title (mandatory) and
   //  (optional:) an author and a link to the article
   return (
-    <View>
-      <View style={{ flexDirection: 'row'}}>
+    <View style={{alignSelf: 'flex-start', marginLeft: 'auto', marginRight: 'auto'}}>
+      <View style={{ flexDirection: 'row', width: '100%'}}>
         <Text style={styles.recCategoriesText}>
             Title:
         </Text>
@@ -38,7 +38,7 @@ export default function ArticleType(props) {
           />
         </SafeAreaView>
         </View>
-          <View style={{ flexDirection: 'row'}}>
+        <View style={{ flexDirection: 'row'}}>
           <Text style={styles.recCategoriesText}>
               Link:
           </Text>

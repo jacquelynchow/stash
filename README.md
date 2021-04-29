@@ -30,14 +30,14 @@ Coming soon!
 
 **Instructions:**
 Once you’ve followed the ‘Getting Started’ instructions, check out how our app works from our onboarding screen. 
-1. Sign up on our Stash App using your phone number (with the area code included, no dashes) and choosing a username.
-2. After receiving a verification code and reCaptcha, you should be able to start creating pods with other users who’ve created an account (lookup by username) by clicking on the + in the bottom right corner.
-3. Once a pod is created, enjoy adding and receiving recommendations from your peers!
+1. Sign up on our Stash App using your phone number (with the area code included, no dashes) and choose a username.
+2. After receiving a verification code and reCaptcha, you should be able to start creating pods with other users who’ve created an account (lookup by username). Start by clicking on the + in the bottom right corner.
+3. Once a pod is created, enjoy adding and receiving recommendations from your group members!
 4. Other features: 
     - Leave pod (or if you’re the last member in a pod, delete pod)
     - Change the pod name
     - View group members
-    - Click on a recommendation for more info (for Songs, Youtube & TikTok videos, Articles, you can add links and visit them)
+    - Click on a recommendation for more info (for Songs, Youtube & TikTok videos, Articles, you can add links and members can visit them)
     - Check off a recommendation once you’ve seen/viewed it
     - Delete a recommendation (warning: this currently deletes the recommendation for everyone in the pod!)
     - View your recommendations (from all pods) based on their media types

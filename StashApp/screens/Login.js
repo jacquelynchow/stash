@@ -50,12 +50,12 @@ export default function LoginScreen({ navigation }) {
           <View style={styles.slide}>
             <Image source={SortIcon} style={styles.icons}></Image>
             <Text style={ styles.title2 } >Sort by Pod or Type</Text>
-            <Text style={ styles.instructions } >Check out your centralized recommendations{'\n'}by groups or by type of media.</Text>
+            <Text style={ styles.instructions } >Check out your centralized recommendations{'\n'}by groups or by media type.</Text>
           </View>
           <View style={styles.slide}>
             <Image source={InteractIcon} style={styles.icons}></Image>
             <Text style={ styles.title2 } >Interact With Recs</Text>
-            <Text style={ styles.instructions } >Click on a recommendation for more info, react to it,{'\n'}or swipe left when you’re done checking it out!</Text>
+            <Text style={ styles.instructions } >Click on a recommendation for more info, check off that you've seen it, {'\n'}or delete recommendations your pod no longer wants saved.</Text>
           </View>
         </Swiper>
 

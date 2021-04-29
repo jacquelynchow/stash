@@ -3,6 +3,7 @@
 ## Table of Contents
 [ABOUT](#stash-application)<br>
 [DEMO](#demo)<br>
+[GETTING STARTED](#getting-started)<br>
 [CONTEXT](#context)<br>
 [MOTIVATION](#motivation)<br>
 [TECHNOLOGIES](#technologies)<br>
@@ -14,13 +15,33 @@
 Stash is a multiplatform mobile application that facilitates social interactions between friends online. Stash centralizes the recommendations for songs, movies, books, YouTube videos and other media your friends send you into one convenient dashboard, so you never lose track of what they share with you again. You can create groups to share recommendations with, sort the recommendations you’ve received by sender or by media type, and react to what was sent to you, all on the same platform. 
 
 Created by **Alice Huang**, **Jacquelyn Chow**, **Leia Rich**, and **Lamia Makkar**
-#### [Click here to check out the app](sitelinkhere.com)
+#### [Click here to check out the app](https://expo.io/@jacquelynchow/projects/stash)
 #### [Click here to check out the preliminary Figma Design](https://www.figma.com/file/bF4SxsXaXwPBtepDlyMyfh/Stash-App?node-id=0%3A1)
 
 * Beta version is currently compatible with iPhone and Android phones. 
 
 ## Demo
 Coming soon! 
+
+## Getting Started
+**Android users:** Download the [Expo Go app](https://play.google.com/store/apps/details?id=host.exp.exponent&hl=en_US&gl=US), then open this [Stash App Link](https://expo.io/@jacquelynchow/projects/stash) and click the button ‘Open Project Using Expo’
+
+**iOS users:** Download the [Expo Go app](https://apps.apple.com/us/app/expo-go/id982107779), then sign in to Expo Go with this account (username: cs71 & password: stashapp), head to ‘Profile’ and the Stash app should be under ‘Published Projects’ 
+
+**Instructions:**
+Once you’ve followed the ‘Getting Started’ instructions, check out how our app works from our onboarding screen. 
+1. Sign up on our Stash App using your phone number (with the area code included, no dashes) and choosing a username.
+2. After receiving a verification code and reCaptcha, you should be able to start creating pods with other users who’ve created an account (lookup by username) by clicking on the + in the bottom right corner.
+3. Once a pod is created, enjoy adding and receiving recommendations from your peers!
+4. Other features: 
+    - Leave pod (or if you’re the last member in a pod, delete pod)
+    - Change the pod name
+    - View group members
+    - Click on a recommendation for more info (for Songs, Youtube & TikTok videos, Articles, you can add links and visit them)
+    - Check off a recommendation once you’ve seen/viewed it
+    - Delete a recommendation (warning: this currently deletes the recommendation for everyone in the pod!)
+    - View your recommendations (from all pods) based on their media types
+    - Click on the Stash logo to see a mini ‘About Us’
 
 ## Context
 Social interactions in this digital age rely heavily on sending and receiving multimedia content from friends, including links to articles, music videos, TikToks and more, as well as recommendations for songs, movies, books and podcasts to check out. These recommendations form the foundation of our conversations and relationships with others. People like to connect over shared interests or new ideas they have come across.

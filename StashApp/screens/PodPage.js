@@ -109,20 +109,20 @@ const PodPage = ({ navigation, route}) => {
   // doesn't provide input for them
   const checkAllFieldsOnSubmit = () => {
       let allValid = true;
-      // check if media type is selected
-      if (mediaType === "") {
-          setErrors({mediaTypeError: "*Media type is required to continue"});
-          allValid = false;
+      // check if they uploaded link, and if so that it is valid
+      if (mediaType != "Movie" && mediaType != "Book" && (recLink == "" || !validURL(recLink))) {
+        setErrors({linkError: "*Please enter a valid link"});
+        allValid = false;
       }
       // check if rec name empty or only has whitespace
       if (recName === "" || !recName.replace(/\s/g, '').length) {
-          setErrors({nameError: "*Title of this recommendation is required"});
-          allValid = false;
+        setErrors({nameError: "*Title of this recommendation is required"});
+        allValid = false;
       }
-      // check if they uploaded link, and if so that it is valid
-      if (mediaType != "Movie" && mediaType != "Book" && (recLink == "" || !validURL(recLink))) {
-          setErrors({linkError: "*Please enter a valid link"});
-          allValid = false;
+      // check if media type is selected
+      if (mediaType === "") {
+        setErrors({mediaTypeError: "*Media type is required to continue"});
+        allValid = false;
       }
       // if everything checks out, add to recs list
       if (allValid) {
@@ -492,6 +492,7 @@ const styles = StyleSheet.create({
   },
   errorMessage: {
     color: '#ffc9b9',
+    fontSize: 11.9
   },
   selectMediaDropdown: {
     flexDirection: 'column',

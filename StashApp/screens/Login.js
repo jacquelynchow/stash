@@ -55,7 +55,7 @@ export default function LoginScreen({ navigation }) {
           <View style={styles.slide}>
             <Image source={InteractIcon} style={styles.icons}></Image>
             <Text style={ styles.title2 } >Interact With Recs</Text>
-            <Text style={ styles.instructions } >Click on a recommendation for more info, check off that you've seen it, {'\n'}or delete recommendations your pod no longer wants saved.</Text>
+            <Text style={ styles.instructions } >Click on a recommendation for more info, {'\n'}check off that you've seen it, {'\n'}or delete it when your pod is done with it.</Text>
           </View>
         </Swiper>
 

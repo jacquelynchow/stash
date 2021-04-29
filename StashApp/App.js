@@ -64,7 +64,7 @@ export default function App() {
         <Stack.Navigator initialRouteName="Loading">
           {/* set up routes for each screen */}
           <Stack.Screen name="Login" component={LoginScreen}
-            options={{ headerShown: false }}
+            options={{ headerShown: false, gestureEnabled: false }}
           />
           <Stack.Screen name="Home" component={HomeScreen}
             options= {{

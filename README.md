@@ -21,7 +21,7 @@ Created by **Alice Huang**, **Jacquelyn Chow**, **Leia Rich**, and **Lamia Makka
 * Beta version is currently compatible with iPhone and Android phones. 
 
 ## Demo
-<img src="./StashApp/assets/demo-video.gif" alt="Stash App Demo" height="40" />
+<img src="./StashApp/assets/demo-gif.gif" alt="Stash App Demo" height="40" />
 
 ## Getting Started
 **Android users:** Download the [Expo Go app](https://play.google.com/store/apps/details?id=host.exp.exponent&hl=en_US&gl=US), then open this [Stash App Link](https://expo.io/@jacquelynchow/projects/stash) and click the button ‘Open Project Using Expo’

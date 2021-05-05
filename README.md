@@ -15,12 +15,12 @@
 
 ## Stash Application
 Stash is a multiplatform mobile application that facilitates social interactions between friends online. Stash centralizes the recommendations for songs, movies, books, YouTube videos and other media your friends send you into one convenient dashboard, so you never lose track of what they share with you again. You can create groups to share recommendations with, sort the recommendations you’ve received by sender or by media type, and react to what was sent to you, all on the same platform. 
+* Beta version is currently compatible with iPhone and Android phones. 
 
 Created by **Alice Huang**, **Jacquelyn Chow**, **Leia Rich**, and **Lamia Makkar**
-#### [Click here to check out the app](https://expo.io/@jacquelynchow/projects/stash)
-#### [Click here to check out the preliminary Figma Design](https://www.figma.com/file/bF4SxsXaXwPBtepDlyMyfh/Stash-App?node-id=0%3A1)
-
-* Beta version is currently compatible with iPhone and Android phones. 
+#### [Expo Go app link](https://expo.io/@jacquelynchow/projects/stash)
+#### [Figma Design link](https://www.figma.com/file/bF4SxsXaXwPBtepDlyMyfh/Stash-App?node-id=0%3A1)
+#### [Stash slide deck link](https://docs.google.com/presentation/d/1MV0Rb61IhSQkhuT-Qmkue5eBsAkDTip_9vufj5w-zDs/edit?usp=sharing)
 
 ## Demo
 <p align="center">
